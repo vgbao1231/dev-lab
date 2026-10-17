@@ -1,0 +1,52 @@
+{
+  // Cấu hình OpenCode dùng chung cho repo Dev Lab.
+  // Tài liệu: https://opencode.ai/v2/docs/config
+  "$schema": "https://opencode.ai/config.json",
+
+  // 1) Model mặc định. Luôn ghi dạng "provider/model".
+  "model": "opencode/deepseek-v4.1-flash-free",
+
+  // 2) Cắt bớt kết quả tool trước khi đưa vào context.
+  //    Mặc định là 2000 dòng / 50 KiB. Đây là "núm" tiết kiệm token mạnh nhất,
+  //    vì output của read/grep/shell thường chiếm phần lớn context.
+  "tool_output": {
+    "max_lines": 500,
+    "max_bytes": 24000,
+  },
+
+  // 3) Nén hội thoại sớm hơn và giữ ít phần "đuôi" hơn.
+  //    Mặc định: keep.tokens = 15000, buffer = 10% giới hạn context.
+  "compaction": {
+    "auto": true,
+    "keep": { "tokens": 8000 },
+    "buffer": 12000,
+  },
+
+  // 4) Repo này không cần tìm kiếm web -> bỏ hẳn tool khỏi prompt.
+  "websearch": false,
+
+  // 5) Ảnh lớn được thu nhỏ trước khi gửi cho model.
+  "media": {
+    "image": {
+      "auto_resize": true,
+      "max_width": 1568,
+      "max_height": 1568,
+    },
+  },
+
+  // 6) Không theo dõi thư mục build (đỡ việc nền, đỡ nhiễu file).
+  "watcher": {
+    "ignore": ["node_modules/**", "**/dist/**", "**/.next/**", "**/build/**"],
+  },
+
+  // 7) Agent: giới hạn số bước model cho một lượt, và cho subagent khám phá
+  //    dùng biến thể "low" để tốn ít token suy luận.
+  "agents": {
+    "build": {
+      "steps": 25,
+    },
+    "explore": {
+      "model": "opencode/deepseek-v4.1-flash-free#low",
+    },
+  },
+}

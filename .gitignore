@@ -17,6 +17,10 @@ pnpm-debug.log*
 .eslintcache
 .cache/
 
+# công cụ / output của deploy và test
+.wrangler/
+coverage/
+
 # environment variables
 .env
 .env.*
@@ -25,3 +29,8 @@ pnpm-debug.log*
 # editor / OS
 .DS_Store
 .idea/
+
+# OpenCode
+# opencode.jsonc được track để dùng chung cho repo.
+# Cấu hình riêng theo máy đặt ở ~/.config/opencode/opencode.json(c), không nằm trong repo.
+
