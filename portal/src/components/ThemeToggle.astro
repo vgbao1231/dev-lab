@@ -1,6 +1,10 @@
 ---
-// Hai trục độc lập: chế độ (sáng / tối / hệ thống) và bảng màu (Warm / Soft).
-// Giá trị được ghi vào <html data-mode data-palette> và lưu ở localStorage.
+import { availableThemes } from '../data/themes';
+
+// Hai trục độc lập: mode (sáng / tối / hệ thống) và theme (Minimalist Editorial, ...).
+// Giá trị được ghi vào <html data-mode data-theme> và lưu ở localStorage.
+// Bộ chọn theme chỉ hiện khi có từ hai theme trở lên — xem docs/DESIGN_SYSTEM.md mục 1.
+const showThemeSelector = availableThemes.length > 1;
 ---
 
 <div class="theme-toggle">
@@ -17,29 +21,28 @@
     </button>
   </fieldset>
 
-  <fieldset class="theme-toggle__group">
-    <legend class="meta">Bảng màu</legend>
-    <button type="button" data-palette-set="warm">
-      Warm
-    </button>
-    <button type="button" data-palette-set="soft">
-      Soft
-    </button>
-  </fieldset>
+  {showThemeSelector && (
+    <fieldset class="theme-toggle__group">
+      <legend class="meta">Theme</legend>
+      {availableThemes.map((theme) => (
+        <button type="button" data-theme-set={theme.id}>
+          {theme.label}
+        </button>
+      ))}
+    </fieldset>
+  )}
 </div>
 
 <script>
   const STORAGE_MODE = 'dev-lab:mode';
-  const STORAGE_PALETTE = 'dev-lab:palette';
+  const STORAGE_THEME = 'dev-lab:theme';
 
   const root = document.documentElement;
   const media = window.matchMedia('(prefers-color-scheme: dark)');
   const modeButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-mode-set]'));
-  const paletteButtons = Array.from(
-    document.querySelectorAll<HTMLButtonElement>('[data-palette-set]'),
-  );
+  const themeButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-theme-set]'));
 
-  const readPreference = (): 'light' | 'dark' | 'system' => {
+  const readModePreference = (): 'light' | 'dark' | 'system' => {
     const value = root.dataset.modePreference;
     return value === 'light' || value === 'dark' ? value : 'system';
   };
@@ -50,20 +53,20 @@
     root.dataset.mode = mode;
   };
 
-  const applyPalette = (palette: 'warm' | 'soft') => {
-    root.dataset.palette = palette;
+  const applyTheme = (theme: string) => {
+    root.dataset.theme = theme;
   };
 
   const syncPressedState = () => {
-    const preference = readPreference();
-    const palette = root.dataset.palette === 'soft' ? 'soft' : 'warm';
+    const preference = readModePreference();
+    const theme = root.dataset.theme ?? '';
 
     for (const button of modeButtons) {
       button.setAttribute('aria-pressed', String(button.dataset.modeSet === preference));
     }
 
-    for (const button of paletteButtons) {
-      button.setAttribute('aria-pressed', String(button.dataset.paletteSet === palette));
+    for (const button of themeButtons) {
+      button.setAttribute('aria-pressed', String(button.dataset.themeSet === theme));
     }
   };
 
@@ -78,20 +81,20 @@
     });
   }
 
-  for (const button of paletteButtons) {
+  for (const button of themeButtons) {
     button.addEventListener('click', () => {
-      const value = button.dataset.paletteSet;
-      if (value !== 'warm' && value !== 'soft') return;
+      const value = button.dataset.themeSet;
+      if (!value) return;
 
-      applyPalette(value);
-      localStorage.setItem(STORAGE_PALETTE, value);
+      applyTheme(value);
+      localStorage.setItem(STORAGE_THEME, value);
       syncPressedState();
     });
   }
 
   // Chỉ theo dõi hệ thống khi người dùng chọn "Hệ thống"
   media.addEventListener('change', () => {
-    if (readPreference() === 'system') {
+    if (readModePreference() === 'system') {
       applyMode('system');
       syncPressedState();
     }

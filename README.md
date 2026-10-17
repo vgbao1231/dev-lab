@@ -32,7 +32,7 @@ dev-lab/
 ├── portal/                   # Cổng chính (Astro)
 │   └── src/
 │       ├── components/       # Header, Footer, LabCard, ThemeToggle
-│       ├── data/             # Dữ liệu tĩnh (danh sách lab)
+│       ├── data/             # Dữ liệu tĩnh (danh sách lab, registry theme)
 │       ├── layouts/
 │       ├── pages/            # /, /labs, /lien-he
 │       └── styles/           # tokens.css, global.css
@@ -80,6 +80,7 @@ pnpm build
 ## Quy ước
 
 - Không hard-code màu và font trong component; dùng CSS variables trong `portal/src/styles/tokens.css` (nguồn: `docs/DESIGN_SYSTEM.md`).
+- **Theme và mode là hai trục độc lập** (`data-theme` + `data-mode`), không phải bốn chế độ cố định. Thêm theme mới gồm ba bước: cập nhật `docs/DESIGN_SYSTEM.md`, thêm block CSS variables trong `portal/src/styles/tokens.css`, đăng ký trong `portal/src/data/themes.ts`.
 - Thay đổi màu/font thì cập nhật `docs/DESIGN_SYSTEM.md` trước, rồi mới sửa code.
 - Hoàn thành một mục trong `docs/ROADMAP.md` thì đánh dấu `[x]` trong cùng thay đổi.
 - `tsconfig.base.json` là cấu hình strict dùng chung. **Không dùng `extends` dạng mảng** trong `portal/`: Rolldown (Vite bên trong Astro) resolve sai dạng này và làm build thất bại; xem ghi chú trong `portal/tsconfig.json`.

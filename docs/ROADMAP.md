@@ -20,11 +20,12 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
 
 ### 1.2 Design tokens
 
-- [x] Tạo file CSS variables cho 4 chế độ: Warm Dark, Warm Light, Soft Dark, Soft Light
+- [x] Tạo file CSS variables cho theme đầu tiên (Minimalist Editorial), đủ light + dark
 - [x] Tích hợp font: Patrick Hand, Inter, JetBrains Mono (có fallback và kiểm tra tiếng Việt)
       — thay Balsamiq Sans bằng Patrick Hand vì Balsamiq Sans không có subset tiếng Việt
-- [x] Cài đặt chuyển chế độ: tối / sáng / hệ thống (đã thêm cả bộ chọn bảng màu Warm / Soft)
-- [ ] Kiểm tra contrast cho text và link trong cả 4 chế độ
+- [x] Cài đặt chuyển chế độ: tối / sáng / hệ thống
+      — theme và mode là hai trục độc lập; bộ chọn theme tự ẩn khi chỉ có một theme khả dụng
+- [ ] Kiểm tra contrast cho text và link ở Minimalist Editorial light và dark
 
 ### 1.3 Cổng chính (portal)
 
@@ -61,7 +62,7 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
 
 ### Tiêu chí hoàn thành giai đoạn 1
 
-- Portal truy cập được trên production, hiển thị đúng 4 chế độ màu.
+- Portal truy cập được trên production, hiển thị đúng theme Minimalist Editorial ở cả light và dark.
 - React Lab có ít nhất 3 bài viết, mỗi bài có frontmatter đầy đủ.
 - Lighthouse Performance trên trang chủ đạt từ 90 trở lên (mobile).
 - Không có lỗi contrast WCAG AA ở text chính.
@@ -78,6 +79,7 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
 - [ ] Chọn lab thứ hai (dự kiến: JS Under the Hood hoặc Next.js Lab)
 - [ ] Thêm tìm kiếm hoặc lọc theo tag
 - [ ] Thêm RSS feed
+- [ ] Thêm theme thứ hai (Digital Garden) — bộ chọn theme sẽ tự hiện khi có từ hai theme
 
 **Tiêu chí hoàn thành:** Có ít nhất 2 lab, một demo tương tác chạy được, người đọc tìm được bài theo tag.
 
@@ -106,8 +108,9 @@ Các ý tưởng sau được ghi nhận nhưng chưa đưa vào lộ trình:
 
 ## Nhật ký thay đổi
 
-| Ngày       | Thay đổi                                                                                                                                              |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-10-17 | Khởi tạo roadmap, đánh dấu giai đoạn 1 đang thực hiện                                                                                                 |
-| 2026-10-17 | Thiết lập pnpm workspace, ESLint/Prettier/TS strict, CI. Chuyển project Astro vào `portal/`, thêm design tokens + chuyển theme, thêm `labs/react-lab` |
-| 2026-10-18 | Chốt tên hệ sinh thái là **Dev Lab** (repo `dev-lab`). Thay font display Balsamiq Sans bằng Patrick Hand vì Balsamiq Sans thiếu subset tiếng Việt     |
+| Ngày       | Thay đổi                                                                                                                                                           |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2026-10-17 | Khởi tạo roadmap, đánh dấu giai đoạn 1 đang thực hiện                                                                                                              |
+| 2026-10-17 | Thiết lập pnpm workspace, ESLint/Prettier/TS strict, CI. Chuyển project Astro vào `portal/`, thêm design tokens + chuyển theme, thêm `labs/react-lab`              |
+| 2026-10-18 | Chốt tên hệ sinh thái là **Dev Lab** (repo `dev-lab`). Thay font display Balsamiq Sans bằng Patrick Hand vì Balsamiq Sans thiếu subset tiếng Việt                  |
+| 2026-10-18 | Tách **theme** và **mode** thành hai trục độc lập (`data-theme` + `data-mode`), bỏ mô hình cố định 4 chế độ. Giai đoạn 1 chỉ triển khai theme Minimalist Editorial |

@@ -98,7 +98,7 @@ Khi đề xuất hoặc đánh giá một lab, nội dung hay tính năng mới,
 - **Lab**: mỗi lab là một ứng dụng hoặc site độc lập, có thể có repo và quy trình deploy riêng.
 - **Nội dung**: file Markdown/MDX với frontmatter chuẩn hóa.
 - **Hosting**: Cloudflare Pages, mỗi lab một subdomain hoặc đường dẫn con.
-- **Design**: dùng chung design tokens từ `DESIGN_SYSTEM.md`.
+- **Design**: dùng chung design tokens từ `DESIGN_SYSTEM.md`; theme và mode là hai trục độc lập (giai đoạn 1 chỉ triển khai theme Minimalist Editorial).
 
 ## 10. Những điều chưa quyết định
 

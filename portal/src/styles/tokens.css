@@ -3,12 +3,15 @@
  * Giá trị lấy từ docs/DESIGN_SYSTEM.md. Khi đổi token, cập nhật tài liệu trước.
  *
  * Hai trục độc lập, gán lên <html>:
- *   data-palette="warm" | "soft"
+ *   data-theme="minimalist-editorial" | "digital-garden" | ...
  *   data-mode="dark" | "light"
+ *
+ * Giai đoạn hiện tại chỉ triển khai Minimalist Editorial. Thêm theme mới thì thêm
+ * một cặp block [data-theme='<id>'] ở dưới và đăng ký trong src/data/themes.ts.
  */
 
 :root,
-:root[data-palette='warm'][data-mode='dark'] {
+:root[data-theme='minimalist-editorial'][data-mode='dark'] {
   --color-bg: #171614;
   --color-surface: #24221f;
   --color-text: #f2ebdd;
@@ -18,7 +21,7 @@
   --color-border: #3a3630;
 }
 
-:root[data-palette='warm'][data-mode='light'] {
+:root[data-theme='minimalist-editorial'][data-mode='light'] {
   --color-bg: #f7f4ed;
   --color-surface: #fffcf6;
   --color-text: #292720;
@@ -26,26 +29,6 @@
   --color-accent: #667a4d;
   --color-link: #326c8a;
   --color-border: #e3ddd1;
-}
-
-:root[data-palette='soft'][data-mode='dark'] {
-  --color-bg: #111a18;
-  --color-surface: #1c2723;
-  --color-text: #e7e8d9;
-  --color-text-muted: #a5b2a6;
-  --color-accent: #a8c3a0;
-  --color-link: #8cbfc0;
-  --color-border: #34423a;
-}
-
-:root[data-palette='soft'][data-mode='light'] {
-  --color-bg: #f1f5ef;
-  --color-surface: #fafcf8;
-  --color-text: #26332b;
-  --color-text-muted: #647469;
-  --color-accent: #547a58;
-  --color-link: #347779;
-  --color-border: #d8e2d7;
 }
 
 /* Typography */

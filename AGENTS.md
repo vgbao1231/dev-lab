@@ -58,7 +58,7 @@ pnpm build
 
 Nếu có lệnh nào thất bại, không báo hoàn thành. Mô tả lỗi và đề xuất cách sửa.
 
-Với thay đổi giao diện, kiểm tra cả 4 chế độ màu (Warm Dark, Warm Light, Soft Dark, Soft Light) và viewport mobile.
+Với thay đổi giao diện, kiểm tra mọi cặp theme × mode đang triển khai (hiện tại: Minimalist Editorial light và dark) và viewport mobile.
 
 ## 5. Cập nhật tài liệu
 

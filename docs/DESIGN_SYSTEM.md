@@ -4,54 +4,63 @@ Hệ thống thiết kế cho cổng chính và các lab. Phong cách tối gi�
 
 ## 1. Cấu trúc theme
 
-Có hai trục độc lập:
+Hai trục **độc lập**, người dùng chọn riêng từng trục:
 
-- **Bảng màu (palette):** Warm (ấm, kiểu nhật ký kỹ thuật) hoặc Soft (dịu, kiểu khu vườn tri thức).
-- **Chế độ (mode):** Dark hoặc Light.
+- **Theme:** bộ nhận diện màu sắc, mỗi theme có tên riêng và tinh thần riêng — Minimalist Editorial, Digital Garden, và các theme thêm sau này.
+- **Chế độ (mode):** Light, Dark, hoặc Hệ thống (theo cài đặt thiết bị). Mode không gắn cứng với theme.
 
-Kết hợp hai trục tạo ra 4 chế độ: **Warm Dark, Warm Light, Soft Dark, Soft Light**.
+Vì hai trục độc lập, số tổ hợp **không cố định**: mỗi theme chỉ cần định nghĩa bảng màu cho light và dark của chính nó.
 
-Ngoài ra, người dùng có thể chọn **Hệ thống** để theo cài đặt sáng/tối của thiết bị.
+Theme được gắn lên `<html>` bằng hai thuộc tính:
 
-> Lưu ý: mockup hiện tại mới có nút chuyển `tối / sáng / hệ thống`. Cần bổ sung bộ chọn palette (Warm / Soft) để đủ 4 chế độ.
+```html
+<html data-theme="minimalist-editorial" data-mode="dark"></html>
+```
 
-## 2. Bảng màu
+Cách mở rộng: thêm theme mới = thêm bảng màu vào `DESIGN_SYSTEM.md` + thêm block CSS variables cho theme đó + đăng ký trong `portal/src/data/themes.ts`. Bố cục và typography **không** đổi theo theme, chỉ màu sắc đổi.
 
-### 2.1 Minimalist Editorial (Warm)
+### Phạm vi triển khai
+
+- **Giai đoạn hiện tại:** chỉ triển khai **Minimalist Editorial** (đủ light + dark). Bộ chọn theme tự ẩn khi chỉ có một theme khả dụng, và tự hiện khi có từ hai theme trở lên.
+- **Sau này:** Digital Garden và các theme khác. Bảng màu của Digital Garden đã ghi ở mục 2.2 nhưng **chưa** đưa vào code.
+
+## 2. Bảng màu theme
+
+### 2.1 Minimalist Editorial — đang triển khai
 
 **Mood:** ấm, bình tĩnh, mang cảm giác nhật ký kỹ thuật cá nhân.
 
-| Token          | Warm Dark | Warm Light |
-| -------------- | --------- | ---------- |
-| Background     | `#171614` | `#F7F4ED`  |
-| Surface        | `#24221F` | `#FFFCF6`  |
-| Primary text   | `#F2EBDD` | `#292720`  |
-| Secondary text | `#B6ADA0` | `#756F64`  |
-| Accent         | `#A6B58A` | `#667A4D`  |
-| Links          | `#83B9D4` | `#326C8A`  |
-| Borders        | `#3A3630` | `#E3DDD1`  |
+| Token          | Dark      | Light     |
+| -------------- | --------- | --------- |
+| Background     | `#171614` | `#F7F4ED` |
+| Surface        | `#24221F` | `#FFFCF6` |
+| Primary text   | `#F2EBDD` | `#292720` |
+| Secondary text | `#B6ADA0` | `#756F64` |
+| Accent         | `#A6B58A` | `#667A4D` |
+| Links          | `#83B9D4` | `#326C8A` |
+| Borders        | `#3A3630` | `#E3DDD1` |
 
-### 2.2 Digital Garden (Soft)
+### 2.2 Digital Garden — chưa triển khai
 
 **Mood:** yên tĩnh, tự nhiên, như một khu vườn tri thức.
 
-| Token          | Soft Dark | Soft Light |
-| -------------- | --------- | ---------- |
-| Background     | `#111A18` | `#F1F5EF`  |
-| Surface        | `#1C2723` | `#FAFCF8`  |
-| Primary text   | `#E7E8D9` | `#26332B`  |
-| Secondary text | `#A5B2A6` | `#647469`  |
-| Accent         | `#A8C3A0` | `#547A58`  |
-| Links          | `#8CBFC0` | `#347779`  |
-| Borders        | `#34423A` | `#D8E2D7`  |
+| Token          | Dark      | Light     |
+| -------------- | --------- | --------- |
+| Background     | `#111A18` | `#F1F5EF` |
+| Surface        | `#1C2723` | `#FAFCF8` |
+| Primary text   | `#E7E8D9` | `#26332B` |
+| Secondary text | `#A5B2A6` | `#647469` |
+| Accent         | `#A8C3A0` | `#547A58` |
+| Links          | `#8CBFC0` | `#347779` |
+| Borders        | `#34423A` | `#D8E2D7` |
 
 ## 3. CSS variables
 
-Tên token dùng chung cho cả 4 chế độ. Chỉ thay giá trị theo theme.
+Tên token dùng chung cho mọi theme và mọi mode; chỉ giá trị thay đổi theo cặp `data-theme` + `data-mode`. Theme đang triển khai:
 
 ```css
 :root,
-:root[data-palette='warm'][data-mode='dark'] {
+:root[data-theme='minimalist-editorial'][data-mode='dark'] {
   --color-bg: #171614;
   --color-surface: #24221f;
   --color-text: #f2ebdd;
@@ -61,7 +70,7 @@ Tên token dùng chung cho cả 4 chế độ. Chỉ thay giá trị theo theme.
   --color-border: #3a3630;
 }
 
-:root[data-palette='warm'][data-mode='light'] {
+:root[data-theme='minimalist-editorial'][data-mode='light'] {
   --color-bg: #f7f4ed;
   --color-surface: #fffcf6;
   --color-text: #292720;
@@ -70,29 +79,13 @@ Tên token dùng chung cho cả 4 chế độ. Chỉ thay giá trị theo theme.
   --color-link: #326c8a;
   --color-border: #e3ddd1;
 }
-
-:root[data-palette='soft'][data-mode='dark'] {
-  --color-bg: #111a18;
-  --color-surface: #1c2723;
-  --color-text: #e7e8d9;
-  --color-text-muted: #a5b2a6;
-  --color-accent: #a8c3a0;
-  --color-link: #8cbfc0;
-  --color-border: #34423a;
-}
-
-:root[data-palette='soft'][data-mode='light'] {
-  --color-bg: #f1f5ef;
-  --color-surface: #fafcf8;
-  --color-text: #26332b;
-  --color-text-muted: #647469;
-  --color-accent: #547a58;
-  --color-link: #347779;
-  --color-border: #d8e2d7;
-}
 ```
 
-Khi chế độ là "Hệ thống", JavaScript đọc `prefers-color-scheme` và gán `data-mode` tương ứng. Không hard-code màu trong component.
+`:root` mang giá trị dark của Minimalist Editorial làm mặc định, để trang vẫn đọc được khi JavaScript chưa chạy.
+
+Thêm theme mới thì thêm hai block cùng dạng với selector `[data-theme='<id>']`, giá trị lấy từ bảng ở mục 2.
+
+Khi mode là "Hệ thống", JavaScript đọc `prefers-color-scheme` và gán `data-mode` tương ứng. Không hard-code màu trong component.
 
 ## 4. Typography
 
@@ -139,7 +132,7 @@ Khi chế độ là "Hệ thống", JavaScript đọc `prefers-color-scheme` và
 
 ## 7. Nguyên tắc
 
-1. **Tương phản:** text chính đạt tối thiểu WCAG AA (4.5:1) trên nền ở cả 4 chế độ. Kiểm tra cả link và text phụ.
+1. **Tương phản:** text chính đạt tối thiểu WCAG AA (4.5:1) trên nền ở mọi cặp theme × mode đang triển khai (hiện tại: Minimalist Editorial light và dark). Kiểm tra cả link và text phụ.
 2. **Tối giản:** tránh card lồng nhau, gradient, hiệu ứng glow, minh họa lớn.
 3. **Một CTA:** mỗi màn hình tối đa một hành động chính.
 4. **Nhất quán:** bố cục và typography giữ nguyên giữa các theme. Chỉ màu sắc thay đổi.
@@ -148,7 +141,7 @@ Khi chế độ là "Hệ thống", JavaScript đọc `prefers-color-scheme` và
 
 ## 8. Việc cần kiểm tra
 
-- [ ] Contrast của `--color-text-muted` trên `--color-surface` ở cả 4 chế độ
+- [ ] Contrast của `--color-text-muted` trên `--color-surface` ở Minimalist Editorial light và dark
 - [ ] Contrast của `--color-link` khi đặt trong đoạn văn dài
 - [x] Hiển thị tiếng Việt của Patrick Hand (subset `vietnamese` của Google Fonts: U+0102-0103, U+0110-0111, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9)
 - [ ] Trạng thái focus cho bàn phím

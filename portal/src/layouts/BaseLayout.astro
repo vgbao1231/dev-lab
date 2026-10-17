@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { availableThemes, defaultThemeId } from '../data/themes';
 
 export type Props = {
   title: string;
@@ -10,17 +11,21 @@ export type Props = {
 
 const { title, description = 'Dev Lab — blog và lab kỹ thuật.' } = Astro.props;
 
+const themeIds = availableThemes.map((theme) => theme.id);
+
 // Chạy trước khi vẽ để tránh nháy màu. Phải là script inline, không qua bundle.
 const themeInitScript = `
 (() => {
   const root = document.documentElement;
-  const storedPalette = localStorage.getItem('dev-lab:palette');
+  const themeIds = ${JSON.stringify(themeIds)};
+  const defaultThemeId = ${JSON.stringify(defaultThemeId)};
+  const storedTheme = localStorage.getItem('dev-lab:theme');
   const storedMode = localStorage.getItem('dev-lab:mode');
-  const palette = storedPalette === 'soft' ? 'soft' : 'warm';
+  const theme = themeIds.includes(storedTheme) ? storedTheme : defaultThemeId;
   const preference = storedMode === 'light' || storedMode === 'dark' ? storedMode : 'system';
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const mode = preference === 'system' ? (prefersDark ? 'dark' : 'light') : preference;
-  root.dataset.palette = palette;
+  root.dataset.theme = theme;
   root.dataset.mode = mode;
   root.dataset.modePreference = preference;
 })();
