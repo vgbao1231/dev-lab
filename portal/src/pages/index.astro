@@ -1,7 +1,14 @@
 ---
+import { getCollection } from 'astro:content';
+
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LabCard from '../components/LabCard.astro';
+import PostList from '../components/PostList.astro';
 import { labs } from '../data/labs';
+
+const latestPosts = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
 ---
 
 <BaseLayout title="Dev Lab — blog và lab kỹ thuật">
@@ -25,12 +32,18 @@ import { labs } from '../data/labs';
     </div>
   </section>
 
-  <section class="section container">
-    <h2>Bài viết</h2>
-    <p class="meta">
-      Hệ thống nội dung (frontmatter, collection bài viết) thuộc giai đoạn 1.4, xem
-      <code>docs/ROADMAP.md</code>.
-    </p>
+  <section class="section container container--wide">
+    <h2>Bài viết mới</h2>
+    {latestPosts.length === 0 ? (
+      <p class="meta">Chưa có bài viết nào.</p>
+    ) : (
+      <>
+        <PostList posts={latestPosts} />
+        <p>
+          <a href="/bai-viet">Tất cả bài viết →</a>
+        </p>
+      </>
+    )}
   </section>
 
   <section class="section container">
