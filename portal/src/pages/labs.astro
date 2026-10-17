@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LabCard from '../components/LabCard.astro';
+import { labs } from '../data/labs';
+---
+
+<BaseLayout title="Labs — Dev Lab" description="Danh sách các lab kỹ thuật của Dev Lab.">
+  <section class="section container container--wide">
+    <h1>Labs</h1>
+    <p class="lead">
+      Mỗi lab tập trung vào một công nghệ hoặc một lĩnh vực, có stack và cách triển khai riêng.
+    </p>
+
+    <div class="lab-grid">
+      {labs.map((lab) => (
+        <LabCard lab={lab} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lab-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    margin-top: 2rem;
+  }
+</style>

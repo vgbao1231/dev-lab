@@ -1,0 +1,139 @@
+---
+// Hai trục độc lập: chế độ (sáng / tối / hệ thống) và bảng màu (Warm / Soft).
+// Giá trị được ghi vào <html data-mode data-palette> và lưu ở localStorage.
+---
+
+<div class="theme-toggle">
+  <fieldset class="theme-toggle__group">
+    <legend class="meta">Chế độ</legend>
+    <button type="button" data-mode-set="light">
+      Sáng
+    </button>
+    <button type="button" data-mode-set="dark">
+      Tối
+    </button>
+    <button type="button" data-mode-set="system">
+      Hệ thống
+    </button>
+  </fieldset>
+
+  <fieldset class="theme-toggle__group">
+    <legend class="meta">Bảng màu</legend>
+    <button type="button" data-palette-set="warm">
+      Warm
+    </button>
+    <button type="button" data-palette-set="soft">
+      Soft
+    </button>
+  </fieldset>
+</div>
+
+<script>
+  const STORAGE_MODE = 'dev-lab:mode';
+  const STORAGE_PALETTE = 'dev-lab:palette';
+
+  const root = document.documentElement;
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+  const modeButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-mode-set]'));
+  const paletteButtons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>('[data-palette-set]'),
+  );
+
+  const readPreference = (): 'light' | 'dark' | 'system' => {
+    const value = root.dataset.modePreference;
+    return value === 'light' || value === 'dark' ? value : 'system';
+  };
+
+  const applyMode = (preference: 'light' | 'dark' | 'system') => {
+    const mode = preference === 'system' ? (media.matches ? 'dark' : 'light') : preference;
+    root.dataset.modePreference = preference;
+    root.dataset.mode = mode;
+  };
+
+  const applyPalette = (palette: 'warm' | 'soft') => {
+    root.dataset.palette = palette;
+  };
+
+  const syncPressedState = () => {
+    const preference = readPreference();
+    const palette = root.dataset.palette === 'soft' ? 'soft' : 'warm';
+
+    for (const button of modeButtons) {
+      button.setAttribute('aria-pressed', String(button.dataset.modeSet === preference));
+    }
+
+    for (const button of paletteButtons) {
+      button.setAttribute('aria-pressed', String(button.dataset.paletteSet === palette));
+    }
+  };
+
+  for (const button of modeButtons) {
+    button.addEventListener('click', () => {
+      const value = button.dataset.modeSet;
+      if (value !== 'light' && value !== 'dark' && value !== 'system') return;
+
+      applyMode(value);
+      localStorage.setItem(STORAGE_MODE, value);
+      syncPressedState();
+    });
+  }
+
+  for (const button of paletteButtons) {
+    button.addEventListener('click', () => {
+      const value = button.dataset.paletteSet;
+      if (value !== 'warm' && value !== 'soft') return;
+
+      applyPalette(value);
+      localStorage.setItem(STORAGE_PALETTE, value);
+      syncPressedState();
+    });
+  }
+
+  // Chỉ theo dõi hệ thống khi người dùng chọn "Hệ thống"
+  media.addEventListener('change', () => {
+    if (readPreference() === 'system') {
+      applyMode('system');
+      syncPressedState();
+    }
+  });
+
+  syncPressedState();
+</script>
+
+<style>
+  .theme-toggle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .theme-toggle__group {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.25rem 0.5rem;
+    margin: 0;
+  }
+
+  .theme-toggle__group legend {
+    padding-inline: 0.25rem;
+  }
+
+  .theme-toggle__group button {
+    background: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    padding: 0.15rem 0.4rem;
+    cursor: pointer;
+  }
+
+  .theme-toggle__group button[aria-pressed='true'] {
+    border-color: var(--color-accent);
+    color: var(--color-text);
+  }
+</style>

@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LabCard from '../components/LabCard.astro';
+import { labs } from '../data/labs';
+---
+
+<BaseLayout title="Dev Lab — blog và lab kỹ thuật">
+  <section class="section container">
+    <h1>Dev Lab</h1>
+    <p class="lead">
+      Hệ sinh thái blog và lab kỹ thuật: ghi chép, thử nghiệm có số đo và giải thích cơ chế của các
+      công nghệ trong công việc hằng ngày — frontend, backend, DevOps và những chủ đề liên quan.
+    </p>
+    <p>
+      <a href="/labs">Xem danh sách lab →</a>
+    </p>
+  </section>
+
+  <section class="section container container--wide">
+    <h2>Các lab</h2>
+    <div class="lab-grid">
+      {labs.map((lab) => (
+        <LabCard lab={lab} />
+      ))}
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Bài viết</h2>
+    <p class="meta">
+      Hệ thống nội dung (frontmatter, collection bài viết) thuộc giai đoạn 1.4, xem
+      <code>docs/ROADMAP.md</code>.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>Dự án khác</h2>
+    <p class="meta">Danh sách này sẽ được bổ sung khi có dự án đủ chất lượng để công khai.</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .lab-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+</style>

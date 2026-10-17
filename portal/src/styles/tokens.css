@@ -1,0 +1,79 @@
+/*
+ * Design tokens — nguồn duy nhất cho màu sắc và typography.
+ * Giá trị lấy từ docs/DESIGN_SYSTEM.md. Khi đổi token, cập nhật tài liệu trước.
+ *
+ * Hai trục độc lập, gán lên <html>:
+ *   data-palette="warm" | "soft"
+ *   data-mode="dark" | "light"
+ */
+
+:root,
+:root[data-palette='warm'][data-mode='dark'] {
+  --color-bg: #171614;
+  --color-surface: #24221f;
+  --color-text: #f2ebdd;
+  --color-text-muted: #b6ada0;
+  --color-accent: #a6b58a;
+  --color-link: #83b9d4;
+  --color-border: #3a3630;
+}
+
+:root[data-palette='warm'][data-mode='light'] {
+  --color-bg: #f7f4ed;
+  --color-surface: #fffcf6;
+  --color-text: #292720;
+  --color-text-muted: #756f64;
+  --color-accent: #667a4d;
+  --color-link: #326c8a;
+  --color-border: #e3ddd1;
+}
+
+:root[data-palette='soft'][data-mode='dark'] {
+  --color-bg: #111a18;
+  --color-surface: #1c2723;
+  --color-text: #e7e8d9;
+  --color-text-muted: #a5b2a6;
+  --color-accent: #a8c3a0;
+  --color-link: #8cbfc0;
+  --color-border: #34423a;
+}
+
+:root[data-palette='soft'][data-mode='light'] {
+  --color-bg: #f1f5ef;
+  --color-surface: #fafcf8;
+  --color-text: #26332b;
+  --color-text-muted: #647469;
+  --color-accent: #547a58;
+  --color-link: #347779;
+  --color-border: #d8e2d7;
+}
+
+/* Typography */
+:root {
+  --font-display: 'Patrick Hand', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2.25rem;
+  --text-display: 3rem;
+
+  /* Bố cục: 680px cho nội dung đọc, 900px cho trang danh sách */
+  --width-content: 680px;
+  --width-wide: 900px;
+  --space-section: 40px;
+  --space-inline: 24px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --space-section: 64px;
+    --space-inline: 32px;
+  }
+}
