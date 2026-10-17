@@ -10,9 +10,10 @@ Mục tiêu: chia sẻ kiến thức, củng cố kiến thức cũ qua thực h
 
 - Workspace: pnpm workspace, Node `>=22.22.0`, pnpm `12`
 - Portal: Astro (static output), CSS thuần + design tokens
+- Nội dung: Markdown/MDX qua content collection của Astro
 - Lab đầu tiên: React, TypeScript, Vite
 - Chất lượng mã: TypeScript `strict`, ESLint (flat config), Prettier
-- Deploy: Cloudflare Pages _(chưa thiết lập)_
+- Deploy: Cloudflare Pages _(chưa kết nối — xem mục Deploy bên dưới)_
 
 ## Cấu trúc thư mục
 
@@ -30,11 +31,14 @@ dev-lab/
 ├── tsconfig.base.json        # Cấu hình TypeScript strict dùng chung
 ├── pnpm-workspace.yaml
 ├── portal/                   # Cổng chính (Astro)
+│   ├── content.config.ts     # Collection bài viết + schema frontmatter
+│   ├── public/
 │   └── src/
-│       ├── components/       # Header, Footer, LabCard, ThemeToggle
-│       ├── data/             # Dữ liệu tĩnh (danh sách lab, registry theme)
+│       ├── components/       # Header, Footer, LabCard, PostList, ThemeToggle
+│       ├── content/posts/    # Bài viết Markdown (tên file = slug)
+│       ├── data/             # Dữ liệu tĩnh (lab, theme, quy ước nội dung)
 │       ├── layouts/
-│       ├── pages/            # /, /labs, /lien-he
+│       ├── pages/            # /, /labs, /bai-viet, /lien-he
 │       └── styles/           # tokens.css, global.css
 └── labs/
     └── react-lab/            # Lab React + TypeScript + Vite
@@ -76,6 +80,39 @@ pnpm build
 | `pnpm lint` / `pnpm lint:fix`       | Chạy / tự sửa lỗi ESLint                               |
 | `pnpm format` / `pnpm format:check` | Định dạng / kiểm tra định dạng bằng Prettier           |
 | `pnpm typecheck`                    | `astro check` cho portal và `tsc --noEmit` cho các lab |
+
+## Nội dung bài viết
+
+Bài viết là file Markdown trong `portal/src/content/posts/`; tên file trở thành slug trên URL. Frontmatter bắt buộc:
+
+| Trường    | Kiểu   | Ghi chú                                                           |
+| --------- | ------ | ----------------------------------------------------------------- |
+| `title`   | string | Tiêu đề bài                                                       |
+| `date`    | date   | `YYYY-MM-DD`                                                      |
+| `type`    | enum   | `concept`, `experiment`, `case-study`, `demo`, `tutorial`, `note` |
+| `lab`     | string | Slug lab, ví dụ `react-lab`                                       |
+| `tags`    | array  | Danh sách tag                                                     |
+| `summary` | string | Tóm tắt một câu, hiển thị ở danh sách bài                         |
+
+`draft: true` (tuỳ chọn) để loại bài khỏi bản build. Schema được kiểm tra ngay lúc build: thiếu trường hoặc `type` sai thì build thất bại.
+
+> `portal/src/content/posts/bai-viet-mau.md` là bài mẫu để kiểm chứng pipeline — thay bằng bài thật hoặc xoá khi bắt đầu viết nội dung (mục 1.5 trong roadmap).
+
+## Deploy (Cloudflare Pages)
+
+Chưa kết nối repo với Cloudflare (cần tài khoản của tác giả). Cấu hình dự kiến cho portal:
+
+| Thiết lập              | Giá trị                                   |
+| ---------------------- | ----------------------------------------- |
+| Repository             | `vgbao1231/dev-lab`                       |
+| Production branch      | `main`                                    |
+| Root directory         | `/` (monorepo, build ở root)              |
+| Build command          | `pnpm --filter portal build`              |
+| Build output directory | `portal/dist`                             |
+| Biến môi trường        | `NODE_VERSION=22.22.0`, `PNPM_VERSION=12` |
+
+- Preview: mỗi pull request sẽ có một preview deployment riêng.
+- React Lab: chưa deploy; cần chốt dùng subdomain hay đường dẫn con (xem "Những điều chưa quyết định" trong `docs/PROJECT_OVERVIEW.md`).
 
 ## Quy ước
 

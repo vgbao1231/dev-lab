@@ -25,25 +25,26 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
       — thay Balsamiq Sans bằng Patrick Hand vì Balsamiq Sans không có subset tiếng Việt
 - [x] Cài đặt chuyển chế độ: tối / sáng / hệ thống
       — theme và mode là hai trục độc lập; bộ chọn theme tự ẩn khi chỉ có một theme khả dụng
-- [ ] Kiểm tra contrast cho text và link ở Minimalist Editorial light và dark
+- [x] Kiểm tra contrast cho text và link ở Minimalist Editorial light và dark
+      — mọi cặp token đạt WCAG AA; secondary text trên surface ở light là 4.87:1, sát ngưỡng nên không được giảm thêm
 
 ### 1.3 Cổng chính (portal)
 
 - [x] Khởi tạo project Astro trong thư mục `portal/`
 - [x] Layout chung: header, footer, container single-column
-- [ ] Trang chủ: hero, danh sách lab, bài viết mới, dự án khác, liên hệ
-      — đã có hero, danh sách lab, dự án khác, liên hệ; **thiếu mục bài viết mới** (chờ 1.4)
+- [x] Trang chủ: hero, danh sách lab, bài viết mới, dự án khác, liên hệ
 - [x] Component thẻ lab (trạng thái: đang chạy, sắp tới, dự kiến)
-- [ ] Trang danh sách bài viết và trang chi tiết bài viết
+- [x] Trang danh sách bài viết (`/bai-viet`) và trang chi tiết bài viết (`/bai-viet/<slug>`)
 - [x] Trang "Labs" liệt kê các lab
 - [x] Trang liên hệ
 - [ ] Responsive trên mobile
 
 ### 1.4 Hệ thống nội dung
 
-- [ ] Định nghĩa frontmatter chuẩn: `title`, `date`, `type`, `lab`, `tags`, `summary`
-- [ ] Cấu hình collection cho bài viết
-- [ ] Hiển thị tag và metadata bằng JetBrains Mono
+- [x] Định nghĩa frontmatter chuẩn: `title`, `date`, `type`, `lab`, `tags`, `summary`
+- [x] Cấu hình collection cho bài viết (`portal/src/content.config.ts`: loader glob + schema zod)
+- [x] Hiển thị tag và metadata bằng JetBrains Mono
+      — bài mẫu `portal/src/content/posts/bai-viet-mau.md` để kiểm chứng pipeline, cần thay bằng bài thật ở mục 1.5
 
 ### 1.5 React Lab
 
@@ -55,7 +56,7 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
 
 ### 1.6 Deploy
 
-- [ ] Kết nối repo với Cloudflare Pages
+- [ ] Kết nối repo với Cloudflare Pages (cần tài khoản Cloudflare — ghi cấu hình dự kiến trong README, mục "Deploy")
 - [ ] Cấu hình build cho portal
 - [ ] Cấu hình subdomain hoặc đường dẫn cho React Lab
 - [ ] Kiểm tra preview branch hoạt động
@@ -108,9 +109,10 @@ Các ý tưởng sau được ghi nhận nhưng chưa đưa vào lộ trình:
 
 ## Nhật ký thay đổi
 
-| Ngày       | Thay đổi                                                                                                                                                           |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 2026-10-17 | Khởi tạo roadmap, đánh dấu giai đoạn 1 đang thực hiện                                                                                                              |
-| 2026-10-17 | Thiết lập pnpm workspace, ESLint/Prettier/TS strict, CI. Chuyển project Astro vào `portal/`, thêm design tokens + chuyển theme, thêm `labs/react-lab`              |
-| 2026-10-18 | Chốt tên hệ sinh thái là **Dev Lab** (repo `dev-lab`). Thay font display Balsamiq Sans bằng Patrick Hand vì Balsamiq Sans thiếu subset tiếng Việt                  |
-| 2026-10-18 | Tách **theme** và **mode** thành hai trục độc lập (`data-theme` + `data-mode`), bỏ mô hình cố định 4 chế độ. Giai đoạn 1 chỉ triển khai theme Minimalist Editorial |
+| Ngày       | Thay đổi                                                                                                                                                                                                        |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-10-17 | Khởi tạo roadmap, đánh dấu giai đoạn 1 đang thực hiện                                                                                                                                                           |
+| 2026-10-17 | Thiết lập pnpm workspace, ESLint/Prettier/TS strict, CI. Chuyển project Astro vào `portal/`, thêm design tokens + chuyển theme, thêm `labs/react-lab`                                                           |
+| 2026-10-18 | Chốt tên hệ sinh thái là **Dev Lab** (repo `dev-lab`). Thay font display Balsamiq Sans bằng Patrick Hand vì Balsamiq Sans thiếu subset tiếng Việt                                                               |
+| 2026-10-18 | Tách **theme** và **mode** thành hai trục độc lập (`data-theme` + `data-mode`), bỏ mô hình cố định 4 chế độ. Giai đoạn 1 chỉ triển khai theme Minimalist Editorial                                              |
+| 2026-10-18 | Thêm hệ thống nội dung: collection `posts`, schema frontmatter, trang `/bai-viet` và chi tiết bài viết, danh sách bài mới ở trang chủ. Kiểm tra contrast WCAG AA cho Minimalist Editorial: mọi cặp token đạt AA |

@@ -141,8 +141,9 @@ Khi mode là "Hệ thống", JavaScript đọc `prefers-color-scheme` và gán `
 
 ## 8. Việc cần kiểm tra
 
-- [ ] Contrast của `--color-text-muted` trên `--color-surface` ở Minimalist Editorial light và dark
-- [ ] Contrast của `--color-link` khi đặt trong đoạn văn dài
+- [x] Contrast của `--color-text-muted` trên `--color-surface`: 7.16:1 (dark) và 4.87:1 (light)
+- [x] Contrast của `--color-link`: trên background 8.49:1 (dark) / 5.24:1 (light), trên surface 7.45:1 (dark) / 5.62:1 (light)
+      — đo bằng công thức WCAG 2.1 (relative luminance) ngày 2026-10-18. Lưu ý: secondary text trên surface ở light chỉ 4.87:1, sát ngưỡng AA 4.5:1, không được giảm thêm.
 - [x] Hiển thị tiếng Việt của Patrick Hand (subset `vietnamese` của Google Fonts: U+0102-0103, U+0110-0111, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9)
 - [ ] Trạng thái focus cho bàn phím
 - [ ] Trạng thái "đang chạy" và "sắp tới" của lab card có đủ phân biệt không khi chỉ dựa vào màu
