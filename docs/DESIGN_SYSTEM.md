@@ -130,16 +130,65 @@ Khi mode là "Hệ thống", JavaScript đọc `prefers-color-scheme` và gán `
 - **Code block:** nền `--color-surface`, font JetBrains Mono.
 - **Bảng số liệu:** viền mảnh, số căn phải, tiêu đề in mờ bằng `--color-text-muted`.
 
-## 7. Nguyên tắc
+## 7. Chuyển động (animation)
+
+Phong cách tối giản thì chuyển động cũng tối giản: mục tiêu là làm rõ thay đổi trạng thái và
+thứ bậc, không phải trang trí. Mục này bổ sung cho phần "Nguyên tắc" bên dưới.
+
+### 7.1 Token
+
+| Token               | Giá trị                         | Dùng cho                                   |
+| ------------------- | ------------------------------- | ------------------------------------------ |
+| `--duration-fast`   | 120ms                           | hover, focus, viền, màu chữ                |
+| `--duration-base`   | 200ms                           | entrance, cross-fade khi đổi theme/mode    |
+| `--duration-slow`   | 320ms                           | chuyển trang (View Transition)             |
+| `--ease-standard`   | `cubic-bezier(0.2, 0, 0, 1)`    | mặc định                                   |
+| `--ease-entrance`   | `cubic-bezier(0.16, 1, 0.3, 1)` | phần tử xuất hiện                          |
+| `--reveal-distance` | 8px                             | độ dịch lên khi phần tử xuất hiện          |
+| `--reveal-stagger`  | 60ms                            | độ trễ giữa các phần tử trong cùng một đợt |
+
+### 7.2 Quy tắc
+
+1. Chỉ animate `opacity` và `transform`. Không animate `width`, `height`, `margin`,
+   `top`/`left` — gây reflow và ảnh hưởng chỉ số hiệu năng.
+2. Thời lượng tối đa 320ms. Không animation lặp vô hạn, không bounce/spring quá đà.
+3. Không thêm gradient, glow hay hiệu ứng trang trí nhờ animation.
+4. Mọi chuyển động **phải** tắt khi `prefers-reduced-motion: reduce`. Đây là yêu cầu bắt
+   buộc, không phải tùy chọn.
+5. Chỉ giữ animation giải thích được thay đổi trạng thái hoặc thứ bậc; nếu không giải thích
+   được điều gì thì bỏ.
+
+### 7.3 Danh mục chuyển động
+
+| Nhóm              | Cách triển khai                                                          |
+| ----------------- | ------------------------------------------------------------------------ |
+| Chuyển trang      | `<ClientRouter />` (View Transitions của Astro) — cross-fade mặc định    |
+| Đổi theme / mode  | `document.startViewTransition()` bọc lúc gán `data-theme` / `data-mode`  |
+| Vào trang lần đầu | Phần tử `[data-animate]` hiện dần bằng `motion/mini`, stagger theo token |
+| Micro-interaction | Link: chuyển màu `--duration-fast`; nút theme/mode: màu chữ + viền       |
+
+Chi tiết triển khai (trong `portal/`):
+
+- `[data-animate]` chỉ chạy ở **lần tải trang đầu tiên**. Các lần điều hướng trong site do
+  View Transition xử lý, không chạy lại entrance.
+- Cờ `.motion-ready` trên `<html>` được script inline chèn **trước khi vẽ**, và chỉ khi
+  người dùng không yêu cầu giảm chuyển động. Nhờ vậy không có nháy, và nội dung không bao
+  giờ bị ẩn khi JavaScript lỗi.
+- View Transitions thay toàn bộ attribute của `<html>`, nên `data-theme` / `data-mode` phải
+  được chép sang document mới trong `astro:before-swap`; nếu không theme sẽ bị reset sau khi
+  chuyển trang.
+
+## 8. Nguyên tắc
 
 1. **Tương phản:** text chính đạt tối thiểu WCAG AA (4.5:1) trên nền ở mọi cặp theme × mode đang triển khai (hiện tại: Minimalist Editorial light và dark). Kiểm tra cả link và text phụ.
 2. **Tối giản:** tránh card lồng nhau, gradient, hiệu ứng glow, minh họa lớn.
 3. **Một CTA:** mỗi màn hình tối đa một hành động chính.
 4. **Nhất quán:** bố cục và typography giữ nguyên giữa các theme. Chỉ màu sắc thay đổi.
 5. **Cá nhân:** ưu tiên nội dung và giọng văn của tác giả hơn trang trí.
-6. **Không bắt buộc animation.** Nếu có, tôn trọng `prefers-reduced-motion`.
+6. **Chuyển động có mục đích.** Animation không bắt buộc; nếu có thì theo mục 7 và luôn tôn
+   trọng `prefers-reduced-motion`.
 
-## 8. Việc cần kiểm tra
+## 9. Việc cần kiểm tra
 
 - [x] Contrast của `--color-text-muted` trên `--color-surface`: 7.16:1 (dark) và 4.87:1 (light)
 - [x] Contrast của `--color-link`: trên background 8.49:1 (dark) / 5.24:1 (light), trên surface 7.45:1 (dark) / 5.62:1 (light)
@@ -147,3 +196,8 @@ Khi mode là "Hệ thống", JavaScript đọc `prefers-color-scheme` và gán `
 - [x] Hiển thị tiếng Việt của Patrick Hand (subset `vietnamese` của Google Fonts: U+0102-0103, U+0110-0111, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9)
 - [ ] Trạng thái focus cho bàn phím
 - [ ] Trạng thái "đang chạy" và "sắp tới" của lab card có đủ phân biệt không khi chỉ dựa vào màu
+- [x] Animation tôn trọng `prefers-reduced-motion` (CSS guard trong `global.css` + kiểm tra
+      trong `BaseLayout.astro` và `ThemeToggle.astro`)
+- [x] Theme không bị reset sau khi chuyển trang bằng View Transitions (chép `data-theme` /
+      `data-mode` trong `astro:before-swap`)
+- [ ] Thời lượng chuyển động và bundle JS của `motion/mini` trên mobile (Lighthouse Performance)

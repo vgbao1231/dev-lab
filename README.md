@@ -10,6 +10,7 @@ Mục tiêu: chia sẻ kiến thức, củng cố kiến thức cũ qua thực h
 
 - Workspace: pnpm workspace, Node `>=22.22.0`, pnpm `12`
 - Portal: Astro (static output), CSS thuần + design tokens
+- Chuyển động: View Transitions của Astro (`<ClientRouter />`) + `motion/mini` cho entrance
 - Nội dung: Markdown/MDX qua content collection của Astro
 - Lab đầu tiên: React, TypeScript, Vite
 - Chất lượng mã: TypeScript `strict`, ESLint (flat config), Prettier
@@ -119,6 +120,7 @@ Chưa kết nối repo với Cloudflare (cần tài khoản của tác giả). C
 - Không hard-code màu và font trong component; dùng CSS variables trong `portal/src/styles/tokens.css` (nguồn: `docs/DESIGN_SYSTEM.md`).
 - **Theme và mode là hai trục độc lập** (`data-theme` + `data-mode`), không phải bốn chế độ cố định. Thêm theme mới gồm ba bước: cập nhật `docs/DESIGN_SYSTEM.md`, thêm block CSS variables trong `portal/src/styles/tokens.css`, đăng ký trong `portal/src/data/themes.ts`.
 - Thay đổi màu/font thì cập nhật `docs/DESIGN_SYSTEM.md` trước, rồi mới sửa code.
+- Không hard-code thời lượng hay easing; dùng motion tokens trong `portal/src/styles/tokens.css` (nguồn: `docs/DESIGN_SYSTEM.md` mục 7). Khối nội dung muốn hiện dần thì thêm `data-animate`; mọi animation phải tôn trọng `prefers-reduced-motion`.
 - Hoàn thành một mục trong `docs/ROADMAP.md` thì đánh dấu `[x]` trong cùng thay đổi.
 - `tsconfig.base.json` là cấu hình strict dùng chung. **Không dùng `extends` dạng mảng** trong `portal/`: Rolldown (Vite bên trong Astro) resolve sai dạng này và làm build thất bại; xem ghi chú trong `portal/tsconfig.json`.
 

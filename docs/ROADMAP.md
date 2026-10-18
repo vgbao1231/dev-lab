@@ -27,6 +27,7 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
       — theme và mode là hai trục độc lập; bộ chọn theme tự ẩn khi chỉ có một theme khả dụng
 - [x] Kiểm tra contrast cho text và link ở Minimalist Editorial light và dark
       — mọi cặp token đạt WCAG AA; secondary text trên surface ở light là 4.87:1, sát ngưỡng nên không được giảm thêm
+- [x] Thêm motion tokens (thời lượng, easing) và quy tắc chuyển động — xem `docs/DESIGN_SYSTEM.md` mục 7
 
 ### 1.3 Cổng chính (portal)
 
@@ -37,6 +38,7 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
 - [x] Trang danh sách bài viết (`/bai-viet`) và trang chi tiết bài viết (`/bai-viet/<slug>`)
 - [x] Trang "Labs" liệt kê các lab
 - [x] Trang liên hệ
+- [x] Chuyển trang bằng View Transitions (`<ClientRouter />`) + entrance animation cho khối nội dung (`motion/mini`, `data-animate`)
 - [ ] Responsive trên mobile
 
 ### 1.4 Hệ thống nội dung
@@ -109,10 +111,11 @@ Các ý tưởng sau được ghi nhận nhưng chưa đưa vào lộ trình:
 
 ## Nhật ký thay đổi
 
-| Ngày       | Thay đổi                                                                                                                                                                                                        |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-10-17 | Khởi tạo roadmap, đánh dấu giai đoạn 1 đang thực hiện                                                                                                                                                           |
-| 2026-10-17 | Thiết lập pnpm workspace, ESLint/Prettier/TS strict, CI. Chuyển project Astro vào `portal/`, thêm design tokens + chuyển theme, thêm `labs/react-lab`                                                           |
-| 2026-10-18 | Chốt tên hệ sinh thái là **Dev Lab** (repo `dev-lab`). Thay font display Balsamiq Sans bằng Patrick Hand vì Balsamiq Sans thiếu subset tiếng Việt                                                               |
-| 2026-10-18 | Tách **theme** và **mode** thành hai trục độc lập (`data-theme` + `data-mode`), bỏ mô hình cố định 4 chế độ. Giai đoạn 1 chỉ triển khai theme Minimalist Editorial                                              |
-| 2026-10-18 | Thêm hệ thống nội dung: collection `posts`, schema frontmatter, trang `/bai-viet` và chi tiết bài viết, danh sách bài mới ở trang chủ. Kiểm tra contrast WCAG AA cho Minimalist Editorial: mọi cặp token đạt AA |
+| Ngày       | Thay đổi                                                                                                                                                                                                                  |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-10-17 | Khởi tạo roadmap, đánh dấu giai đoạn 1 đang thực hiện                                                                                                                                                                     |
+| 2026-10-17 | Thiết lập pnpm workspace, ESLint/Prettier/TS strict, CI. Chuyển project Astro vào `portal/`, thêm design tokens + chuyển theme, thêm `labs/react-lab`                                                                     |
+| 2026-10-18 | Chốt tên hệ sinh thái là **Dev Lab** (repo `dev-lab`). Thay font display Balsamiq Sans bằng Patrick Hand vì Balsamiq Sans thiếu subset tiếng Việt                                                                         |
+| 2026-10-18 | Tách **theme** và **mode** thành hai trục độc lập (`data-theme` + `data-mode`), bỏ mô hình cố định 4 chế độ. Giai đoạn 1 chỉ triển khai theme Minimalist Editorial                                                        |
+| 2026-10-18 | Thêm hệ thống nội dung: collection `posts`, schema frontmatter, trang `/bai-viet` và chi tiết bài viết, danh sách bài mới ở trang chủ. Kiểm tra contrast WCAG AA cho Minimalist Editorial: mọi cặp token đạt AA           |
+| 2026-10-18 | Thêm chuyển động: motion tokens (mục 7 `DESIGN_SYSTEM.md`), View Transitions khi chuyển trang, entrance animation bằng `motion/mini`, cross-fade khi đổi theme/mode. Giữ `data-theme`/`data-mode` qua `astro:before-swap` |
