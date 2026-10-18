@@ -10,7 +10,7 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
 ---
 
 <BaseLayout title="Bài viết — Dev Lab" description="Tất cả bài viết kỹ thuật của Dev Lab.">
-  <section class="section container container--wide">
+  <section class="section container container--wide" data-animate>
     <h1>Bài viết</h1>
     <p class="lead">
       Ghi chép, thử nghiệm và giải thích cơ chế. Mỗi bài có đủ metadata: loại, lab, tag và ngày

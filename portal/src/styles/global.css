@@ -50,6 +50,7 @@ p {
 a {
   color: var(--color-link);
   text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-standard);
 }
 
 a:hover {
@@ -102,6 +103,33 @@ pre {
 
 .stack > * + * {
   margin-top: 1rem;
+}
+
+/*
+ * Chuyển trang: Astro ClientRouter dùng View Transitions với cross-fade mặc định;
+ * chỉ chỉnh thời lượng theo token. Astro tự tắt animation khi prefers-reduced-motion.
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--duration-slow);
+}
+
+/*
+ * Entrance: phần tử [data-animate] được ẩn trước khi JS chạy để tránh nháy.
+ * Chỉ áp dụng khi script đã bật cờ .motion-ready VÀ người dùng không yêu cầu giảm
+ * chuyển động — nhờ vậy nội dung không bị ẩn khi JavaScript lỗi.
+ * Script trong BaseLayout chạy motion/mini rồi gắn .is-revealed để khoá trạng thái cuối.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html.motion-ready [data-animate] {
+    opacity: 0;
+    transform: translateY(var(--reveal-distance));
+  }
+
+  html.motion-ready [data-animate].is-revealed {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

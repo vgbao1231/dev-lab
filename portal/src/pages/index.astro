@@ -12,7 +12,7 @@ const latestPosts = (await getCollection('posts', ({ data }) => !data.draft))
 ---
 
 <BaseLayout title="Dev Lab — blog và lab kỹ thuật">
-  <section class="section container">
+  <section class="section container" data-animate>
     <h1>Dev Lab</h1>
     <p class="lead">
       Hệ sinh thái blog và lab kỹ thuật: ghi chép, thử nghiệm có số đo và giải thích cơ chế của các
@@ -23,7 +23,7 @@ const latestPosts = (await getCollection('posts', ({ data }) => !data.draft))
     </p>
   </section>
 
-  <section class="section container container--wide">
+  <section class="section container container--wide" data-animate>
     <h2>Các lab</h2>
     <div class="lab-grid">
       {labs.map((lab) => (
@@ -32,7 +32,7 @@ const latestPosts = (await getCollection('posts', ({ data }) => !data.draft))
     </div>
   </section>
 
-  <section class="section container container--wide">
+  <section class="section container container--wide" data-animate>
     <h2>Bài viết mới</h2>
     {latestPosts.length === 0 ? (
       <p class="meta">Chưa có bài viết nào.</p>
@@ -46,7 +46,7 @@ const latestPosts = (await getCollection('posts', ({ data }) => !data.draft))
     )}
   </section>
 
-  <section class="section container">
+  <section class="section container" data-animate>
     <h2>Dự án khác</h2>
     <p class="meta">Danh sách này sẽ được bổ sung khi có dự án đủ chất lượng để công khai.</p>
   </section>

@@ -39,8 +39,21 @@ const showThemeSelector = availableThemes.length > 1;
 
   const root = document.documentElement;
   const media = window.matchMedia('(prefers-color-scheme: dark)');
-  const modeButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-mode-set]'));
-  const themeButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-theme-set]'));
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Đổi theme/mode chủ động chạy trong một view transition để cross-fade màu.
+  const withViewTransition = (update: () => void): void => {
+    if (!document.startViewTransition || prefersReducedMotion) {
+      update();
+      return;
+    }
+    try {
+      document.startViewTransition(update);
+    } catch {
+      // Có thể trùng với một view transition khác (điều hướng đang chạy).
+      update();
+    }
+  };
 
   const readModePreference = (): 'light' | 'dark' | 'system' => {
     const value = root.dataset.modePreference;
@@ -57,40 +70,56 @@ const showThemeSelector = availableThemes.length > 1;
     root.dataset.theme = theme;
   };
 
+  /*
+   * Luôn truy vấn DOM tại thời điểm gọi: ClientRouter thay nút theme khi chuyển
+   * trang, nên không được giữ tham chiếu tới nút của trang cũ.
+   */
   const syncPressedState = () => {
     const preference = readModePreference();
     const theme = root.dataset.theme ?? '';
 
-    for (const button of modeButtons) {
+    for (const button of document.querySelectorAll<HTMLButtonElement>('[data-mode-set]')) {
       button.setAttribute('aria-pressed', String(button.dataset.modeSet === preference));
     }
 
-    for (const button of themeButtons) {
+    for (const button of document.querySelectorAll<HTMLButtonElement>('[data-theme-set]')) {
       button.setAttribute('aria-pressed', String(button.dataset.themeSet === theme));
     }
   };
 
-  for (const button of modeButtons) {
-    button.addEventListener('click', () => {
-      const value = button.dataset.modeSet;
+  /*
+   * Uỷ quyền sự kiện ở document thay vì gắn vào từng nút: listener trên document
+   * tồn tại qua mọi lần chuyển trang, nên nút theme vẫn hoạt động sau điều hướng.
+   */
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const modeButton = target.closest<HTMLButtonElement>('[data-mode-set]');
+    if (modeButton) {
+      const value = modeButton.dataset.modeSet;
       if (value !== 'light' && value !== 'dark' && value !== 'system') return;
 
-      applyMode(value);
-      localStorage.setItem(STORAGE_MODE, value);
-      syncPressedState();
-    });
-  }
+      withViewTransition(() => {
+        applyMode(value);
+        localStorage.setItem(STORAGE_MODE, value);
+        syncPressedState();
+      });
+      return;
+    }
 
-  for (const button of themeButtons) {
-    button.addEventListener('click', () => {
-      const value = button.dataset.themeSet;
+    const themeButton = target.closest<HTMLButtonElement>('[data-theme-set]');
+    if (themeButton) {
+      const value = themeButton.dataset.themeSet;
       if (!value) return;
 
-      applyTheme(value);
-      localStorage.setItem(STORAGE_THEME, value);
-      syncPressedState();
-    });
-  }
+      withViewTransition(() => {
+        applyTheme(value);
+        localStorage.setItem(STORAGE_THEME, value);
+        syncPressedState();
+      });
+    }
+  });
 
   // Chỉ theo dõi hệ thống khi người dùng chọn "Hệ thống"
   media.addEventListener('change', () => {
@@ -99,6 +128,23 @@ const showThemeSelector = availableThemes.length > 1;
       syncPressedState();
     }
   });
+
+  /*
+   * Astro ClientRouter thay toàn bộ attribute của <html> bằng bản của trang mới
+   * (swapRootAttributes), nên data-theme/data-mode do JS gán sẽ bị xoá và theme bị
+   * reset sau khi chuyển trang. Chép chúng sang document mới để giữ nguyên.
+   * Cờ .motion-ready thì cố ý không chép: trang mới không chạy lại entrance.
+   */
+  document.addEventListener('astro:before-swap', (event) => {
+    const nextRoot = event.newDocument.documentElement;
+    if (root.dataset.theme) nextRoot.dataset.theme = root.dataset.theme;
+    if (root.dataset.mode) nextRoot.dataset.mode = root.dataset.mode;
+    if (root.dataset.modePreference) nextRoot.dataset.modePreference = root.dataset.modePreference;
+  });
+
+  // Sau mỗi lần chuyển trang, nút theme được render lại: đặt lại aria-pressed.
+  // astro:page-load cũng bắn ở lần tải đầu tiên.
+  document.addEventListener('astro:page-load', syncPressedState);
 
   syncPressedState();
 </script>
@@ -133,6 +179,9 @@ const showThemeSelector = availableThemes.length > 1;
     font-size: var(--text-xs);
     padding: 0.15rem 0.4rem;
     cursor: pointer;
+    transition:
+      color var(--duration-fast) var(--ease-standard),
+      border-color var(--duration-fast) var(--ease-standard);
   }
 
   .theme-toggle__group button[aria-pressed='true'] {
