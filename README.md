@@ -26,7 +26,8 @@ dev-lab/
 ├── docs/
 │   ├── PROJECT_OVERVIEW.md   # Mục tiêu, đối tượng, phạm vi, định hướng kiến trúc
 │   ├── ROADMAP.md            # Các giai đoạn, checklist, tiêu chí hoàn thành
-│   └── DESIGN_SYSTEM.md      # Màu sắc, typography, nguyên tắc giao diện
+│   └── DESIGN_SYSTEM.md      # Màu sắc, typography, quy tắc chuyển động, nguyên tắc giao diện
+├── design-reference/         # Tham khảo bố cục và màu (HTML + screenshot), không đưa vào build
 ├── eslint.config.js          # ESLint flat config dùng chung cho cả workspace
 ├── prettier.config.mjs
 ├── tsconfig.base.json        # Cấu hình TypeScript strict dùng chung
@@ -121,6 +122,7 @@ Chưa kết nối repo với Cloudflare (cần tài khoản của tác giả). C
 - **Theme và mode là hai trục độc lập** (`data-theme` + `data-mode`), không phải bốn chế độ cố định. Thêm theme mới gồm ba bước: cập nhật `docs/DESIGN_SYSTEM.md`, thêm block CSS variables trong `portal/src/styles/tokens.css`, đăng ký trong `portal/src/data/themes.ts`.
 - Thay đổi màu/font thì cập nhật `docs/DESIGN_SYSTEM.md` trước, rồi mới sửa code.
 - Không hard-code thời lượng hay easing; dùng motion tokens trong `portal/src/styles/tokens.css` (nguồn: `docs/DESIGN_SYSTEM.md` mục 7). Khối nội dung muốn hiện dần thì thêm `data-animate`; mọi animation phải tôn trọng `prefers-reduced-motion`.
+- `design-reference/` chỉ là bản tham khảo bố cục và màu. `docs/DESIGN_SYSTEM.md` mới là nguồn quyết định; khi reference khác docs thì theo docs và ghi rõ ở mục "Ghi chú: khác biệt có chủ ý".
 - Hoàn thành một mục trong `docs/ROADMAP.md` thì đánh dấu `[x]` trong cùng thay đổi.
 - `tsconfig.base.json` là cấu hình strict dùng chung. **Không dùng `extends` dạng mảng** trong `portal/`: Rolldown (Vite bên trong Astro) resolve sai dạng này và làm build thất bại; xem ghi chú trong `portal/tsconfig.json`.
 
