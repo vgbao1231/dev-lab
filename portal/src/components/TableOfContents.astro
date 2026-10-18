@@ -1,0 +1,277 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+/*
+ * Mục lục bài viết — chỉ dùng ở trang chi tiết bài viết.
+ * Nhận `headings` từ `render()` của Astro; không tự dò DOM để mục lục luôn có sẵn trong
+ * HTML (đọc được cả khi JavaScript lỗi).
+ *
+ * Một cấp: chỉ lấy `h2`. Thêm `h3` làm mục lục dài và khó quét, trong khi `h2` đã đủ để
+ * định vị trong bài.
+ *
+ * Bố cục: hẹp thì là khối ở đầu bài; từ 1200px thì thành cột riêng dính bên phải
+ * (xem `.post-layout` trong global.css và docs/DESIGN_SYSTEM.md mục 5, 6).
+ */
+export type Props = {
+  headings: MarkdownHeading[];
+};
+
+const { headings } = Astro.props;
+
+/* Bỏ mục trùng slug: markdown có thể trả hai tiêu đề cùng slug cho hai heading khác nhau. */
+const seen = new Set<string>();
+
+const items = headings.filter((heading) => {
+  if (heading.depth !== 2) return false;
+  if (seen.has(heading.slug)) return false;
+
+  seen.add(heading.slug);
+  return true;
+});
+---
+
+{items.length > 1 && (
+  <nav class="toc" aria-labelledby="toc-title" data-toc>
+    {/* Dùng <p> chứ không phải heading: mục lục không phải một mục trong cấu trúc bài. */}
+    <p class="toc__title" id="toc-title">
+      Nội dung
+    </p>
+    <div class="toc__scroll" data-toc-scroll>
+      <ol class="toc__list">
+        {items.map((item) => (
+          <li class="toc__item">
+            <a class="toc__link" href={`#${item.slug}`} data-toc-link={item.slug}>
+              {item.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </nav>
+)}
+
+<script>
+  /* Khớp với `--offset-header` trong tokens.css; đọc từ token để không bị lệch. */
+  const readRootPixels = (name: string, fallback: number): number => {
+    const value = Number.parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue(name).trim(),
+    );
+    return Number.isFinite(value) ? value : fallback;
+  };
+
+  const ACTIVE_OFFSET = readRootPixels('--offset-header', 96);
+
+  let activeKey = '';
+  let scroller: HTMLElement | null = null;
+
+  /*
+   * Mục lục có thể có nhiều mục active cùng lúc: mọi tiêu đề đang nằm trong tầm nhìn (phía
+   * dưới header) đều được đánh dấu. Nếu không tiêu đề nào trong tầm nhìn — đang ở giữa một
+   * mục dài, tiêu đề đã cuộn qua — thì giữ mục gần nhất đã đi qua, để không bao giờ mất
+   * chỉ báo "đang ở đâu".
+   */
+  const collectActive = (links: HTMLAnchorElement[]): number[] => {
+    const visible: number[] = [];
+    let lastPassed = 0;
+    let hasPassed = false;
+
+    for (const [index, link] of links.entries()) {
+      const heading = document.getElementById(link.dataset.tocLink ?? '');
+      if (!heading) continue;
+
+      const rect = heading.getBoundingClientRect();
+
+      if (rect.top <= ACTIVE_OFFSET) {
+        lastPassed = index;
+        hasPassed = true;
+      }
+
+      // Giao với vùng nhìn thấy được: dưới header, trên đáy viewport.
+      if (rect.bottom > ACTIVE_OFFSET && rect.top < globalThis.innerHeight) visible.push(index);
+    }
+
+    if (visible.length > 0) return visible;
+    return hasPassed ? [lastPassed] : [];
+  };
+
+  const updateActive = (): void => {
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
+    if (links.length === 0) return;
+
+    const active = collectActive(links);
+    const key = active.join(',');
+
+    // Chỉ ghi DOM khi tập mục đang đọc thật sự đổi — tránh invalidate style mỗi frame cuộn.
+    if (key === activeKey) return;
+    activeKey = key;
+
+    const activeSet = new Set(active);
+    for (const [index, link] of links.entries()) {
+      if (activeSet.has(index)) link.setAttribute('aria-current', 'true');
+      else link.removeAttribute('aria-current');
+    }
+  };
+
+  /*
+   * Bật lớp mờ ở mép dưới khi mục lục còn phần chưa cuộn tới. Ghi lên chính `<nav>` để CSS
+   * khỏi cần `:has()`.
+   */
+  const syncOverflow = (): void => {
+    if (!scroller) return;
+
+    const nav = scroller.closest<HTMLElement>('[data-toc]');
+    if (!nav) return;
+
+    const canScroll = scroller.scrollHeight - scroller.clientHeight > 1;
+    const atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1;
+
+    nav.dataset.overflow = canScroll && !atBottom ? 'bottom' : 'none';
+  };
+
+  const refresh = (): void => {
+    activeKey = '';
+
+    // Mục lục được thay mới sau mỗi lần điều hướng nên phải gắn lại listener cho phần tử mới.
+    const next = document.querySelector<HTMLElement>('[data-toc-scroll]');
+    if (next !== scroller) {
+      scroller?.removeEventListener('scroll', syncOverflow);
+      scroller = next;
+      scroller?.addEventListener('scroll', syncOverflow, { passive: true });
+    }
+
+    updateActive();
+    syncOverflow();
+  };
+
+  globalThis.addEventListener('scroll', updateActive, { passive: true });
+  globalThis.addEventListener('resize', refresh);
+  document.addEventListener('astro:page-load', refresh);
+
+  // Bố cục đổi sau khi font tải xong thì phải tính lại vị trí heading và chiều cao mục lục.
+  document.fonts.ready.then(refresh, refresh);
+
+  refresh();
+</script>
+
+<style>
+  .toc {
+    /* Hẹp: đứng trước cột đọc (grid một cột) — xem `.post-layout` trong global.css.
+       Không padding ngang: mục đang đọc cần trải hết bề ngang, link tự lo lề trong. */
+    order: -1;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding-block: 12px;
+    overflow: hidden;
+  }
+
+  .toc__title {
+    margin: 0 0 8px;
+    padding-inline: 12px;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .toc__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc__link {
+    display: block;
+    /* Vạch accent bên trái: giữ sẵn 2px để mục active không làm nhảy chữ. */
+    border-left: 2px solid transparent;
+    padding: 5px 12px;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    background-image: none;
+    transition:
+      color var(--duration-fast) var(--ease-standard),
+      background-color var(--duration-fast) var(--ease-standard),
+      border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .toc__link:hover {
+    color: var(--color-text);
+  }
+
+  /*
+   * Mục đang đọc: nền panel + vạch accent + chữ đủ tương phản. Ba tín hiệu cùng lúc để
+   * nhìn ra ngay giữa danh sách, không chỉ đổi màu chữ.
+   */
+  .toc__link[aria-current='true'] {
+    color: var(--color-text);
+    background-color: var(--color-surface);
+    border-left-color: var(--color-accent);
+  }
+
+  /*
+   * Từ 1200px: mục lục thành cột riêng và dính dưới header nên luôn nhìn thấy trong
+   * lúc đọc. `align-self: start` để ô lưới không bị kéo cao bằng cột đọc — nếu không,
+   * phần tử sẽ hết chỗ để dính.
+   */
+  @media (min-width: 1200px) {
+    .toc {
+      order: 0;
+      align-self: start;
+      position: sticky;
+      top: var(--offset-header);
+      padding-block: 0;
+      /* Đây là cột phụ chứ không phải hộp nổi: bỏ khung cho nhẹ. */
+      border: 0;
+      border-radius: 0;
+      overflow: visible;
+    }
+
+    .toc__scroll {
+      position: relative;
+      /* Mục lục dài hơn viewport thì tự cuộn bên trong cột. */
+      max-height: calc(100dvh - var(--offset-header) - 24px);
+      overflow-y: auto;
+      /* Chừa chỗ cho thanh cuộn để nó không đè lên chữ. */
+      padding-right: 8px;
+      /* Thanh cuộn mảnh, lấy màu từ token nên tự đúng ở cả light và dark. */
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-scrollbar-thumb) transparent;
+    }
+
+    /* Safari chưa dùng `scrollbar-width`/`scrollbar-color` thì đi đường webkit. */
+    .toc__scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .toc__scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .toc__scroll::-webkit-scrollbar-thumb {
+      background-color: var(--color-scrollbar-thumb);
+      border-radius: var(--radius-pill);
+    }
+
+    /*
+     * Lớp phủ mờ dần ở mép dưới: báo cho biết còn mục chưa cuộn tới. Cao 80px để mờ dần
+     * qua khoảng ba mục chứ không cắt ngang một mục. Chỉ hiện khi JS xác nhận đúng là còn
+     * phần phía dưới (`data-overflow="bottom"`), nên không bao giờ hiện nhầm lúc danh sách
+     * đã hết.
+     */
+    .toc::after {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      bottom: 0;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--color-bg));
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--duration-fast) var(--ease-standard);
+    }
+
+    .toc[data-overflow='bottom']::after {
+      opacity: 1;
+    }
+  }
+</style>

@@ -1,0 +1,136 @@
+---
+/*
+ * Thanh tiến độ đọc — chỉ dùng ở trang chi tiết bài viết.
+ *
+ * Cách chạy: nếu trình duyệt hỗ trợ animation theo tiến độ cuộn
+ * (`animation-timeline: scroll()`), để trình duyệt tự chạy trên compositor — không có
+ * việc gì phải làm mỗi frame, nên mượt. Nếu không, JS ghi `--reading-progress` theo
+ * từng frame cuộn như cũ.
+ *
+ * Đây là chỉ báo trạng thái nên vẫn hiển thị khi người dùng yêu cầu giảm chuyển động.
+ * Xem docs/DESIGN_SYSTEM.md mục 6.
+ */
+---
+
+<div class="reading-progress" data-reading-progress aria-hidden="true"></div>
+
+<script>
+  const hasScrollTimeline = CSS.supports('animation-timeline: scroll()');
+  const prefersReducedMotion = globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let start = 0;
+  let range = 1;
+  let lastRatio = -1;
+  let browserDrives = false;
+
+  const measure = (): void => {
+    const bar = document.querySelector<HTMLElement>('[data-reading-progress]');
+    const target = document.querySelector<HTMLElement>('[data-reading-target]');
+    if (!bar || !target) return;
+
+    start = target.getBoundingClientRect().top + globalThis.scrollY;
+    // Quãng cuộn thực tế: từ lúc đỉnh bài chạm đỉnh viewport tới lúc đáy bài chạm đáy viewport.
+    range = Math.max(target.offsetHeight - globalThis.innerHeight, 1);
+
+    // Cho animation theo tiến độ cuộn biết đúng quãng của bài viết (đơn vị px trong
+    // không gian cuộn của trang).
+    bar.style.setProperty('--reading-start', `${Math.round(start)}px`);
+    bar.style.setProperty('--reading-end', `${Math.round(start + range)}px`);
+  };
+
+  /*
+   * Hỏi thẳng CSS xem animation có thật sự được áp không, thay vì chỉ tin vào
+   * `CSS.supports`. Nếu chỉ tin vào `CSS.supports` mà cú pháp bị loại ở đâu đó, thanh sẽ
+   * đứng yên ở 0 vì JS đã ngừng ghi.
+   */
+  const detectBrowserDriving = (): boolean => {
+    if (!hasScrollTimeline || prefersReducedMotion) return false;
+
+    const bar = document.querySelector<HTMLElement>('[data-reading-progress]');
+    if (!bar) return false;
+
+    return getComputedStyle(bar).animationName.includes('reading-progress');
+  };
+
+  const update = (): void => {
+    if (browserDrives) return;
+
+    const bar = document.querySelector<HTMLElement>('[data-reading-progress]');
+    if (!bar) return;
+
+    // Làm tròn 5 chữ số: đủ mịn để không thấy bậc, vẫn bỏ được những lần ghi vô ích.
+    const clamped =
+      Math.round(Math.min(1, Math.max(0, (globalThis.scrollY - start) / range)) * 100000) / 100000;
+    if (clamped === lastRatio) return;
+
+    lastRatio = clamped;
+    bar.style.setProperty('--reading-progress', String(clamped));
+  };
+
+  const refresh = (): void => {
+    lastRatio = -1;
+    measure();
+    browserDrives = detectBrowserDriving();
+    update();
+  };
+
+  globalThis.addEventListener('scroll', update, { passive: true });
+  globalThis.addEventListener('resize', refresh);
+  document.addEventListener('astro:page-load', refresh);
+
+  // Bố cục đổi sau khi font tải xong thì quãng cuộn cũng đổi.
+  document.fonts.ready.then(refresh, refresh);
+
+  /*
+   * Chiều cao bài viết đổi khi ảnh tải xong. Chỉ đọc kích thước trong callback, phần
+   * ghi DOM không làm đổi kích thước tài liệu nên không tạo vòng lặp.
+   */
+  new ResizeObserver(refresh).observe(document.documentElement);
+
+  refresh();
+</script>
+
+<style>
+  .reading-progress {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: 40;
+    height: 2px;
+    background-color: var(--color-accent);
+    transform: scaleX(var(--reading-progress, 0));
+    transform-origin: left center;
+    /* Nằm trên header nên phải cho phép bấm xuyên qua. */
+    pointer-events: none;
+    /* Giữ thanh trên layer riêng: đổi transform chỉ cần recomposite. */
+    will-change: transform;
+  }
+
+  /*
+   * Trình duyệt hỗ trợ animation theo tiến độ cuộn: giao cho trình duyệt chạy, JS không
+   * còn phải ghi mỗi frame.
+   *
+   * Không bật khi người dùng yêu cầu giảm chuyển động: ngoài chuyện tôn trọng thiết lập,
+   * quy tắc `animation-duration: 0.01ms !important` toàn cục (global.css) sẽ làm animation
+   * theo tiến độ cuộn nhảy thẳng tới 100%. Khi đó JS đảm nhiệm như cũ.
+   */
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .reading-progress {
+        animation: reading-progress linear both;
+        animation-timeline: scroll(root block);
+        animation-range: var(--reading-start, 0px) var(--reading-end, 100%);
+      }
+    }
+  }
+
+  @keyframes reading-progress {
+    from {
+      transform: scaleX(0);
+    }
+
+    to {
+      transform: scaleX(1);
+    }
+  }
+</style>

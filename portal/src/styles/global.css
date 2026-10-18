@@ -11,7 +11,15 @@ html {
   color-scheme: dark light;
 }
 
+/*
+ * Sticky footer: body là cột flex cao ít nhất bằng viewport, `main` giãn ra giữa.
+ * Nhờ vậy khi nội dung ngắn, footer vẫn nằm ở đáy viewport chứ không lơ lửng ngay
+ * dưới nội dung.
+ */
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
   margin: 0;
   background-color: var(--color-bg);
   color: var(--color-text);
@@ -19,6 +27,10 @@ body {
   font-size: var(--text-base);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+}
+
+main {
+  flex: 1;
 }
 
 h1,
@@ -43,18 +55,47 @@ h3 {
   font-size: var(--text-lg);
 }
 
+@media (max-width: 560px) {
+  h1 {
+    font-size: 1.875rem;
+  }
+}
+
 p {
   margin: 0 0 1em;
 }
 
+/*
+ * Link: gạch chân mọc dần trái → phải khi hover (docs/DESIGN_SYSTEM.md mục 7.4).
+ * Dùng background-size thay text-decoration để không tạo layout shift.
+ */
 a {
   color: var(--color-link);
   text-decoration: none;
-  transition: color var(--duration-fast) var(--ease-standard);
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    background-size var(--duration-fast) var(--ease-standard);
 }
 
 a:hover {
-  text-decoration: underline;
+  background-size: 100% 1px;
+}
+
+/*
+ * Link CTA (`… →`): mũi tên tách riêng để dịch sang phải 2px khi hover
+ * (docs/DESIGN_SYSTEM.md mục 7.4).
+ */
+.cta__arrow {
+  display: inline-block;
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+a:hover .cta__arrow {
+  transform: translateX(2px);
 }
 
 :focus-visible {
@@ -68,15 +109,21 @@ hr {
   margin: 0;
 }
 
+/*
+ * Chữ mono luôn nhỏ hơn chữ Inter cùng vai trò 2px (docs/DESIGN_SYSTEM.md mục 4): JetBrains
+ * Mono có nét rộng và x-height cao nên ở cùng cỡ nó trông nặng hơn Inter. Vì vậy mono chỉ
+ * dùng `--text-xs` (14px) cho chữ/link và `--text-2xs` (12px) cho metadata — không dùng
+ * `--text-sm`, token đó dành cho chữ Inter.
+ */
 code,
 kbd,
 pre {
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
 }
 
 .lead {
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   color: var(--color-text-muted);
 }
 
@@ -86,19 +133,256 @@ pre {
   color: var(--color-text-muted);
 }
 
+/* Nhãn section (eyebrow) — docs/DESIGN_SYSTEM.md mục 6. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 0.75rem;
+}
+
+/* Dòng kicker mono ở hero — dùng được cả cho dòng ghi chú `// …` (kicker--accent). */
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin: 0 0 0.875rem;
+}
+
+.kicker--accent {
+  color: var(--color-accent);
+  margin-block: 0 0.875rem;
+}
+
+/* Hàng đầu của section: tiêu đề bên trái, ghi chú nhỏ bên phải. */
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.section-head h2 {
+  margin: 0;
+}
+
+.section-note {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--color-text-muted);
+}
+
+/*
+ * Khung ngoài: rộng tối đa 1280px, căn giữa. Mọi thứ bên trong căn trái theo khung
+ * này, nên khối chữ (`.measure`) và lưới luôn thẳng hàng với nhau.
+ */
 .container {
   width: 100%;
-  max-width: var(--width-content);
+  max-width: var(--width-page);
   margin: 0 auto;
   padding-inline: var(--space-inline);
 }
 
-.container--wide {
-  max-width: var(--width-wide);
+/* Khối chữ: giới hạn bề rộng để dòng không quá dài khi khung ngoài rộng 1280px. */
+.measure {
+  max-width: var(--width-content);
 }
 
+/* Khối chữ của bài viết: rộng hơn khối chữ thường. */
+.prose-col {
+  max-width: var(--width-prose);
+}
+
+/*
+ * Bố cục trang chi tiết bài viết (docs/DESIGN_SYSTEM.md mục 5).
+ * - Hẹp: một cột; TOC là khối ở đầu bài (component tự đặt `order: -1`).
+ * - Từ 1200px: hai cột — cột đọc + cột TOC dính bên phải. `justify-content: center`
+ *   giữ cả nhóm cột căn giữa khung.
+ */
+.post-layout {
+  display: grid;
+  grid-template-columns: minmax(0, var(--width-prose));
+  justify-content: center;
+  gap: 40px;
+}
+
+@media (min-width: 1200px) {
+  .post-layout {
+    grid-template-columns: minmax(0, var(--width-prose)) var(--width-toc);
+  }
+}
+
+/* Ẩn khỏi mắt thường nhưng vẫn cho screen reader đọc. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/*
+ * Nút "sao chép liên kết" gắn vào heading trong nội dung bài viết
+ * (docs/DESIGN_SYSTEM.md mục 6). Nút do JS chèn vào nên style phải global, không scope.
+ * Ẩn mặc định, hiện khi hover heading hoặc khi nút được focus.
+ */
+.heading-anchor {
+  margin-inline-start: 0.4em;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7em;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+h2:hover > .heading-anchor,
+h3:hover > .heading-anchor,
+.heading-anchor:focus-visible,
+.heading-anchor[data-copied='true'] {
+  opacity: 1;
+}
+
+.heading-anchor:hover,
+.heading-anchor[data-copied='true'] {
+  color: var(--color-accent);
+}
+
+/*
+ * Section ngăn nhau bằng một đường kẻ mỏng. Đường kẻ chỉ chạy trong bề rộng khối nội
+ * dung (không tràn ra padding ngang) để thẳng hàng với capsule của header khi đã cuộn.
+ */
 .section {
+  position: relative;
   padding-block: var(--space-section);
+}
+
+.section::after {
+  content: '';
+  position: absolute;
+  inset-inline: var(--space-inline);
+  bottom: 0;
+  height: 1px;
+  background-color: var(--color-border);
+}
+
+.section--hero {
+  padding-top: 56px;
+}
+
+/*
+ * Lưới card: tự chia cột theo bề rộng khả dụng — 1 cột khi hẹp, 2–3 cột khi rộng
+ * (docs/DESIGN_SYSTEM.md mục 5). `min(340px, 100%)` để không tràn trên màn hình hẹp.
+ */
+.lab-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+}
+
+/*
+ * Hàng link dạng chữ (link điều hướng, CTA, khối liên hệ) — mono cho đồng bộ với nav và
+ * footer. Không dùng cho tiêu đề (bài viết, lab, dự án) hay link nằm trong câu văn: hai
+ * chỗ đó giữ font nội dung, xem docs/DESIGN_SYSTEM.md mục 4.
+ */
+.link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+/*
+ * Bảng facts — docs/DESIGN_SYSTEM.md mục 6. Mỗi dòng: nhãn mono bên trái, giá trị là hàng
+ * **chip** font display. Không kẻ đường giữa các hàng — chip đã tự tạo khối, thêm đường kẻ nữa
+ * là hai hệ thống đường kẻ chồng lên nhau (và cả trang đã khá nhiều đường ngang).
+ * Dùng chung ở mục "Về mình" (trang chủ) và trang liên hệ.
+ */
+.facts {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+}
+
+.facts__row {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+}
+
+/*
+ * Nhãn để chữ thường, không `uppercase`: các dòng liền nhau mà uppercase hết thì đọc như đang
+ * hét, và nhãn ở đây là chú thích cho chip chứ không phải tiêu đề.
+ */
+.facts__label {
+  flex: 0 0 7rem;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.facts__values {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * Chip: nền `--color-surface` + viền `--color-border` là cặp token sẵn có nên ăn theo cả theme
+ * lẫn mode, không cần thêm token màu mới. Chữ để màu `--color-text` (không dùng accent) vì cả
+ * hàng chip cùng màu accent sẽ tranh chỗ nhấn với kicker và mục lục.
+ */
+.facts__chip {
+  padding: 0.05rem 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+/* Hẹp: nhãn lên trên, chip xuống dưới và căn trái. */
+@media (max-width: 559px) {
+  .facts__row {
+    display: block;
+  }
+
+  .facts__label {
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+}
+
+/*
+ * Tag — docs/DESIGN_SYSTEM.md mục 6. Trước đây khai báo lặp ở `PostList` và trang chi tiết
+ * bài viết; gom về đây vì còn dùng cho danh sách kỹ năng ở mục "Về mình".
+ */
+.tag {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.05rem 0.4rem;
 }
 
 .stack > * + * {
@@ -106,12 +390,51 @@ pre {
 }
 
 /*
- * Chuyển trang: Astro ClientRouter dùng View Transitions với cross-fade mặc định;
- * chỉ chỉnh thời lượng theo token. Astro tự tắt animation khi prefers-reduced-motion.
+ * Chuyển trang: chỉ cross-fade phần nội dung (`main`); header và footer đứng yên.
+ * Gốc (`root`) không animate nữa, không còn cross-fade cả trang.
  */
 ::view-transition-old(root),
 ::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+main {
+  view-transition-name: page-content;
+}
+
+::view-transition-old(page-content),
+::view-transition-new(page-content) {
   animation-duration: var(--duration-slow);
+}
+
+/*
+ * Đổi theme / mode: cần cross-fade cả trang để màu đổi đều, không bị "khựng" ở
+ * header/footer. ThemeToggle.astro bật cờ này trước khi gọi startViewTransition,
+ * và tắt sau khi transition kết thúc.
+ */
+html[data-theme-transition] main {
+  view-transition-name: none;
+}
+
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+html[data-theme-transition] ::view-transition-old(root) {
+  animation: vt-fade-out var(--duration-slow) var(--ease-standard) both;
+}
+
+html[data-theme-transition] ::view-transition-new(root) {
+  animation: vt-fade-in var(--duration-slow) var(--ease-standard) both;
 }
 
 /*

@@ -1,0 +1,87 @@
+---
+/*
+ * Nút "lên đầu trang": điều khiển phụ, không có nội dung chữ nên dùng aria-label.
+ * Ẩn ở đầu trang, hiện khi đã cuộn đủ xa.
+ */
+---
+
+<button type="button" class="to-top" data-to-top aria-label="Lên đầu trang" hidden>
+  <span aria-hidden="true">↑</span>
+</button>
+
+<script>
+  const SHOW_AFTER = 600;
+
+  const prefersReducedMotion = globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /*
+   * Truy vấn lại mỗi lần: Astro thay nút khi chuyển trang. Listener đặt ở module nên
+   * sống qua mọi lần điều hướng.
+   */
+  const updateToTop = (): void => {
+    const button = document.querySelector<HTMLButtonElement>('[data-to-top]');
+    if (!button) return;
+    button.hidden = globalThis.scrollY <= SHOW_AFTER;
+  };
+
+  globalThis.addEventListener('scroll', updateToTop, { passive: true });
+
+  document.addEventListener('astro:page-load', updateToTop);
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (!target.closest('[data-to-top]')) return;
+
+    // Tôn trọng prefers-reduced-motion: nhảy thẳng thay vì cuộn mượt.
+    globalThis.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+  });
+
+  updateToTop();
+</script>
+
+<style>
+  .to-top {
+    position: fixed;
+    right: var(--space-inline);
+    bottom: var(--space-inline);
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      color var(--duration-fast) var(--ease-standard),
+      border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .to-top:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  /* Cần thiết: `display: grid` ở trên đè `[hidden] { display: none }` của trình duyệt. */
+  .to-top[hidden] {
+    display: none;
+  }
+
+  /* Hiện dần khi xuất hiện; ẩn thì tắt ngay (dùng `hidden` để không còn focus được). */
+  .to-top:not([hidden]) {
+    animation: to-top-in var(--duration-base) var(--ease-standard);
+  }
+
+  @keyframes to-top-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+</style>

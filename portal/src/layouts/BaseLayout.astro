@@ -3,6 +3,7 @@ import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import BackToTop from '../components/BackToTop.astro';
 import { availableThemes, defaultThemeId } from '../data/themes';
 
 export type Props = {
@@ -71,6 +72,7 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       <slot />
     </main>
     <Footer />
+    <BackToTop />
   </body>
 </html>
 
@@ -82,6 +84,9 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     padding: 0.5rem 1rem;
     background-color: var(--color-surface);
     color: var(--color-text);
+    /* Link điều hướng nên theo font mono cho đồng bộ với nav/footer. */
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     z-index: 10;
   }
 

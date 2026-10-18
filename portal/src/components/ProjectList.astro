@@ -1,0 +1,83 @@
+---
+import type { ProfileProject } from '../data/profile';
+
+/*
+ * Danh sách dự án khác (không phải lab). Cấu trúc hàng giống `PostList` để hai danh sách
+ * cùng nhịp khi nằm gần nhau trên trang chủ.
+ */
+export type Props = {
+  projects: ProfileProject[];
+};
+
+const { projects } = Astro.props;
+---
+
+<ul class="project-list">
+  {projects.map((project) => (
+    <li class="project-list__item">
+      <p class="project-list__head">
+        {project.href ? (
+          <a class="project-list__name" href={project.href}>
+            {project.name}
+          </a>
+        ) : (
+          <span class="project-list__name">{project.name}</span>
+        )}
+        {project.stack.length > 0 && (
+          <span class="project-list__stack">{project.stack.join(' · ')}</span>
+        )}
+      </p>
+      <p class="project-list__summary">{project.summary}</p>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .project-list {
+    margin: 0 0 1.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .project-list__item {
+    padding-block: 1rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .project-list__item:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .project-list__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    margin: 0;
+  }
+
+  .project-list__name {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    line-height: 1.4;
+    color: var(--color-text);
+  }
+
+  /* Chỉ link mới có gạch chân mọc dần; tên không có link thì không phản hồi hover. */
+  a.project-list__name {
+    color: var(--color-link);
+  }
+
+  .project-list__stack {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-muted);
+  }
+
+  .project-list__summary {
+    margin: 0.25rem 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+</style>

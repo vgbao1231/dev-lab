@@ -13,21 +13,23 @@ const { posts } = Astro.props;
 <ul class="post-list">
   {posts.map((post) => (
     <li class="post-list__item">
-      <a class="post-list__title" href={`/bai-viet/${post.id}`}>
-        {post.data.title}
+      <a class="post-list__link" href={`/bai-viet/${post.id}`}>
+        <span class="post-list__meta">
+          {formatPostDate(post.data.date)} · {postTypeLabels[post.data.type]} · {post.data.lab}
+          {post.data.tags.length > 0 && (
+            <>
+              {' · '}
+              {post.data.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </>
+          )}
+        </span>
+        <span class="post-list__title" style={`view-transition-name: vt-post-${post.id}`}>
+          {post.data.title}
+        </span>
+        <span class="post-list__summary">{post.data.summary}</span>
       </a>
-      <p class="post-list__summary">{post.data.summary}</p>
-      <p class="meta">
-        {formatPostDate(post.data.date)} · {postTypeLabels[post.data.type]} · {post.data.lab}
-        {post.data.tags.length > 0 && (
-          <>
-            {' · '}
-            {post.data.tags.map((tag) => (
-              <span class="tag">{tag}</span>
-            ))}
-          </>
-        )}
-      </p>
     </li>
   ))}
 </ul>
@@ -35,36 +37,55 @@ const { posts } = Astro.props;
 <style>
   .post-list {
     list-style: none;
-    margin: 2rem 0 0;
+    margin: 0 0 1.25rem;
     padding: 0;
   }
 
   .post-list__item {
     border-top: 1px solid var(--color-border);
-    padding-block: 1.25rem;
   }
 
-  .post-list__title {
-    font-family: var(--font-display);
-    font-size: var(--text-xl);
+  .post-list__item:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /*
+   * Cả hàng là một link để vùng bấm rộng, nên không dùng gạch chân mọc dần;
+   * phản hồi hover nằm ở màu tiêu đề (docs/DESIGN_SYSTEM.md mục 7.4).
+   */
+  .post-list__link {
+    display: block;
+    padding-block: 1rem;
     color: var(--color-text);
+    background-image: none;
   }
 
-  .post-list__summary {
-    margin: 0.25rem 0 0.5rem;
-  }
-
-  .post-list__item .meta {
+  .post-list__meta {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.4rem;
-    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-muted);
   }
 
-  .tag {
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    padding: 0.05rem 0.4rem;
+  .post-list__title {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    line-height: 1.4;
+    transition: color var(--duration-fast) var(--ease-standard);
+  }
+
+  .post-list__link:hover .post-list__title {
+    color: var(--color-link);
+  }
+
+  .post-list__summary {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
   }
 </style>

@@ -1,29 +1,156 @@
 ---
+import { labs } from '../data/labs';
+import { profile, profileLinks, sourceRepo } from '../data/profile';
+
 const year = new Date().getFullYear();
+
+/* Điều hướng nội bộ — cùng danh sách với nav trên header. */
+const contentLinks = [
+  { label: 'Trang chủ', href: '/' },
+  { label: 'Bài viết', href: '/bai-viet' },
+  { label: 'Labs', href: '/labs' },
+  { label: 'Liên hệ', href: '/lien-he' },
+];
 ---
 
 <footer class="site-footer">
-  <div class="container container--wide site-footer__inner">
-    <p class="meta">© {year} Dev Lab — Gura</p>
-    <p class="meta">Nội dung viết bằng tiếng Việt, thuật ngữ kỹ thuật giữ nguyên tiếng Anh.</p>
+  <div class="container site-footer__top">
+    <div class="site-footer__brand">
+      <p class="site-footer__name">Dev Lab</p>
+      <p class="site-footer__desc">
+        Blog, lab và portfolio của {profile.name} — ghi chép, thử nghiệm có số đo và giải thích cơ
+        chế.
+      </p>
+    </div>
+
+    <nav class="site-footer__col" aria-labelledby="footer-heading-content">
+      <p class="eyebrow" id="footer-heading-content">
+        Nội dung
+      </p>
+      <ul class="site-footer__list">
+        {contentLinks.map((link) => (
+          <li>
+            <a href={link.href}>{link.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <nav class="site-footer__col" aria-labelledby="footer-heading-labs">
+      <p class="eyebrow" id="footer-heading-labs">
+        Lab
+      </p>
+      <ul class="site-footer__list">
+        {labs.map((lab) => (
+          <li>
+            <a href="/labs">{lab.name}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <nav class="site-footer__col" aria-labelledby="footer-heading-contact">
+      <p class="eyebrow" id="footer-heading-contact">
+        Liên hệ
+      </p>
+      <ul class="site-footer__list">
+        {profileLinks.map((link) => (
+          <li>
+            {/* `rel="me"` chỉ có nghĩa với link http(s), không dùng cho `mailto:`. */}
+            <a href={link.href} rel={link.href.startsWith('http') ? 'me' : undefined}>
+              {link.label}
+            </a>
+          </li>
+        ))}
+        <li>
+          <a href="/lien-he">trang liên hệ</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="container site-footer__bottom">
+    <p class="meta">
+      © {year} {profile.name} · Dev Lab
+    </p>
+    <p class="meta">
+      <a href={sourceRepo}>mã nguồn</a> · deploy trên Cloudflare
+    </p>
   </div>
 </footer>
 
 <style>
-  .site-footer {
-    border-top: 1px solid var(--color-border);
-    margin-top: var(--space-section);
+  /*
+   * Bốn cột: brand rộng hơn, ba cột điều hướng đều nhau. Hẹp thì xếp dọc rồi 2 cột.
+   * Không dùng border-top: section cuối phía trên đã có đường kẻ riêng (docs/DESIGN_SYSTEM.md
+   * mục 5).
+   */
+  .site-footer__top {
+    display: grid;
+    gap: 28px 24px;
+    padding-block: 36px 24px;
   }
 
-  .site-footer__inner {
+  @media (min-width: 640px) {
+    .site-footer__top {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .site-footer__top {
+      grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .site-footer__name {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+  }
+
+  .site-footer__desc {
+    max-width: 34ch;
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .site-footer__list {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+
+  /*
+   * Link footer để màu muted: mặc định `--color-link` cho cả bốn cột sẽ quá ồn. Hover mới lên
+   * màu link, kèm gạch chân mọc dần của quy tắc `a` chung (docs/DESIGN_SYSTEM.md mục 7.4).
+   */
+  .site-footer a {
+    color: var(--color-text-muted);
+    transition:
+      color var(--duration-fast) var(--ease-standard),
+      background-size var(--duration-fast) var(--ease-standard);
+  }
+
+  .site-footer a:hover {
+    color: var(--color-link);
+  }
+
+  .site-footer__bottom {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 0.5rem;
-    padding-block: 1.5rem;
+    gap: 0.5rem 1rem;
+    padding-block: 16px 48px;
+    border-top: 1px solid var(--color-border);
   }
 
-  .site-footer__inner p {
+  .site-footer__bottom p {
     margin: 0;
   }
 </style>

@@ -8,28 +8,24 @@ const showThemeSelector = availableThemes.length > 1;
 ---
 
 <div class="theme-toggle">
-  <fieldset class="theme-toggle__group">
-    <legend class="meta">Chế độ</legend>
-    <button type="button" data-mode-set="light">
-      Sáng
-    </button>
-    <button type="button" data-mode-set="dark">
-      Tối
-    </button>
-    <button type="button" data-mode-set="system">
-      Hệ thống
-    </button>
-  </fieldset>
+  <label class="theme-toggle__field">
+    <span class="theme-toggle__label">Chế độ</span>
+    <select data-mode-set>
+      <option value="system">Hệ thống</option>
+      <option value="light">Sáng</option>
+      <option value="dark">Tối</option>
+    </select>
+  </label>
 
   {showThemeSelector && (
-    <fieldset class="theme-toggle__group">
-      <legend class="meta">Theme</legend>
-      {availableThemes.map((theme) => (
-        <button type="button" data-theme-set={theme.id}>
-          {theme.label}
-        </button>
-      ))}
-    </fieldset>
+    <label class="theme-toggle__field">
+      <span class="theme-toggle__label">Theme</span>
+      <select data-theme-set>
+        {availableThemes.map((theme) => (
+          <option value={theme.id}>{theme.label}</option>
+        ))}
+      </select>
+    </label>
   )}
 </div>
 
@@ -41,16 +37,29 @@ const showThemeSelector = availableThemes.length > 1;
   const media = window.matchMedia('(prefers-color-scheme: dark)');
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Đổi theme/mode chủ động chạy trong một view transition để cross-fade màu.
+  /*
+   * Đổi theme/mode chạy trong một view transition để màu cross-fade cho đều cả trang.
+   * Mặc định chỉ cross-fade phần nội dung (xem global.css), nên phải bật cờ
+   * `data-theme-transition` trên <html> để lúc này cả trang là một khối màu duy nhất.
+   */
   const withViewTransition = (update: () => void): void => {
     if (!document.startViewTransition || prefersReducedMotion) {
       update();
       return;
     }
+
+    root.dataset.themeTransition = 'true';
+
+    const clearFlag = () => {
+      delete root.dataset.themeTransition;
+    };
+
     try {
-      document.startViewTransition(update);
+      const transition = document.startViewTransition(update);
+      void transition.finished.then(clearFlag, clearFlag);
     } catch {
-      // Có thể trùng với một view transition khác (điều hướng đang chạy).
+      // Có thể trùng với view transition của điều hướng đang chạy.
+      clearFlag();
       update();
     }
   };
@@ -71,52 +80,48 @@ const showThemeSelector = availableThemes.length > 1;
   };
 
   /*
-   * Luôn truy vấn DOM tại thời điểm gọi: ClientRouter thay nút theme khi chuyển
-   * trang, nên không được giữ tham chiếu tới nút của trang cũ.
+   * Luôn truy vấn DOM tại thời điểm gọi: <select> được render lại khi chuyển trang,
+   * nên không giữ tham chiếu tới phần tử của trang cũ.
    */
-  const syncPressedState = () => {
+  const syncState = () => {
     const preference = readModePreference();
     const theme = root.dataset.theme ?? '';
 
-    for (const button of document.querySelectorAll<HTMLButtonElement>('[data-mode-set]')) {
-      button.setAttribute('aria-pressed', String(button.dataset.modeSet === preference));
+    for (const select of document.querySelectorAll<HTMLSelectElement>('select[data-mode-set]')) {
+      select.value = preference;
     }
 
-    for (const button of document.querySelectorAll<HTMLButtonElement>('[data-theme-set]')) {
-      button.setAttribute('aria-pressed', String(button.dataset.themeSet === theme));
+    for (const select of document.querySelectorAll<HTMLSelectElement>('select[data-theme-set]')) {
+      select.value = theme;
     }
   };
 
   /*
-   * Uỷ quyền sự kiện ở document thay vì gắn vào từng nút: listener trên document
-   * tồn tại qua mọi lần chuyển trang, nên nút theme vẫn hoạt động sau điều hướng.
+   * Uỷ quyền sự kiện ở document thay vì gắn vào từng <select>: listener trên document
+   * tồn tại qua mọi lần chuyển trang.
    */
-  document.addEventListener('click', (event) => {
+  document.addEventListener('change', (event) => {
     const target = event.target;
-    if (!(target instanceof Element)) return;
+    if (!(target instanceof HTMLSelectElement)) return;
 
-    const modeButton = target.closest<HTMLButtonElement>('[data-mode-set]');
-    if (modeButton) {
-      const value = modeButton.dataset.modeSet;
-      if (value !== 'light' && value !== 'dark' && value !== 'system') return;
+    const modeValue = target.dataset.modeSet;
+    if (modeValue !== undefined) {
+      if (modeValue !== 'light' && modeValue !== 'dark' && modeValue !== 'system') return;
 
       withViewTransition(() => {
-        applyMode(value);
-        localStorage.setItem(STORAGE_MODE, value);
-        syncPressedState();
+        applyMode(modeValue);
+        localStorage.setItem(STORAGE_MODE, modeValue);
+        syncState();
       });
       return;
     }
 
-    const themeButton = target.closest<HTMLButtonElement>('[data-theme-set]');
-    if (themeButton) {
-      const value = themeButton.dataset.themeSet;
-      if (!value) return;
-
+    const themeValue = target.dataset.themeSet;
+    if (themeValue) {
       withViewTransition(() => {
-        applyTheme(value);
-        localStorage.setItem(STORAGE_THEME, value);
-        syncPressedState();
+        applyTheme(themeValue);
+        localStorage.setItem(STORAGE_THEME, themeValue);
+        syncState();
       });
     }
   });
@@ -125,7 +130,7 @@ const showThemeSelector = availableThemes.length > 1;
   media.addEventListener('change', () => {
     if (readModePreference() === 'system') {
       applyMode('system');
-      syncPressedState();
+      syncState();
     }
   });
 
@@ -142,50 +147,66 @@ const showThemeSelector = availableThemes.length > 1;
     if (root.dataset.modePreference) nextRoot.dataset.modePreference = root.dataset.modePreference;
   });
 
-  // Sau mỗi lần chuyển trang, nút theme được render lại: đặt lại aria-pressed.
+  // Sau mỗi lần chuyển trang, <select> được render lại: đặt lại giá trị đang chọn.
   // astro:page-load cũng bắn ở lần tải đầu tiên.
-  document.addEventListener('astro:page-load', syncPressedState);
+  document.addEventListener('astro:page-load', syncState);
 
-  syncPressedState();
+  syncState();
 </script>
 
 <style>
   .theme-toggle {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  .theme-toggle__group {
-    display: flex;
-    gap: 0.25rem;
     align-items: center;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    padding: 0.25rem 0.5rem;
-    margin: 0;
+    gap: 8px 12px;
   }
 
-  .theme-toggle__group legend {
-    padding-inline: 0.25rem;
+  .theme-toggle__field {
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 
-  .theme-toggle__group button {
-    background: none;
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
+  .theme-toggle__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--color-text-muted);
-    font-family: var(--font-body);
-    font-size: var(--text-xs);
-    padding: 0.15rem 0.4rem;
-    cursor: pointer;
-    transition:
-      color var(--duration-fast) var(--ease-standard),
-      border-color var(--duration-fast) var(--ease-standard);
   }
 
-  .theme-toggle__group button[aria-pressed='true'] {
-    border-color: var(--color-accent);
+  /*
+   * Bộ chọn dùng <select> gốc: giữ được hành vi và bàn phím của hệ điều hành, không
+   * phải vẽ lại mũi tên (không hard-code màu trong component).
+   */
+  .theme-toggle select {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
     color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    padding: 4px 6px;
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .theme-toggle select:hover {
+    border-color: var(--color-accent);
+  }
+
+  /* Header hẹp: ẩn nhãn chữ, giữ <label> cho screen reader. */
+  @media (max-width: 767px) {
+    .theme-toggle__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
   }
 </style>

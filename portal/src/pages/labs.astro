@@ -5,11 +5,13 @@ import { labs } from '../data/labs';
 ---
 
 <BaseLayout title="Labs — Dev Lab" description="Danh sách các lab kỹ thuật của Dev Lab.">
-  <section class="section container container--wide" data-animate>
-    <h1>Labs</h1>
-    <p class="lead">
-      Mỗi lab tập trung vào một công nghệ hoặc một lĩnh vực, có stack và cách triển khai riêng.
-    </p>
+  <section class="section container" data-animate>
+    <div class="measure">
+      <h1 style="view-transition-name: page-title">Labs</h1>
+      <p class="lead">
+        Mỗi lab tập trung vào một công nghệ hoặc một lĩnh vực, có stack và cách triển khai riêng.
+      </p>
+    </div>
 
     <div class="lab-grid">
       {labs.map((lab) => (
@@ -21,9 +23,6 @@ import { labs } from '../data/labs';
 
 <style>
   .lab-grid {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     margin-top: 2rem;
   }
 </style>
