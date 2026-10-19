@@ -176,7 +176,7 @@ pre {
 }
 
 /*
- * Khung ngoài: rộng tối đa 1280px, căn giữa. Mọi thứ bên trong căn trái theo khung
+ * Khung ngoài: rộng tối đa 1120px, căn giữa. Mọi thứ bên trong căn trái theo khung
  * này, nên khối chữ (`.measure`) và lưới luôn thẳng hàng với nhau.
  */
 .container {
@@ -186,14 +186,14 @@ pre {
   padding-inline: var(--space-inline);
 }
 
-/* Khối chữ: giới hạn bề rộng để dòng không quá dài khi khung ngoài rộng 1280px. */
+/* Khối chữ: giới hạn bề rộng để dòng không quá dài khi khung ngoài rộng hơn. */
 .measure {
   max-width: var(--width-content);
 }
 
-/* Khối chữ của bài viết: rộng hơn khối chữ thường. */
+/* Cột đọc bài viết dùng chung một bề rộng với khối chữ thường. */
 .prose-col {
-  max-width: var(--width-prose);
+  max-width: var(--width-content);
 }
 
 /*
@@ -204,14 +204,14 @@ pre {
  */
 .post-layout {
   display: grid;
-  grid-template-columns: minmax(0, var(--width-prose));
+  grid-template-columns: minmax(0, var(--width-content));
   justify-content: center;
   gap: 40px;
 }
 
 @media (min-width: 1200px) {
   .post-layout {
-    grid-template-columns: minmax(0, var(--width-prose)) var(--width-toc);
+    grid-template-columns: minmax(0, var(--width-content)) var(--width-toc);
   }
 }
 

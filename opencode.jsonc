@@ -22,8 +22,8 @@
     "buffer": 12000,
   },
 
-  // 4) Repo này không cần tìm kiếm web -> bỏ hẳn tool khỏi prompt.
-  "websearch": false,
+  // 4) Giữ websearch cho việc cần tra cứu ngoài repo; bỏ comment dòng dưới nếu muốn tắt.
+  // "websearch": false,
 
   // 5) Ảnh lớn được thu nhỏ trước khi gửi cho model.
   "media": {
@@ -43,7 +43,7 @@
   //    dùng biến thể "low" để tốn ít token suy luận.
   "agents": {
     "build": {
-      "steps": 25,
+      "steps": 40,
     },
     "explore": {
       "model": "opencode/deepseek-v4.1-flash-free#low",

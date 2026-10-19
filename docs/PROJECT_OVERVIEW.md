@@ -91,22 +91,23 @@ Khi đề xuất hoặc đánh giá một lab, nội dung hay tính năng mới,
 7. Chi phí hosting, domain và công sức duy trì có hợp lý không?
 8. Có thể bắt đầu nhỏ và phát triển dần không?
 
-## 9. Định hướng kiến trúc (sơ bộ)
+## 9. Kiến trúc (đã chốt)
 
-- **Tên**: Dev Lab, repo `dev-lab`.
-- **Portal**: site tĩnh, ưu tiên tốc độ tải và chi phí thấp. Dự kiến dùng Astro.
-- **Lab**: mỗi lab là một ứng dụng hoặc site độc lập, có thể có repo và quy trình deploy riêng.
-- **Nội dung**: file Markdown/MDX với frontmatter chuẩn hóa.
-- **Hosting**: Cloudflare Pages, mỗi lab một subdomain hoặc đường dẫn con.
-- **Design**: dùng chung design tokens từ `DESIGN_SYSTEM.md`; theme và mode là hai trục độc lập (giai đoạn 1 chỉ triển khai theme Minimalist Editorial).
+Lý do chi tiết ở [`adr/`](adr/README.md).
+
+- **Tên**: Dev Lab, repo `dev-lab` (chốt 2026-10-18).
+- **Portal**: `portal/`, Astro với output tĩnh, CSS thuần + design tokens ([ADR 0001](adr/0001-astro-tinh-va-pnpm-workspace.md)).
+- **Lab**: mỗi lab là một ứng dụng độc lập trong `labs/`, có thể có stack, repo và quy trình deploy riêng. Lab đầu tiên: `react-lab` (React, TypeScript, Vite).
+- **Nội dung**: Markdown/MDX trong content collection `posts`; schema frontmatter ở `portal/src/content.config.ts`.
+- **Design**: theme và mode là hai trục độc lập ([ADR 0002](adr/0002-theme-va-mode-hai-truc-doc-lap.md)); giai đoạn 1 chỉ triển khai theme Minimalist Editorial. Token và quy tắc ở `docs/DESIGN_SYSTEM.md`.
+- **Hosting (dự kiến, chưa kết nối)**: Cloudflare Pages.
 
 ## 10. Những điều chưa quyết định
 
 Các mục dưới đây **chưa được chốt**. Không nên coi là đã quyết định khi viết code hoặc nội dung.
 
-- Cấu trúc cổng chính và các lab con.
-- Mỗi lab là subdomain, đường dẫn con hay site riêng.
-- Lab đầu tiên là React, JavaScript hay hướng khác.
-- Các lab dùng chung một thiết kế hay có bản sắc riêng.
-- Mức độ tương tác: chỉ bài viết, có demo, hay có playground chạy trực tiếp.
-- Cách quản lý nội dung và quy trình xuất bản.
+- Mỗi lab là subdomain, đường dẫn con hay site riêng (liên quan mục 1.6 trong `ROADMAP.md`).
+- Các lab dùng chung design tokens với portal hay có bản sắc riêng (`react-lab` hiện chỉ có style bố cục).
+- Mức độ tương tác: chỉ bài viết, có demo, hay có playground chạy trực tiếp (giai đoạn 2).
+- Lab thứ hai (dự kiến JS Under the Hood hoặc Next.js Lab).
+- Quy trình xuất bản, và có cần công cụ quản lý nội dung ngoài file Markdown hay không.
