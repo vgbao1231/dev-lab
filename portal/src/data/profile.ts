@@ -81,7 +81,7 @@ export const profile: Profile = {
     { label: 'Nhiên liệu', items: ['Cà phê', 'Đồ ngọt', 'Gura'] },
     { label: 'Ngoài code', items: ['Chạy bộ', 'Cầu lông', 'Nghe nhạc', 'Chơi game'] },
   ],
-  links: [{ label: 'github/vgbao1231', href: 'https://github.com/vgbao1231' }],
+  links: [{ label: 'GitHub/vgbao1231', href: 'https://github.com/vgbao1231' }],
   /*
    * TẠM: hai dự án ví dụ để xem bố cục danh sách. Cả hai cố tình không có `href` để không tạo
    * link giả — khi có dự án thật, thêm `href` là tên tự thành link.
