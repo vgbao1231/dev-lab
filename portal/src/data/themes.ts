@@ -15,7 +15,7 @@ export type Theme = {
  * Registry theme — hai trục độc lập với mode (xem docs/DESIGN_SYSTEM.md mục 1).
  *
  * Thêm theme mới gồm ba bước:
- *  1. Thêm bảng màu vào docs/DESIGN_SYSTEM.md.
+ *  1. Thêm bảng màu vào docs/design/theme.md.
  *  2. Thêm block CSS variables cho theme đó trong src/styles/tokens.css.
  *  3. Thêm một mục vào danh sách này với status 'available'.
  */

@@ -21,26 +21,30 @@ Mục tiêu: chia sẻ kiến thức, củng cố kiến thức cũ qua thực h
 ```
 dev-lab/
 ├── .github/workflows/ci.yml  # CI: lint, format, typecheck, build
-├── AGENTS.md                 # Hướng dẫn cho AI agent làm việc trong repo
+├── AGENTS.md                 # Hướng dẫn cho AI agent (nguồn chính)
 ├── README.md
 ├── docs/
-│   ├── PROJECT_OVERVIEW.md   # Mục tiêu, đối tượng, phạm vi, định hướng kiến trúc
+│   ├── PROJECT_OVERVIEW.md   # Mục tiêu, đối tượng, phạm vi, kiến trúc đã chốt và chưa chốt
 │   ├── ROADMAP.md            # Các giai đoạn, checklist, tiêu chí hoàn thành
-│   └── DESIGN_SYSTEM.md      # Màu sắc, typography, quy tắc chuyển động, nguyên tắc giao diện
+│   ├── DESIGN_SYSTEM.md      # Chỉ mục design system, nguyên tắc, checklist
+│   ├── design/               # Spec theo chủ đề: theme, typography, layout, components, post-page, motion
+│   ├── adr/                  # Quyết định kiến trúc/thiết kế: vì sao, đánh đổi gì
+│   └── CHANGELOG.md          # Lịch sử các vòng chỉnh thiết kế
 ├── design-reference/         # Tham khảo bố cục và màu (HTML + screenshot), không đưa vào build
 ├── eslint.config.js          # ESLint flat config dùng chung cho cả workspace
 ├── prettier.config.mjs
 ├── tsconfig.base.json        # Cấu hình TypeScript strict dùng chung
 ├── pnpm-workspace.yaml
 ├── portal/                   # Cổng chính (Astro)
-│   ├── content.config.ts     # Collection bài viết + schema frontmatter
 │   ├── public/
 │   └── src/
-│       ├── components/       # Header, Footer, LabCard, PostList, ThemeToggle
+│       ├── components/       # Header, Footer, LabCard, PostList, ProjectList, ThemeToggle,
+│       │                     # TableOfContents, ReadingProgress, BackToTop
 │       ├── content/posts/    # Bài viết Markdown (tên file = slug)
-│       ├── data/             # Dữ liệu tĩnh (lab, theme, quy ước nội dung)
+│       ├── content.config.ts # Collection bài viết + schema frontmatter
+│       ├── data/             # Dữ liệu tĩnh (lab, theme, profile, quy ước nội dung)
 │       ├── layouts/
-│       ├── pages/            # /, /labs, /bai-viet, /lien-he
+│       ├── pages/            # /, /labs, /bai-viet, /bai-viet/<slug>, /lien-he
 │       └── styles/           # tokens.css, global.css
 └── labs/
     └── react-lab/            # Lab React + TypeScript + Vite
@@ -118,19 +122,17 @@ Chưa kết nối repo với Cloudflare (cần tài khoản của tác giả). C
 
 ## Quy ước
 
-- Không hard-code màu và font trong component; dùng CSS variables trong `portal/src/styles/tokens.css` (nguồn: `docs/DESIGN_SYSTEM.md`).
-- **Theme và mode là hai trục độc lập** (`data-theme` + `data-mode`), không phải bốn chế độ cố định. Thêm theme mới gồm ba bước: cập nhật `docs/DESIGN_SYSTEM.md`, thêm block CSS variables trong `portal/src/styles/tokens.css`, đăng ký trong `portal/src/data/themes.ts`.
-- Thay đổi màu/font thì cập nhật `docs/DESIGN_SYSTEM.md` trước, rồi mới sửa code.
-- Không hard-code thời lượng hay easing; dùng motion tokens trong `portal/src/styles/tokens.css` (nguồn: `docs/DESIGN_SYSTEM.md` mục 7). Khối nội dung muốn hiện dần thì thêm `data-animate`; mọi animation phải tôn trọng `prefers-reduced-motion`.
-- `design-reference/` chỉ là bản tham khảo bố cục và màu. `docs/DESIGN_SYSTEM.md` mới là nguồn quyết định; khi reference khác docs thì theo docs và ghi rõ ở mục "Ghi chú: khác biệt có chủ ý".
+Quy tắc code, gotchas và định nghĩa "xong" nằm ở [AGENTS.md](AGENTS.md); quy tắc giao diện nằm ở [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md). Hai điểm cần biết khi tự phát triển:
+
+- Không hard-code màu, font, thời lượng, easing: dùng token trong `portal/src/styles/tokens.css`.
 - Hoàn thành một mục trong `docs/ROADMAP.md` thì đánh dấu `[x]` trong cùng thay đổi.
-- `tsconfig.base.json` là cấu hình strict dùng chung. **Không dùng `extends` dạng mảng** trong `portal/`: Rolldown (Vite bên trong Astro) resolve sai dạng này và làm build thất bại; xem ghi chú trong `portal/tsconfig.json`.
 
 ## Tài liệu
 
 - [Tổng quan dự án](docs/PROJECT_OVERVIEW.md)
 - [Roadmap](docs/ROADMAP.md)
-- [Design system](docs/DESIGN_SYSTEM.md)
+- [Design system](docs/DESIGN_SYSTEM.md) và các spec trong [docs/design/](docs/design/)
+- [Quyết định kiến trúc (ADR)](docs/adr/README.md)
 - [Hướng dẫn cho agent](AGENTS.md)
 
 ## Giấy phép
