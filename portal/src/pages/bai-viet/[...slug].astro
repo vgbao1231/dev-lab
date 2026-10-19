@@ -2,6 +2,8 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import ReadingProgress from '../../components/ReadingProgress.astro';
 import { formatPostDate, postTypeLabels } from '../../data/content';
 
 export async function getStaticPaths() {
@@ -18,33 +20,133 @@ export type Props = {
 };
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+
+/*
+ * Tên dùng cho View Transition: phải trùng với tên đặt trên tiêu đề bài trong
+ * PostList, để tiêu đề biến hình từ danh sách sang trang chi tiết.
+ * Phải là custom-ident hợp lệ nên có tiền tố `vt-post-` (id bài bắt đầu bằng số).
+ */
+const titleViewTransitionName = `vt-post-${post.id}`;
 ---
 
 <BaseLayout title={`${post.data.title} — Dev Lab`} description={post.data.summary}>
-  <article class="section container">
-    <header class="post-header">
-      <h1>{post.data.title}</h1>
-      <p class="meta">
-        {formatPostDate(post.data.date)} · {postTypeLabels[post.data.type]} · {post.data.lab}
-      </p>
-      <ul class="post-header__tags meta">
-        {post.data.tags.map((tag) => (
-          <li class="tag">{tag}</li>
-        ))}
-      </ul>
-      <p class="lead">{post.data.summary}</p>
-    </header>
+  <ReadingProgress />
+  <article class="section container" data-animate data-reading-target>
+    <div class="post-layout">
+      <div class="prose-col">
+        <header class="post-header">
+          <h1 style={`view-transition-name: ${titleViewTransitionName}`}>{post.data.title}</h1>
+          <p class="meta">
+            {formatPostDate(post.data.date)} · {postTypeLabels[post.data.type]} · {post.data.lab}
+          </p>
+          <ul class="post-header__tags meta">
+            {post.data.tags.map((tag) => (
+              <li class="tag">{tag}</li>
+            ))}
+          </ul>
+          <p class="lead">{post.data.summary}</p>
+        </header>
 
-    <div class="post-body">
-      <Content />
+        <div class="post-body">
+          <Content />
+        </div>
+
+        <p class="link-row">
+          <a href="/bai-viet">← Tất cả bài viết</a>
+        </p>
+      </div>
+
+      <TableOfContents headings={headings} />
     </div>
-
-    <p>
-      <a href="/bai-viet">← Tất cả bài viết</a>
-    </p>
   </article>
 </BaseLayout>
+
+<script>
+  /*
+   * Gắn nút "sao chép liên kết" vào từng heading trong thân bài. Không làm được ở phía
+   * server vì `render()` chỉ trả HTML của markdown, không cho chèn thêm phần tử; và thao
+   * tác copy vốn đã cần JavaScript.
+   * Xem docs/DESIGN_SYSTEM.md mục 6.
+   */
+  const COPY_FEEDBACK_MS = 1600;
+
+  /* Vùng thông báo cho screen reader — nút copy không tự đọc được kết quả. */
+  const status = document.createElement('span');
+  status.className = 'visually-hidden';
+  status.setAttribute('role', 'status');
+  document.body.append(status);
+
+  const resetTimers = new Map<HTMLButtonElement, number>();
+
+  const decorateHeadings = (): void => {
+    status.textContent = '';
+
+    for (const heading of document.querySelectorAll<HTMLElement>(
+      '.post-body h2[id], .post-body h3[id]',
+    )) {
+      // Script có thể chạy lại sau điều hướng: chỉ gắn một lần cho mỗi heading.
+      if (heading.querySelector('.heading-anchor')) continue;
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'heading-anchor';
+      button.dataset.headingAnchor = heading.id;
+      button.setAttribute('aria-label', 'Sao chép liên kết tới mục này');
+      button.title = 'Sao chép liên kết';
+      button.textContent = '#';
+      heading.append(button);
+    }
+  };
+
+  const copyHeadingLink = async (button: HTMLButtonElement): Promise<void> => {
+    const id = button.dataset.headingAnchor ?? '';
+    const url = `${globalThis.location.origin}${globalThis.location.pathname}#${id}`;
+
+    // Cập nhật thanh địa chỉ trước: kể cả khi clipboard bị chặn thì URL vẫn đúng.
+    globalThis.history.replaceState(null, '', `#${id}`);
+
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      status.textContent = 'Trình duyệt không cho sao chép. Liên kết đã có trên thanh địa chỉ.';
+      return;
+    }
+
+    const timer = resetTimers.get(button);
+    if (timer !== undefined) globalThis.clearTimeout(timer);
+
+    button.textContent = '✓';
+    button.dataset.copied = 'true';
+    status.textContent = 'Đã sao chép liên kết tới mục này.';
+    resetTimers.set(
+      button,
+      globalThis.setTimeout(() => {
+        button.textContent = '#';
+        delete button.dataset.copied;
+        resetTimers.delete(button);
+      }, COPY_FEEDBACK_MS),
+    );
+  };
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const button = target.closest<HTMLButtonElement>('[data-heading-anchor]');
+    if (!button) return;
+
+    void copyHeadingLink(button);
+  });
+
+  document.addEventListener('astro:page-load', decorateHeadings);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', decorateHeadings, { once: true });
+  } else {
+    decorateHeadings();
+  }
+</script>
 
 <style>
   .post-header__tags {
@@ -56,14 +158,34 @@ const { Content } = await render(post);
     padding: 0;
   }
 
-  .tag {
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    padding: 0.05rem 0.4rem;
-  }
-
   .post-body :global(h2) {
     margin-top: 2rem;
+  }
+
+  /*
+   * Khi nhảy tới anchor (từ mục lục) hoặc ghim mục lục, chừa chỗ cho header dính.
+   */
+  .post-body :global(h2),
+  .post-body :global(h3) {
+    scroll-margin-top: var(--offset-header);
+  }
+
+  /*
+   * Link trong bài viết dùng text-decoration thay vì gạch chân mọc dần: kỹ thuật
+   * background-size bị vỡ khi link xuống dòng (docs/DESIGN_SYSTEM.md mục 7.4).
+   */
+  .post-body :global(a) {
+    background-image: none;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 4px;
+    transition:
+      color var(--duration-fast) var(--ease-standard),
+      text-decoration-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .post-body :global(a:hover) {
+    text-decoration-color: currentColor;
   }
 
   .post-body :global(pre) {
@@ -89,5 +211,10 @@ const { Content } = await render(post);
 
   .post-body :global(th) {
     color: var(--color-text-muted);
+  }
+
+  /* Hover hàng bảng — docs/DESIGN_SYSTEM.md mục 7.4. */
+  .post-body :global(tbody tr:hover td) {
+    background-color: var(--color-bg);
   }
 </style>

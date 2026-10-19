@@ -19,6 +19,7 @@
   --color-accent: #a6b58a;
   --color-link: #83b9d4;
   --color-border: #3a3630;
+  --color-scrollbar-thumb: #565046;
 }
 
 :root[data-theme='minimalist-editorial'][data-mode='light'] {
@@ -29,6 +30,7 @@
   --color-accent: #667a4d;
   --color-link: #326c8a;
   --color-border: #e3ddd1;
+  --color-scrollbar-thumb: #c9c1b1;
 }
 
 /* Typography */
@@ -37,26 +39,75 @@
   --font-body: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.5rem;
-  --text-2xl: 2.25rem;
+  --text-2xs: 0.75rem;
+  --text-xs: 0.875rem;
+  --text-sm: 1rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.3125rem;
+  --text-xl: 1.625rem;
+  --text-2xl: 2.375rem;
   --text-display: 3rem;
+  /* Brand trên header: chữ display một mình nên cần lớn hơn cỡ chữ UI. */
+  --text-brand: 1.75rem;
 
-  /* Bố cục: 680px cho nội dung đọc, 900px cho trang danh sách */
-  --width-content: 680px;
-  --width-wide: 900px;
+  /*
+   * Bố cục — docs/DESIGN_SYSTEM.md mục 5.
+   * `--width-page` là khung ngoài (header, section, lưới) nên rộng;
+   * `--width-content` là khối chữ, giữ dòng đủ ngắn để đọc.
+   *
+   * Breakpoint dùng thẳng trong media query (CSS không cho dùng biến trong điều kiện media):
+   *   < 560px   — một cột
+   *   >= 640px  — header gọn một hàng, nav căn giữa
+   *   >= 768px  — section 48px, padding ngang 24px
+   *   >= 1024px — padding ngang 32px
+   */
+  --width-page: 1280px;
+  --width-content: 720px;
+  /* Bề rộng đọc cho thân bài viết: rộng hơn khối chữ thường, nhưng vẫn dưới ngưỡng khó đọc. */
+  --width-prose: 800px;
+  /* Cột mục lục ở trang chi tiết bài viết (chỉ có từ 1200px). */
+  --width-toc: 220px;
+  /*
+   * Khoảng chừa cho header dính khi nhảy tới anchor và khi ghim mục lục: cao hơn header
+   * một chút để tiêu đề không nằm sát mép. Header hai hàng trên mobile cao khoảng 92px.
+   */
+  --offset-header: 96px;
   --space-section: 40px;
-  --space-inline: 24px;
+  --space-inline: 20px;
   --radius-sm: 4px;
   --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-pill: 999px;
+}
+
+/*
+ * Motion — nguồn: docs/DESIGN_SYSTEM.md mục 7.
+ * Chỉ animate opacity và transform; giữ thời lượng ngắn (xem quy tắc ở tài liệu).
+ */
+:root {
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  /*
+   * Riêng phần "chrome" của header (nền, viền, bo góc, độ rộng capsule khi cuộn):
+   * chậm hơn --duration-base để mắt bắt kịp, tránh cảm giác giật.
+   */
+  --duration-chrome: 340ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --reveal-distance: 8px;
+  --reveal-stagger: 60ms;
 }
 
 @media (min-width: 768px) {
   :root {
-    --space-section: 64px;
+    --space-section: 48px;
+    --space-inline: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
     --space-inline: 32px;
   }
 }

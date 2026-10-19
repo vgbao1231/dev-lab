@@ -1,7 +1,9 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import BackToTop from '../components/BackToTop.astro';
 import { availableThemes, defaultThemeId } from '../data/themes';
 
 export type Props = {
@@ -30,6 +32,15 @@ const themeInitScript = `
   root.dataset.modePreference = preference;
 })();
 `;
+
+// Bật cờ pre-hide cho entrance animation trước khi vẽ, chỉ khi người dùng không
+// yêu cầu giảm chuyển động. Nhờ inline + chạy sớm, nội dung [data-animate] không
+// nháy; và vì cờ không được bật khi reduced-motion, nội dung không bao giờ bị ẩn.
+const motionReadyScript = `
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.documentElement.classList.add('motion-ready');
+}
+`;
 ---
 
 <!doctype html>
@@ -49,6 +60,8 @@ const themeInitScript = `
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Patrick+Hand&display=swap"
     />
     <script is:inline set:html={themeInitScript} />
+    <script is:inline set:html={motionReadyScript} />
+    <ClientRouter />
   </head>
   <body>
     <a class="skip-link" href="#main">
@@ -59,6 +72,7 @@ const themeInitScript = `
       <slot />
     </main>
     <Footer />
+    <BackToTop />
   </body>
 </html>
 
@@ -70,6 +84,9 @@ const themeInitScript = `
     padding: 0.5rem 1rem;
     background-color: var(--color-surface);
     color: var(--color-text);
+    /* Link điều hướng nên theo font mono cho đồng bộ với nav/footer. */
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     z-index: 10;
   }
 
@@ -77,3 +94,80 @@ const themeInitScript = `
     left: 0;
   }
 </style>
+
+<script>
+  import { animate } from 'motion/mini';
+
+  const root = document.documentElement;
+
+  // Thời lượng đọc từ token CSS (docs/DESIGN_SYSTEM.md mục 7) để JS và CSS dùng
+  // chung một nguồn giá trị. Token tính bằng ms, motion tính bằng giây.
+  const readSeconds = (name: string, fallbackMs: number): number => {
+    const ms = Number.parseFloat(getComputedStyle(root).getPropertyValue(name).trim());
+    return Number.isFinite(ms) && ms > 0 ? ms / 1000 : fallbackMs / 1000;
+  };
+
+  const readPixels = (name: string, fallbackPx: number): number => {
+    const px = Number.parseFloat(getComputedStyle(root).getPropertyValue(name).trim());
+    return Number.isFinite(px) ? px : fallbackPx;
+  };
+
+  const duration = readSeconds('--duration-base', 200);
+  const stagger = readSeconds('--reveal-stagger', 60);
+  const distance = readPixels('--reveal-distance', 8);
+  // Khớp với --ease-entrance trong tokens.css.
+  const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const reveal = (element: HTMLElement, indexInBatch: number): void => {
+    if (prefersReducedMotion) {
+      element.classList.add('is-revealed');
+      return;
+    }
+
+    void animate(
+      element,
+      { opacity: [0, 1], y: [distance, 0] },
+      { duration, delay: indexInBatch * stagger, ease },
+    )
+      .then(() => element.classList.add('is-revealed'))
+      // Animation có thể bị huỷ khi điều hướng giữa chừng; vẫn khoá trạng thái cuối.
+      .catch(() => element.classList.add('is-revealed'));
+  };
+
+  /*
+   * Entrance chỉ chạy ở lần tải trang đầu tiên. Các lần điều hướng trong site do
+   * View Transition xử lý; listener astro:before-swap (ThemeToggle) đã xoá cờ
+   * .motion-ready nên nội dung của trang mới không bị ẩn lại.
+   */
+  const start = (): void => {
+    const targets = Array.from(document.querySelectorAll<HTMLElement>('[data-animate]'));
+    if (targets.length === 0) return;
+
+    if (prefersReducedMotion || typeof IntersectionObserver === 'undefined') {
+      for (const element of targets) element.classList.add('is-revealed');
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entering = entries.filter((entry) => entry.isIntersecting);
+        entering.forEach((entry, indexInBatch) => {
+          observer.unobserve(entry.target);
+          reveal(entry.target as HTMLElement, indexInBatch);
+        });
+      },
+      // threshold 0 + rootMargin âm để phần tử rất cao (bài viết dài) vẫn kích hoạt.
+      { rootMargin: '0px 0px -10% 0px', threshold: 0 },
+    );
+
+    for (const element of targets) observer.observe(element);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+</script>

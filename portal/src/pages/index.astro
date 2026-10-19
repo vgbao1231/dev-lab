@@ -4,27 +4,113 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LabCard from '../components/LabCard.astro';
 import PostList from '../components/PostList.astro';
+import ProjectList from '../components/ProjectList.astro';
 import { labs } from '../data/labs';
+import { profile, profileFacts, profileLinks } from '../data/profile';
 
 const latestPosts = (await getCollection('posts', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
+
+/*
+ * Hai mục dưới đây chỉ hiện khi có dữ liệu thật trong `src/data/profile.ts`. Khi chưa có thì
+ * ẩn hẳn — không để lại khối rỗng hay câu "sẽ bổ sung".
+ */
+const hasAbout = profile.about.length > 0 || profileFacts.length > 0 || profile.skills.length > 0;
+const hasProjects = profile.projects.length > 0;
 ---
 
-<BaseLayout title="Dev Lab — blog và lab kỹ thuật">
-  <section class="section container">
-    <h1>Dev Lab</h1>
-    <p class="lead">
-      Hệ sinh thái blog và lab kỹ thuật: ghi chép, thử nghiệm có số đo và giải thích cơ chế của các
-      công nghệ trong công việc hằng ngày — frontend, backend, DevOps và những chủ đề liên quan.
-    </p>
-    <p>
-      <a href="/labs">Xem danh sách lab →</a>
-    </p>
+<BaseLayout title="Dev Lab — blog, lab và portfolio">
+  {/*
+    Hero là lời chào, không phải giới thiệu hệ sinh thái: trang chủ giờ là portfolio cá nhân,
+    nên mở đầu bằng "ai đang viết" rồi mới tới "chỗ này là gì" (khối Dev Lab ngay dưới).
+    Lời chào lấy tên từ `profile.ts`, câu slogan lấy từ `profile.tagline`.
+  */}
+  <section class="section section--hero container" data-animate>
+    <div class="measure">
+      <h1 style="view-transition-name: page-title">Xin chào, tui là {profile.name}</h1>
+      {profile.tagline && <p class="lead">{profile.tagline}</p>}
+      {profile.slogan && <p class="kicker kicker--accent">// {profile.slogan}</p>}
+      {/* Ba lối vào chính; cả ba đều có mũi tên để cùng một kiểu. */}
+      <p class="link-row">
+        <a href="/labs">
+          Xem các lab{' '}
+          <span class="cta__arrow" aria-hidden="true">
+            →
+          </span>
+        </a>
+        <a href="/bai-viet">
+          Đọc bài viết{' '}
+          <span class="cta__arrow" aria-hidden="true">
+            →
+          </span>
+        </a>
+        <a href="/lien-he">
+          Liên hệ{' '}
+          <span class="cta__arrow" aria-hidden="true">
+            →
+          </span>
+        </a>
+      </p>
+    </div>
   </section>
 
-  <section class="section container container--wide">
-    <h2>Các lab</h2>
+  <section class="section container" data-animate>
+    <div class="measure">
+      <p class="kicker">~/devlab{profile.role ? ` · ${profile.role}` : ''}</p>
+      <h2>Dev Lab</h2>
+      <p>
+        Hệ sinh thái blog và lab kỹ thuật: ghi chép, thử nghiệm có số đo và giải thích cơ chế của
+        các công nghệ trong công việc hằng ngày — frontend, backend, DevOps và những chủ đề liên
+        quan.
+      </p>
+      <p class="kicker kicker--accent">// Học bằng cách xây, rồi đo lại những gì mình đã xây.</p>
+      <p class="section-intro">
+        Mỗi lab tập trung vào một công nghệ hoặc một lĩnh vực, có stack và cách triển khai riêng.
+      </p>
+    </div>
+  </section>
+
+  {hasAbout && (
+    <section class="section container" data-animate>
+      <div class="measure">
+        <p class="eyebrow">Về mình</p>
+        {profile.about.map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
+        {profileFacts.length > 0 && (
+          <dl class="facts">
+            {profileFacts.map((fact) => (
+              <div class="facts__row">
+                <dt class="facts__label">{fact.label}</dt>
+                <dd class="facts__values">
+                  {fact.items.map((item) => (
+                    <span class="facts__chip">{item}</span>
+                  ))}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        )}
+        {profile.skills.length > 0 && (
+          <>
+            <p class="facts__label">Kỹ năng</p>
+            <ul class="skill-list">
+              {profile.skills.map((skill) => (
+                <li class="tag">{skill}</li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
+    </section>
+  )}
+
+  <section class="section container" data-animate>
+    <div class="section-head measure">
+      <h2>Các lab</h2>
+      <span class="section-note">mỗi lab là một site riêng</span>
+    </div>
     <div class="lab-grid">
       {labs.map((lab) => (
         <LabCard lab={lab} />
@@ -32,30 +118,74 @@ const latestPosts = (await getCollection('posts', ({ data }) => !data.draft))
     </div>
   </section>
 
-  <section class="section container container--wide">
-    <h2>Bài viết mới</h2>
-    {latestPosts.length === 0 ? (
-      <p class="meta">Chưa có bài viết nào.</p>
-    ) : (
-      <>
-        <PostList posts={latestPosts} />
-        <p>
-          <a href="/bai-viet">Tất cả bài viết →</a>
-        </p>
-      </>
-    )}
+  <section class="section container" data-animate>
+    <div class="measure">
+      <p class="eyebrow">Bài viết mới</p>
+      {latestPosts.length === 0 ? (
+        <p class="meta">Chưa có bài viết nào.</p>
+      ) : (
+        <>
+          <PostList posts={latestPosts} />
+          <p class="link-row">
+            <a href="/bai-viet">
+              Tất cả bài viết{' '}
+              <span class="cta__arrow" aria-hidden="true">
+                →
+              </span>
+            </a>
+          </p>
+        </>
+      )}
+    </div>
   </section>
 
-  <section class="section container">
-    <h2>Dự án khác</h2>
-    <p class="meta">Danh sách này sẽ được bổ sung khi có dự án đủ chất lượng để công khai.</p>
+  {hasProjects && (
+    <section class="section container" data-animate>
+      <div class="measure">
+        <p class="eyebrow">Dự án khác</p>
+        <ProjectList projects={profile.projects} />
+      </div>
+    </section>
+  )}
+
+  <section class="section container" data-animate>
+    <div class="measure">
+      <p class="eyebrow">Liên hệ</p>
+      <p class="section-intro">
+        Góp ý về nội dung, báo lỗi trong bài viết hoặc trao đổi về kỹ thuật đều được hoan nghênh.
+      </p>
+      <p class="link-row">
+        {profileLinks.map((link) => (
+          <a href={link.href} rel={link.href.startsWith('http') ? 'me' : undefined}>
+            {link.label}
+          </a>
+        ))}
+        <a href="/lien-he">trang liên hệ</a>
+      </p>
+    </div>
   </section>
 </BaseLayout>
 
 <style>
-  .lab-grid {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  .section-intro {
+    margin-bottom: 1rem;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  /*
+   * Bảng facts giờ là component dùng chung, khai báo ở `global.css` (mục 6 của
+   * docs/DESIGN_SYSTEM.md).
+   */
+  .skill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-muted);
   }
 </style>

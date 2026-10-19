@@ -2,28 +2,30 @@
 import ThemeToggle from './ThemeToggle.astro';
 
 const navItems = [
-  { href: '/', label: 'Trang chủ' },
-  { href: '/labs', label: 'Labs' },
-  { href: '/bai-viet', label: 'Bài viết' },
-  { href: '/lien-he', label: 'Liên hệ' },
+  { href: '/labs', label: 'labs' },
+  { href: '/bai-viet', label: 'bài viết' },
+  { href: '/lien-he', label: 'liên hệ' },
 ];
 
 const currentPath = Astro.url.pathname;
-const isActive = (href: string) =>
-  href === '/' ? currentPath === '/' : currentPath.startsWith(href);
+const isActive = (href: string) => currentPath.startsWith(href);
 ---
 
-<header class="site-header">
-  <div class="container container--wide site-header__inner">
+<header class="site-header" data-site-header transition:persist>
+  <div class="site-header__bar">
     <a class="site-header__brand" href="/">
-      Dev Lab
+      DevLab.
     </a>
 
     <nav class="site-nav" aria-label="Điều hướng chính">
       <ul class="site-nav__list">
         {navItems.map((item) => (
           <li>
-            <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+            <a
+              href={item.href}
+              data-nav-link={item.href}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+            >
               {item.label}
             </a>
           </li>
@@ -31,53 +33,315 @@ const isActive = (href: string) =>
       </ul>
     </nav>
 
-    <ThemeToggle />
+    <div class="site-header__actions">
+      <ThemeToggle />
+    </div>
   </div>
 </header>
 
+<script>
+  /*
+   * Header dính theo kiểu ngockhoi96.dev. Hai trạng thái, hình ảnh nằm trong CSS:
+   *   <html data-scrolled>  — quá ngưỡng: nền mờ + blur, thanh thu lại thành capsule
+   *   <header data-hidden>  — cuộn xuống: trượt lên khỏi màn hình; cuộn lên: hiện lại
+   *
+   * Listener đặt ở module/window nên sống qua mọi lần điều hướng của ClientRouter;
+   * phần tử header được truy vấn lại mỗi lần vì Astro có thể thay nó khi chuyển trang.
+   */
+  /*
+   * Ngưỡng:
+   *   SCROLLED_AT  — quá mức này thì hiện capsule
+   *   HIDE_AFTER   — phải cuộn xa hơn mức này mới bắt đầu ẩn header
+   *   HIDE_DELTA   — đủ đà cuộn mới đổi trạng thái (chống rung khi cuộn nhẹ)
+   *   HIDE_COOLDOWN — khoảng nghỉ tối thiểu giữa hai lần ẩn liên tiếp
+   */
+  const SCROLLED_AT = 4;
+  const HIDE_AFTER = 320;
+  const HIDE_DELTA = 16;
+  const HIDE_COOLDOWN = 250;
+
+  const prefersReducedMotion = globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let lastY = 0;
+  let lastHideAt = 0;
+
+  const updateHeader = (): void => {
+    const header = document.querySelector<HTMLElement>('[data-site-header]');
+    if (!header) return;
+
+    const y = Math.max(globalThis.scrollY, 0);
+    const scrolled = String(y > SCROLLED_AT);
+
+    // Chỉ ghi khi giá trị đổi: ghi lại mỗi frame cuộn sẽ invalidate style của <html>.
+    if (document.documentElement.dataset.scrolled !== scrolled) {
+      document.documentElement.dataset.scrolled = scrolled;
+    }
+
+    // Người dùng yêu cầu giảm chuyển động: giữ header luôn hiện, không ẩn theo cuộn.
+    if (prefersReducedMotion) return;
+
+    const delta = y - lastY;
+    const isHidden = header.dataset.hidden === 'true';
+    const show = () => {
+      if (isHidden) header.dataset.hidden = 'false';
+    };
+
+    if (y <= HIDE_AFTER) {
+      // Gần đầu trang thì luôn hiện, bất kể hướng cuộn.
+      show();
+    } else if (delta < -HIDE_DELTA) {
+      // Cuộn lên: hiện lại ngay, không chờ cooldown.
+      show();
+    } else if (delta > HIDE_DELTA && !isHidden && performance.now() - lastHideAt > HIDE_COOLDOWN) {
+      header.dataset.hidden = 'true';
+      lastHideAt = performance.now();
+    }
+
+    lastY = y;
+  };
+
+  /*
+   * Header dùng `transition:persist` nên DOM được giữ nguyên qua các lần chuyển trang
+   * (không render lại). Vì vậy `aria-current` phải tự cập nhật ở đây.
+   */
+  const syncActiveNav = (): void => {
+    const { pathname } = globalThis.location;
+
+    for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')) {
+      const href = link.dataset.navLink;
+      if (href && pathname.startsWith(href)) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    }
+  };
+
+  globalThis.addEventListener('scroll', updateHeader, { passive: true });
+
+  document.addEventListener('astro:page-load', () => {
+    lastY = Math.max(globalThis.scrollY, 0);
+    updateHeader();
+    syncActiveNav();
+  });
+
+  updateHeader();
+  syncActiveNav();
+</script>
+
 <style>
+  /*
+   * Header không có nền riêng: nền đục đặt trên thanh bar để lúc cuộn, phần ngoài
+   * capsule là trong suốt (nếu không sẽ thấy một hình chữ nhật sau bốn góc bo).
+   *
+   * `--header-inset` là khoảng hở phía trên capsule khi đã cuộn; chỉ bật từ 640px.
+   */
   .site-header {
-    border-bottom: 1px solid var(--color-border);
+    --header-inset: 0px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    transition:
+      transform var(--duration-base) var(--ease-standard),
+      padding var(--duration-chrome) var(--ease-standard);
   }
 
-  .site-header__inner {
-    display: flex;
-    flex-wrap: wrap;
+  /*
+   * Khi đã cuộn, capsule được đẩy xuống một khoảng bằng `--header-inset`. Khoảng hở đó
+   * nằm trong luồng nên nội dung đang trôi phía sau sẽ lộ ra, cần một dải nền đục che
+   * lại. Đặt trên pseudo-element `position: absolute` nên không làm đổi chiều cao
+   * header — không reflow. Ở trạng thái đầu, capsule phủ lên dải này nên không thấy.
+   */
+  .site-header::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: var(--header-inset);
+    background-color: var(--color-bg);
+  }
+
+  /*
+   * Cuộn xuống: header trượt lên khỏi màn hình. Trừ thêm `--header-inset` vì capsule
+   * nhô ra dưới đáy header đúng một khoảng bằng nó, cộng thêm 2px để chắc chắn không
+   * còn sót một vệt mảnh do làm tròn dưới pixel.
+   */
+  .site-header[data-hidden='true'] {
+    transform: translateY(calc(-100% - var(--header-inset) - 2px));
+  }
+
+  .site-header__bar {
+    /*
+     * `top` chỉ dịch chuyển khi vẽ, không đổi layout — dùng để đẩy capsule xuống mà
+     * không đẩy nội dung phía dưới.
+     */
+    position: relative;
+    top: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'brand actions'
+      'nav nav';
     align-items: center;
-    gap: 1rem;
-    padding-block: 1rem;
+    gap: 10px 16px;
+    width: 100%;
+    max-width: var(--width-page);
+    margin-inline: auto;
+    /* Chiều cao giữ nguyên ở cả hai trạng thái để không đẩy nội dung phía dưới (reflow dọc). */
+    padding: 14px var(--space-inline) 12px;
+    /*
+     * Nền đục ở trạng thái đầu để che nội dung phía sau header ngay cả khi chưa vượt ngưỡng
+     * cuộn. Blur bật thường trực: bật/tắt theo trạng thái cuộn sẽ phải tạo lại compositing
+     * layer giữa chừng, gây giật; ở trạng thái đầu nền đục nên blur không nhìn thấy.
+     */
+    background-color: var(--color-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid transparent;
+    border-bottom-color: var(--color-border);
+    border-radius: 0;
+    transition:
+      background-color var(--duration-chrome) var(--ease-standard),
+      border-color var(--duration-chrome) var(--ease-standard),
+      border-radius var(--duration-chrome) var(--ease-standard),
+      box-shadow var(--duration-chrome) var(--ease-standard),
+      top var(--duration-chrome) var(--ease-standard),
+      max-width var(--duration-chrome) var(--ease-standard);
+  }
+
+  @media (min-width: 640px) {
+    /* Capsule chỉ có từ 640px, nên khoảng hở phía trên cũng chỉ bật từ đây. */
+    .site-header {
+      --header-inset: 12px;
+    }
+
+    .site-header__bar {
+      grid-template-columns: 1fr auto 1fr;
+      grid-template-areas: 'brand nav actions';
+      padding-block: 14px;
+    }
+  }
+
+  /*
+   * Đã cuộn: nền bán trong suốt + blur để nội dung trôi phía dưới, thanh thu lại thành
+   * capsule (hẹp hơn, bo góc, đủ viền) và hạ xuống `--header-inset`. Đây là ngoại lệ có
+   * chủ ý của quy tắc "chỉ animate opacity/transform": chỉ một phần tử nhỏ, chỉ đổi
+   * kích thước theo chiều ngang và dịch chuyển bằng `top` (đều không làm đổi chiều cao
+   * trang), và chỉ chạy khi vượt ngưỡng cuộn.
+   */
+  html[data-scrolled='true'] .site-header__bar {
+    background-color: color-mix(in oklab, var(--color-bg) 86%, transparent);
+    border-color: var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 1px 3px color-mix(in oklab, var(--color-text) 8%, transparent);
+  }
+
+  @media (min-width: 640px) {
+    /* Chừa lề hai bên để capsule không dính mép màn hình ở viewport hẹp. */
+    html[data-scrolled='true'] .site-header {
+      padding-inline: var(--space-inline);
+    }
+
+    /*
+     * Hẹp đúng bằng 2 lần padding ngang, nên ở màn hình rộng capsule trùng khít mép
+     * khối nội dung; trên màn hình hẹp thì nó chạm đúng mép đó luôn.
+     */
+    html[data-scrolled='true'] .site-header__bar {
+      top: var(--header-inset);
+      max-width: calc(var(--width-page) - 2 * var(--space-inline));
+    }
   }
 
   .site-header__brand {
+    grid-area: brand;
+    justify-self: start;
     font-family: var(--font-display);
-    font-size: var(--text-lg);
+    font-size: var(--text-brand);
     font-weight: 400;
+    /*
+     * Chữ display có ascent/descent rộng, nên `line-height: normal` ở cỡ này sẽ cao hơn
+     * mọi thứ còn lại trong thanh và đẩy header cao lên. Ghim `line-height: 1` để hộp
+     * dòng đúng bằng cỡ chữ; nét chữ tràn nhẹ ra ngoài hộp nhưng nằm trong padding của
+     * thanh nên không cắt và không đổi chiều cao.
+     */
+    line-height: 1;
     color: var(--color-text);
-  }
-
-  .site-header__brand:hover {
-    text-decoration: none;
+    /* Brand không dùng hiệu ứng gạch chân mọc dần. */
+    background-image: none;
+    transition: color var(--duration-fast) var(--ease-standard);
   }
 
   .site-nav {
-    flex: 1;
+    grid-area: nav;
+    justify-self: start;
+  }
+
+  @media (min-width: 640px) {
+    .site-nav {
+      justify-self: center;
+    }
   }
 
   .site-nav__list {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 4px;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .site-nav__list a {
+    position: relative;
+    isolation: isolate;
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
-    font-size: var(--text-sm);
+    background-image: none;
+    transition: color var(--duration-fast) var(--ease-standard);
+  }
+
+  /* Nền pill nở ra phía sau chữ (kiểu ngockhoi96.dev). */
+  .site-nav__list a::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background-color: color-mix(in oklab, var(--color-accent) 16%, transparent);
+    opacity: 0;
+    transform: scale(0.85);
+    transition:
+      opacity var(--duration-base) var(--ease-standard),
+      transform var(--duration-base) var(--ease-standard);
   }
 
   .site-nav__list a[aria-current='page'] {
-    color: var(--color-text);
+    color: var(--color-accent);
+  }
+
+  .site-nav__list a[aria-current='page']::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Chỉ áp hover trên thiết bị có con trỏ thật, tránh dính trạng thái trên cảm ứng. */
+  @media (hover: hover) and (pointer: fine) {
+    .site-header__brand:hover,
+    .site-nav__list a:hover {
+      color: var(--color-accent);
+    }
+
+    .site-nav__list a:hover::before {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .site-header__actions {
+    grid-area: actions;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 </style>

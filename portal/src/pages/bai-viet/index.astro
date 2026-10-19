@@ -10,13 +10,15 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
 ---
 
 <BaseLayout title="Bài viết — Dev Lab" description="Tất cả bài viết kỹ thuật của Dev Lab.">
-  <section class="section container container--wide">
-    <h1>Bài viết</h1>
-    <p class="lead">
-      Ghi chép, thử nghiệm và giải thích cơ chế. Mỗi bài có đủ metadata: loại, lab, tag và ngày
-      viết.
-    </p>
+  <section class="section container" data-animate>
+    <div class="measure">
+      <h1 style="view-transition-name: page-title">Bài viết</h1>
+      <p class="lead">
+        Ghi chép, thử nghiệm và giải thích cơ chế. Mỗi bài có đủ metadata: loại, lab, tag và ngày
+        viết.
+      </p>
 
-    {posts.length === 0 ? <p class="meta">Chưa có bài viết nào.</p> : <PostList posts={posts} />}
+      {posts.length === 0 ? <p class="meta">Chưa có bài viết nào.</p> : <PostList posts={posts} />}
+    </div>
   </section>
 </BaseLayout>
