@@ -4,6 +4,7 @@ Lịch sử các vòng chỉnh, chuyển từ `ROADMAP.md` sang đây để road
 Agent **không cần đọc** file này trừ khi cần biết một giá trị từng đổi thế nào. Lý do của các quyết định
 đáng nhớ nằm ở [`adr/`](adr/README.md); lịch sử đầy đủ nằm ở `git log`.
 
+- **2026-10-20**: Viết hoa chữ đầu các nhãn đang để thường: nav header (`Labs`, `Bài viết`, `Liên hệ`), link `Trang liên hệ`, nhãn GitHub, ghi chú section và hàng đáy footer (`Mã nguồn · Deploy trên Cloudflare`); giữ chữ thường cho handle, URL và nhãn bảng facts
 - **2026-10-19**: Gộp ba tầng bề rộng còn hai: bỏ `--width-prose`, cột đọc bài viết dùng chung `--width-content`; hạ `--width-page` 1280px → 1120px và đặt khối chữ 800px để trang chủ bớt lệch trái và nội dung chiếm rõ hơn bề ngang khung
 - **2026-10-17**: Khởi tạo roadmap, đánh dấu giai đoạn 1 đang thực hiện
 - **2026-10-17**: Thiết lập pnpm workspace, ESLint/Prettier/TS strict, CI. Chuyển project Astro vào `portal/`, thêm design tokens + chuyển theme, thêm `labs/react-lab`

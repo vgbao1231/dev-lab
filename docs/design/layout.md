@@ -78,11 +78,11 @@
   1. **Brand** — tên font display + một dòng mô tả (`--text-sm`, muted, tối đa 34ch).
   2. **Nội dung** — bốn route nội bộ (Trang chủ, Bài viết, Labs, Liên hệ).
   3. **Lab** — sinh thẳng từ `data/labs.ts`, không chép tay.
-  4. **Liên hệ** — sinh từ `data/profile.ts` (GitHub, email nếu có) + link `trang liên hệ`.
+  4. **Liên hệ** — sinh từ `data/profile.ts` (GitHub, email nếu có) + link `Trang liên hệ`.
 
   Mỗi cột là một `<nav aria-labelledby>` trỏ vào nhãn `.eyebrow` của cột. Link footer để màu
   `--color-text-muted`, hover mới lên `--color-link` — bốn cột cùng màu `--color-link` sẽ quá ồn.
-  Hàng đáy ngăn bằng `border-top` 1px: `© [năm] [Tên] · Dev Lab` bên trái, `mã nguồn · deploy trên
+  Hàng đáy ngăn bằng `border-top` 1px: `© [năm] [Tên] · Dev Lab` bên trái, `Mã nguồn · Deploy trên
 Cloudflare` bên phải. Nền tảng dữ liệu: xem mục 6 "Nguồn thông tin portfolio" trong `components.md`.
 
 - **Sticky footer:** `body` là cột flex cao ít nhất `100dvh`, `main` giãn ra ở giữa

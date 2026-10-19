@@ -55,7 +55,7 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
 - [x] Trang chi tiết bài viết: thanh tiến độ đọc ở mép trên viewport (không hiện số phần trăm)
       — trình duyệt hỗ trợ thì chạy bằng `animation-timeline: scroll()` trên compositor, không JS mỗi frame
 - [x] Sticky footer: nội dung ngắn hơn viewport thì footer vẫn nằm ở đáy viewport
-- [x] Footer bốn cột (brand · Nội dung · Lab · Liên hệ) + hàng đáy `© · mã nguồn · deploy`
+- [x] Footer bốn cột (brand · Nội dung · Lab · Liên hệ) + hàng đáy `© · Mã nguồn · Deploy`
 - [x] Trang chủ thành portfolio: hero có vai trò + ba CTA, thêm mục "Về mình" (bảng facts, kỹ năng), "Dự án khác" lấy từ dữ liệu thật
 - [x] `src/data/profile.ts` làm nguồn duy nhất cho thông tin cá nhân; trường trống thì UI tự bỏ qua
 - [ ] Mục "So sánh giữa các stack" trên trang chủ — tạm bỏ 2026-10-18, làm cùng mục 1.5 khi có số đo thật
