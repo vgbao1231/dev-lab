@@ -5,8 +5,9 @@
 
 ## 5. Bố cục
 
-- **Hai tầng bề rộng.** `--width-page` (1280px) là khung ngoài — header, section, lưới, bảng.
-  `--width-content` (720px) là khối chữ (`.measure`) để dòng không quá dài. Nội dung trong khung
+- **Hai tầng bề rộng.** `--width-page` (1120px) là khung ngoài — header, section, lưới, bảng.
+  `--width-content` (800px) là khối chữ (`.measure`) để dòng không quá dài; cột đọc của bài
+  viết (`.prose-col`) dùng chung giá trị này, không có tầng thứ ba. Nội dung trong khung
   căn **trái**, nên khối chữ và lưới luôn thẳng hàng với nhau.
 - **Section ngăn bằng đường kẻ mỏng** ở cuối mỗi section. Đường kẻ vẽ bằng `::after` với
   `inset-inline: var(--space-inline)`, nên chỉ chạy trong bề rộng khối nội dung (không tràn ra
@@ -60,11 +61,11 @@
   (`repeat(auto-fit, minmax(min(340px, 100%), 1fr))`, gap 12px) — 1 cột khi hẹp, 2–3 cột khi rộng.
 - **Trang chi tiết bài viết:** bố cục do `.post-layout` quyết định, `justify-content: center` để
   cả nhóm cột căn giữa khung.
-  - Dưới 1200px: **một cột** — cột đọc (`.prose-col`, `--width-prose` 800px), mục lục là khối ở
+  - Dưới 1200px: **một cột** — cột đọc (`.prose-col`, `--width-content` 800px), mục lục là khối ở
     đầu bài.
   - Từ 1200px: **hai cột** — cột đọc 800px + cột mục lục `--width-toc` (220px), cách nhau 40px;
     cột mục lục dính dưới header nên luôn nhìn thấy.
-  - Các khối chữ ngắn ở trang khác vẫn dùng `.measure` (720px) và căn trái để thẳng hàng với lưới
+  - Các khối chữ ngắn ở trang khác cũng dùng `.measure` (800px) và căn trái để thẳng hàng với lưới
     bên dưới. Thanh tiến độ đọc ghim ở mép trên viewport (mục 6, `post-page.md`).
 - **Thứ tự section trang chủ:** hero (lời chào) → Dev Lab → Về mình → Các lab → Bài viết mới →
   Dự án khác → Liên hệ.
@@ -92,9 +93,8 @@ Cloudflare` bên phải. Nền tảng dữ liệu: xem mục 6 "Nguồn thông t
 
 | Token             | Giá trị     | Dùng cho                                                                     |
 | ----------------- | ----------- | ---------------------------------------------------------------------------- |
-| `--width-page`    | 1280px      | khung ngoài: header, section, lưới, bảng                                     |
-| `--width-content` | 720px       | khối chữ ngắn (`.measure`)                                                   |
-| `--width-prose`   | 800px       | cột đọc của bài viết (`.prose-col`)                                          |
+| `--width-page`    | 1120px      | khung ngoài: header, section, lưới, bảng                                     |
+| `--width-content` | 800px       | khối chữ ngắn (`.measure`) và cột đọc bài viết (`.prose-col`)                |
 | `--width-toc`     | 220px       | cột mục lục bài viết (chỉ từ 1200px)                                         |
 | `--offset-header` | 96px        | chừa chỗ cho header dính: `scroll-margin-top` của heading, `top` của mục lục |
 | `--space-inline`  | 20/24/32px  | padding ngang container theo breakpoint                                      |

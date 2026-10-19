@@ -35,7 +35,7 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
 ### 1.3 Cổng chính (portal)
 
 - [x] Khởi tạo project Astro trong thư mục `portal/`
-- [x] Layout chung: header dính, footer, container hai tầng bề rộng (page 1280px + khối chữ 720px)
+- [x] Layout chung: header dính, footer, container hai tầng bề rộng (page 1120px + khối chữ 800px)
 - [x] Trang chủ: hero, danh sách lab, bài viết mới, dự án khác, liên hệ
 - [x] Component thẻ lab (trạng thái: đang chạy, sắp tới, dự kiến)
 - [x] Trang danh sách bài viết (`/bai-viet`) và trang chi tiết bài viết (`/bai-viet/<slug>`)
