@@ -5,7 +5,7 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
 **Giai đoạn hiện tại: Giai đoạn 1 — Nền tảng và lab React đầu tiên** 🟡 đang thực hiện
 
 **Còn mở ở giai đoạn 1:** 1.3 menu mobile + tìm kiếm cho header (chưa cần), mục "So sánh giữa các stack"
-(tạm bỏ), kiểm tra responsive trên mobile · 1.5 ba bài viết + trang so sánh · 1.6 toàn bộ phần Deploy.
+(tạm bỏ) · 1.5 ba bài viết + trang so sánh · 1.6 toàn bộ phần Deploy.
 
 ---
 
@@ -59,7 +59,8 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
 - [x] Trang chủ thành portfolio: hero có vai trò + ba CTA, thêm mục "Về mình" (bảng facts, kỹ năng), "Dự án khác" lấy từ dữ liệu thật
 - [x] `src/data/profile.ts` làm nguồn duy nhất cho thông tin cá nhân; trường trống thì UI tự bỏ qua
 - [ ] Mục "So sánh giữa các stack" trên trang chủ — tạm bỏ 2026-10-18, làm cùng mục 1.5 khi có số đo thật
-- [ ] Kiểm tra responsive trên mobile (breakpoint nền đã có sẵn)
+- [x] Kiểm tra responsive trên mobile (breakpoint nền đã có sẵn)
+      — xác minh 360/390/414px ở cả light và dark: nav một hàng, lưới lab 1 cột, TOC ở đầu bài, chip facts không tràn; không có tràn ngang ở cấp trang
 
 ### 1.4 Hệ thống nội dung
 
