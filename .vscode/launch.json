@@ -2,8 +2,14 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "./node_modules/.bin/astro dev",
-      "name": "Development server",
+      "command": "pnpm dev",
+      "name": "Portal dev server",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
+      "command": "pnpm --filter react-lab dev",
+      "name": "React Lab dev server",
       "request": "launch",
       "type": "node-terminal"
     }

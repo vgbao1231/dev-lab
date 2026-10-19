@@ -1,0 +1,93 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatPostDate, postTypeLabels } from '../../data/content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+export type Props = {
+  post: CollectionEntry<'posts'>;
+};
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={`${post.data.title} — Dev Lab`} description={post.data.summary}>
+  <article class="section container">
+    <header class="post-header">
+      <h1>{post.data.title}</h1>
+      <p class="meta">
+        {formatPostDate(post.data.date)} · {postTypeLabels[post.data.type]} · {post.data.lab}
+      </p>
+      <ul class="post-header__tags meta">
+        {post.data.tags.map((tag) => (
+          <li class="tag">{tag}</li>
+        ))}
+      </ul>
+      <p class="lead">{post.data.summary}</p>
+    </header>
+
+    <div class="post-body">
+      <Content />
+    </div>
+
+    <p>
+      <a href="/bai-viet">← Tất cả bài viết</a>
+    </p>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-header__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+  }
+
+  .tag {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.05rem 0.4rem;
+  }
+
+  .post-body :global(h2) {
+    margin-top: 2rem;
+  }
+
+  .post-body :global(pre) {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    overflow-x: auto;
+  }
+
+  .post-body :global(table) {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: var(--text-sm);
+  }
+
+  .post-body :global(th),
+  .post-body :global(td) {
+    border: 1px solid var(--color-border);
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+  }
+
+  .post-body :global(th) {
+    color: var(--color-text-muted);
+  }
+</style>

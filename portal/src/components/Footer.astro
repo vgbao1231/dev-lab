@@ -1,0 +1,29 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container container--wide site-footer__inner">
+    <p class="meta">© {year} Dev Lab — Gura</p>
+    <p class="meta">Nội dung viết bằng tiếng Việt, thuật ngữ kỹ thuật giữ nguyên tiếng Anh.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--color-border);
+    margin-top: var(--space-section);
+  }
+
+  .site-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-block: 1.5rem;
+  }
+
+  .site-footer__inner p {
+    margin: 0;
+  }
+</style>

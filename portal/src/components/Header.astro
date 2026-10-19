@@ -1,0 +1,83 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+const navItems = [
+  { href: '/', label: 'Trang chủ' },
+  { href: '/labs', label: 'Labs' },
+  { href: '/bai-viet', label: 'Bài viết' },
+  { href: '/lien-he', label: 'Liên hệ' },
+];
+
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? currentPath === '/' : currentPath.startsWith(href);
+---
+
+<header class="site-header">
+  <div class="container container--wide site-header__inner">
+    <a class="site-header__brand" href="/">
+      Dev Lab
+    </a>
+
+    <nav class="site-nav" aria-label="Điều hướng chính">
+      <ul class="site-nav__list">
+        {navItems.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <ThemeToggle />
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .site-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1rem;
+  }
+
+  .site-header__brand {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 400;
+    color: var(--color-text);
+  }
+
+  .site-header__brand:hover {
+    text-decoration: none;
+  }
+
+  .site-nav {
+    flex: 1;
+  }
+
+  .site-nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-nav__list a {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .site-nav__list a[aria-current='page'] {
+    color: var(--color-text);
+  }
+</style>

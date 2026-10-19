@@ -1,0 +1,83 @@
+---
+import { type Lab, labStatusLabel } from '../data/labs';
+
+export type Props = {
+  lab: Lab;
+};
+
+const { lab } = Astro.props;
+---
+
+<article class="lab-card">
+  <div class="lab-card__heading">
+    <h3 class="lab-card__title">{lab.href ? <a href={lab.href}>{lab.name}</a> : lab.name}</h3>
+    <p class="meta lab-card__status">
+      <span class="lab-card__dot" aria-hidden="true"></span>
+      {labStatusLabel[lab.status]}
+    </p>
+  </div>
+
+  <p class="lab-card__summary">{lab.summary}</p>
+
+  <ul class="lab-card__stack meta">
+    {lab.stack.map((item) => (
+      <li>{item}</li>
+    ))}
+  </ul>
+</article>
+
+<style>
+  .lab-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+  }
+
+  .lab-card__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .lab-card__title {
+    font-size: var(--text-lg);
+    margin: 0;
+  }
+
+  .lab-card__status {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+  }
+
+  /* Trạng thái không chỉ phân biệt bằng màu: luôn kèm nhãn chữ */
+  .lab-card__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--color-text-muted);
+  }
+
+  .lab-card__summary {
+    margin: 0.5rem 0;
+  }
+
+  .lab-card__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .lab-card__stack li {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.1rem 0.4rem;
+  }
+</style>

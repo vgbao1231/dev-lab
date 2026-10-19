@@ -2,6 +2,7 @@
 dist/
 # generated types
 .astro/
+*.tsbuildinfo
 
 # dependencies
 node_modules/
@@ -12,13 +13,24 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# caches
+.eslintcache
+.cache/
+
+# công cụ / output của deploy và test
+.wrangler/
+coverage/
 
 # environment variables
 .env
-.env.production
+.env.*
+!.env.example
 
-# macOS-specific files
+# editor / OS
 .DS_Store
-
-# jetbrains setting folder
 .idea/
+
+# OpenCode
+# opencode.jsonc được track để dùng chung cho repo.
+# Cấu hình riêng theo máy đặt ở ~/.config/opencode/opencode.json(c), không nằm trong repo.
+

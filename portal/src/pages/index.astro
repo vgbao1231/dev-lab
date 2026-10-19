@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content';
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LabCard from '../components/LabCard.astro';
+import PostList from '../components/PostList.astro';
+import { labs } from '../data/labs';
+
+const latestPosts = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout title="Dev Lab — blog và lab kỹ thuật">
+  <section class="section container">
+    <h1>Dev Lab</h1>
+    <p class="lead">
+      Hệ sinh thái blog và lab kỹ thuật: ghi chép, thử nghiệm có số đo và giải thích cơ chế của các
+      công nghệ trong công việc hằng ngày — frontend, backend, DevOps và những chủ đề liên quan.
+    </p>
+    <p>
+      <a href="/labs">Xem danh sách lab →</a>
+    </p>
+  </section>
+
+  <section class="section container container--wide">
+    <h2>Các lab</h2>
+    <div class="lab-grid">
+      {labs.map((lab) => (
+        <LabCard lab={lab} />
+      ))}
+    </div>
+  </section>
+
+  <section class="section container container--wide">
+    <h2>Bài viết mới</h2>
+    {latestPosts.length === 0 ? (
+      <p class="meta">Chưa có bài viết nào.</p>
+    ) : (
+      <>
+        <PostList posts={latestPosts} />
+        <p>
+          <a href="/bai-viet">Tất cả bài viết →</a>
+        </p>
+      </>
+    )}
+  </section>
+
+  <section class="section container">
+    <h2>Dự án khác</h2>
+    <p class="meta">Danh sách này sẽ được bổ sung khi có dự án đủ chất lượng để công khai.</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .lab-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+</style>

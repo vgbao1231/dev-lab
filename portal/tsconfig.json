@@ -1,0 +1,20 @@
+{
+  /*
+   * KHÔNG dùng `extends` dạng mảng ở đây: Rolldown (Vite dùng trong build của Astro)
+   * resolve sai `extends` dạng mảng và build thất bại. Vì vậy kế thừa
+   * `astro/tsconfigs/strict` và khai báo lại các cờ strict của `tsconfig.base.json`.
+   */
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  }
+}

@@ -1,0 +1,30 @@
+/*
+ * Style tối thiểu, chỉ dùng cho bố cục và typography cơ bản.
+ *
+ * Cách chia sẻ design tokens giữa portal và các lab chưa được chốt
+ * (xem docs/PROJECT_OVERVIEW.md, mục "Những điều chưa quyết định").
+ * Khi chốt, thay giá trị dưới đây bằng CSS variables từ docs/DESIGN_SYSTEM.md.
+ */
+
+:root {
+  --lab-font-body: 'Inter', system-ui, sans-serif;
+  --lab-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --lab-content-width: 680px;
+}
+
+body {
+  margin: 0;
+  padding: 40px 24px;
+  font-family: var(--lab-font-body);
+  line-height: 1.6;
+}
+
+main {
+  max-width: var(--lab-content-width);
+  margin: 0 auto;
+}
+
+code {
+  font-family: var(--lab-font-mono);
+  font-size: 0.875em;
+}

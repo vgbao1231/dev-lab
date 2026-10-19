@@ -1,0 +1,79 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { availableThemes, defaultThemeId } from '../data/themes';
+
+export type Props = {
+  title: string;
+  description?: string;
+};
+
+const { title, description = 'Dev Lab — blog và lab kỹ thuật.' } = Astro.props;
+
+const themeIds = availableThemes.map((theme) => theme.id);
+
+// Chạy trước khi vẽ để tránh nháy màu. Phải là script inline, không qua bundle.
+const themeInitScript = `
+(() => {
+  const root = document.documentElement;
+  const themeIds = ${JSON.stringify(themeIds)};
+  const defaultThemeId = ${JSON.stringify(defaultThemeId)};
+  const storedTheme = localStorage.getItem('dev-lab:theme');
+  const storedMode = localStorage.getItem('dev-lab:mode');
+  const theme = themeIds.includes(storedTheme) ? storedTheme : defaultThemeId;
+  const preference = storedMode === 'light' || storedMode === 'dark' ? storedMode : 'system';
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const mode = preference === 'system' ? (prefersDark ? 'dark' : 'light') : preference;
+  root.dataset.theme = theme;
+  root.dataset.mode = mode;
+  root.dataset.modePreference = preference;
+})();
+`;
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Patrick+Hand&display=swap"
+    />
+    <script is:inline set:html={themeInitScript} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Bỏ qua tới nội dung
+    </a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    padding: 0.5rem 1rem;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    z-index: 10;
+  }
+
+  .skip-link:focus {
+    left: 0;
+  }
+</style>
