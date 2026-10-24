@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+  <rect width="1200" height="675" fill="var(--color-surface)" />
+  <text x="70" y="86" fill="var(--color-text-muted)" font-family="JetBrains Mono, monospace" font-size="24">
+    lanes · scheduling
+  </text>
+  <g font-family="JetBrains Mono, monospace" font-size="20">
+    <text x="70" y="190" fill="var(--color-text-muted)">Sync</text>
+    <rect x="220" y="164" width="720" height="36" rx="6" fill="var(--color-accent)" opacity="0.9" />
+    <text x="970" y="190" fill="var(--color-accent)">31</text>
+
+    <text x="70" y="270" fill="var(--color-text-muted)">Input</text>
+    <rect x="220" y="244" width="520" height="36" rx="6" fill="var(--color-accent)" opacity="0.62" />
+    <text x="770" y="270" fill="var(--color-text-muted)">input</text>
+
+    <text x="70" y="350" fill="var(--color-text-muted)">Default</text>
+    <rect x="220" y="324" width="380" height="36" rx="6" fill="var(--color-link)" opacity="0.55" />
+    <text x="630" y="350" fill="var(--color-text-muted)">default</text>
+
+    <text x="70" y="430" fill="var(--color-text-muted)">Transition</text>
+    <rect x="220" y="404" width="240" height="36" rx="6" fill="var(--color-link)" opacity="0.35" />
+    <text x="490" y="430" fill="var(--color-text-muted)">transition</text>
+
+    <text x="70" y="510" fill="var(--color-text-muted)">Idle</text>
+    <rect x="220" y="484" width="120" height="36" rx="6" fill="var(--color-border)" />
+    <text x="370" y="510" fill="var(--color-text-muted)">idle</text>
+  </g>
+  <path d="M220 580h760" stroke="var(--color-border)" stroke-width="2" />
+  <path d="M980 562v36" stroke="var(--color-accent)" stroke-width="3" />
+  <text x="220" y="618" fill="var(--color-text-muted)" font-family="JetBrains Mono, monospace" font-size="19">
+    time slice
+  </text>
+  <text x="980" y="618" text-anchor="end" fill="var(--color-accent)" font-family="JetBrains Mono, monospace" font-size="19">
+    yield
+  </text>
+</svg>

@@ -41,17 +41,18 @@ thứ bậc, không phải trang trí. Mục này bổ sung cho phần "Nguyên 
 
 ### 7.3 Danh mục chuyển động
 
-| Nhóm               | Cách triển khai                                                                                                            |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| Chuyển trang       | `<ClientRouter />`; gốc không animate, chỉ `main` cross-fade                                                               |
-| Header dính        | Cuộn xuống: `translateY(-100%)`; cuộn lên: hiện lại. Capsule đổi nền, viền, bo góc, độ rộng                                |
-| Phần tử dùng chung | `view-transition-name` trùng tên ở hai trang, phần tử biến hình thay vì cross-fade                                         |
-| Đổi theme / mode   | `document.startViewTransition()` bọc lúc gán `data-theme` / `data-mode`                                                    |
-| Vào trang lần đầu  | Phần tử `[data-animate]` hiện dần bằng `motion/mini`, stagger theo token                                                   |
-| Nút lên đầu trang  | Hiện dần khi cuộn quá 600px; bấm thì cuộn mượt (hoặc nhảy thẳng) lên đầu                                                   |
-| Mục lục bài viết   | Mọi mục đang trong tầm nhìn được đánh dấu theo vị trí cuộn (có thể nhiều mục cùng lúc)                                     |
-| Tiến độ đọc        | Đường 2px ở mép trên, dài theo phần trăm bài viết đã cuộn; trình duyệt hỗ trợ thì chạy bằng `animation-timeline: scroll()` |
-| Micro-interaction  | Hover link, nav, lab card, hàng bảng — xem mục 7.4                                                                         |
+| Nhóm               | Cách triển khai                                                                                                                                   |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chuyển trang       | `<ClientRouter />`; gốc không animate, chỉ `main` cross-fade                                                                                      |
+| Header dính        | Cuộn xuống: `translateY(-100%)`; cuộn lên: hiện lại. Capsule đổi nền, viền, bo góc, độ rộng                                                       |
+| Phần tử dùng chung | `view-transition-name` trùng tên ở hai trang, phần tử biến hình thay vì cross-fade                                                                |
+| Đổi theme / mode   | `document.startViewTransition()` bọc lúc gán `data-theme` / `data-mode`                                                                           |
+| Vào trang lần đầu  | Phần tử `[data-animate]` hiện dần bằng `motion/mini`, stagger theo token                                                                          |
+| Nút lên đầu trang  | Hiện dần khi cuộn quá 600px; bấm thì cuộn mượt (hoặc nhảy thẳng) lên đầu                                                                          |
+| Mục lục bài viết   | Mọi mục đang trong tầm nhìn được đánh dấu theo vị trí cuộn (có thể nhiều mục cùng lúc)                                                            |
+| Tiến độ đọc        | Đường 2px ở mép trên, dài theo phần trăm bài viết đã cuộn; trình duyệt hỗ trợ thì chạy bằng `animation-timeline: scroll()`                        |
+| Parallax trang chủ | Blobs, hạt bụi mờ (`dustParticles`) và visual hero trôi nhẹ theo `mousemove` + `scroll` qua TS + CSS transition 2.4s–2.8s; tắt khi reduced motion |
+| Micro-interaction  | Hover link, nav, lab card, post card, hàng bảng — xem mục 7.4                                                                                     |
 
 Hiện đã nối shared element cho **tiêu đề bài viết**: `PostList` gắn
 `view-transition-name: vt-post-<id>` lên tiêu đề trong danh sách, trang chi tiết gắn đúng tên đó
@@ -83,6 +84,7 @@ dịch chuyển quá 1px (chỉ lab card nhấc lên 1px).
 | Brand trên header                   | `--color-text`            | `--color-accent`, không gạch chân                                                |
 | Tiêu đề bài viết                    | `--color-text`            | `--color-link`                                                                   |
 | Lab card (khi là link)              | viền `--color-border`     | viền `--color-accent` + `translateY(-1px)`                                       |
+| Post card ở `/bai-viet`             | viền `--color-border`     | viền accent 55% + `translateY(-2px)`; tiêu đề sang `--color-link`                |
 | Hàng bảng                           | nền `--color-surface`     | nền `--color-bg`                                                                 |
 | Link mục lục                        | `--color-text-muted`      | `--color-text`; mục đang đọc thêm nền `--color-surface` + vạch `--color-accent`  |
 | Nút sao chép ở tiêu đề bài viết     | ẩn (`opacity: 0`)         | hiện + `--color-accent` (cũng hiện khi focus)                                    |

@@ -34,3 +34,8 @@ Ngày: YYYY-MM-DD
 | [0005](0005-chu-mono-nho-hon-inter-2px.md)          | Chữ mono luôn nhỏ hơn chữ Inter cùng vai trò 2px           |
 | [0006](0006-header-capsule-dinh.md)                 | Header dính dạng capsule mờ                                |
 | [0007](0007-tien-do-doc-bang-animation-timeline.md) | Thanh tiến độ đọc chạy bằng `animation-timeline: scroll()` |
+| [0008](0008-moi-lab-mot-project-pages.md)           | Mỗi lab là một project Cloudflare Pages riêng              |
+| [0009](0009-cover-bai-viet-thu-cong.md)             | Cover bài viết đặt thủ công, SVG inline theo theme         |
+| [0010](0010-tag-dung-chung-package.md)              | Tag dùng chung qua package `@dev-lab/tags`                 |
+| [0011](0011-command-palette-tim-kiem.md)            | Command palette tìm kiếm, index sinh lúc build             |
+| [0012](0012-giao-dien-home-va-hieu-ung-parallax.md) | Giao diện trang chủ và hiệu ứng parallax nền               |

@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
 const navItems = [
@@ -14,6 +15,7 @@ const isActive = (href: string) => currentPath.startsWith(href);
 <header class="site-header" data-site-header transition:persist>
   <div class="site-header__bar">
     <a class="site-header__brand" href="/">
+      <Icon name="leaf" size={24} />
       DevLab.
     </a>
 
@@ -34,6 +36,20 @@ const isActive = (href: string) => currentPath.startsWith(href);
     </nav>
 
     <div class="site-header__actions">
+      <button
+        class="site-search"
+        type="button"
+        data-search-open
+        aria-label="Tìm kiếm (Ctrl K)"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+      >
+        <Icon name="search" size={16} />
+        <span class="site-search__label">Tìm kiếm…</span>
+        <kbd class="site-search__key" data-search-shortcut>
+          Ctrl K
+        </kbd>
+      </button>
       <ThemeToggle />
     </div>
   </div>
@@ -249,7 +265,10 @@ const isActive = (href: string) => currentPath.startsWith(href);
   }
 
   .site-header__brand {
+    display: inline-flex;
     grid-area: brand;
+    align-items: center;
+    gap: 0.4rem;
     justify-self: start;
     font-family: var(--font-display);
     font-size: var(--text-brand);
@@ -265,6 +284,10 @@ const isActive = (href: string) => currentPath.startsWith(href);
     /* Brand không dùng hiệu ứng gạch chân mọc dần. */
     background-image: none;
     transition: color var(--duration-fast) var(--ease-standard);
+  }
+
+  .site-header__brand .icon {
+    color: var(--color-accent);
   }
 
   .site-nav {
@@ -342,6 +365,58 @@ const isActive = (href: string) => currentPath.startsWith(href);
     justify-self: end;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+  }
+
+  /*
+   * Nút mở search trông như một ô tìm kiếm thu nhỏ trên desktop. Dưới 768px thu lại
+   * thành icon vuông để nhường chỗ cho brand và bộ chọn mode.
+   */
+  .site-search {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 2.125rem;
+    padding: 0 0.55rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: color-mix(in oklab, var(--color-surface) 70%, transparent);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    cursor: pointer;
+    transition:
+      border-color var(--duration-fast) var(--ease-standard),
+      color var(--duration-fast) var(--ease-standard);
+  }
+
+  .site-search:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .site-search__key {
+    padding: 0 0.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    font: inherit;
+    font-size: 0.6875rem;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 767px) {
+    .site-search {
+      width: 2.125rem;
+      padding: 0;
+      justify-content: center;
+      border-color: transparent;
+      background-color: transparent;
+    }
+
+    .site-search__label,
+    .site-search__key {
+      display: none;
+    }
   }
 </style>

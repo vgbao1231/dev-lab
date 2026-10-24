@@ -5,11 +5,13 @@
 
 ## 4. Typography
 
-| Vai trò | Font           | Dùng cho                                                                                |
-| ------- | -------------- | --------------------------------------------------------------------------------------- |
-| Display | Patrick Hand   | Tiêu đề chính, hero, chip ở bảng facts. Dùng tiết kiệm                                  |
-| Body    | Inter          | Nội dung bài viết, đoạn văn, UI                                                         |
-| Mono    | JetBrains Mono | Metadata, ngày tháng, tag, code block, bảng số liệu riêng (chưa triển khai), nhãn facts |
+| Vai trò   | Font           | Dùng cho                                                                                |
+| --------- | -------------- | --------------------------------------------------------------------------------------- |
+| Display   | Patrick Hand   | Tiêu đề chính, chip ở bảng facts. Dùng tiết kiệm                                        |
+| Handwrite | Caveat         | Tên hero trên trang chủ (92px), ghi chú viết tay trang trí ("Small steps")              |
+| Serif     | Lora           | Tiêu đề mục "Các lab" và tiêu đề trên card lab                                          |
+| Body      | Inter / Sans   | Nội dung bài viết, đoạn văn, UI (trang chủ hỗ trợ `Be Vietnam Pro`)                     |
+| Mono      | JetBrains Mono | Metadata, ngày tháng, tag, code block, bảng số liệu riêng (chưa triển khai), nhãn facts |
 
 ### Quy tắc
 

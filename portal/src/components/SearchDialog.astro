@@ -1,0 +1,324 @@
+---
+import Icon from './Icon.astro';
+---
+
+<dialog class="search-dialog" data-search-dialog aria-labelledby="search-dialog-title">
+  <div class="search-dialog__panel">
+    <h2 class="visually-hidden" id="search-dialog-title">
+      Tìm kiếm
+    </h2>
+
+    <div class="search-dialog__bar">
+      <Icon name="search" size={18} />
+      <input
+        class="search-dialog__input"
+        type="search"
+        role="combobox"
+        placeholder="Tìm bài viết, lab, trang…"
+        autocomplete="off"
+        spellcheck="false"
+        aria-controls="search-results"
+        aria-haspopup="listbox"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-activedescendant=""
+        data-search-input
+      />
+      <button
+        class="search-dialog__close"
+        type="button"
+        data-search-close
+        aria-label="Đóng tìm kiếm"
+      >
+        <Icon name="x" size={18} />
+      </button>
+    </div>
+
+    <div
+      class="search-dialog__results"
+      id="search-results"
+      role="listbox"
+      aria-label="Kết quả tìm kiếm"
+      data-search-results
+    ></div>
+
+    <p class="search-dialog__empty" data-search-empty hidden>
+      Không tìm thấy kết quả phù hợp.
+    </p>
+
+    <p class="visually-hidden" role="status" aria-live="polite" data-search-status></p>
+
+    <div class="search-dialog__footer">
+      <span>
+        <kbd>↑</kbd>
+        <kbd>↓</kbd> di chuyển
+      </span>
+      <span>
+        <kbd>↵</kbd> mở
+      </span>
+      <span>
+        <kbd>esc</kbd> đóng
+      </span>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  import { searchEntries, searchTypeLabels, type SearchEntry } from '../lib/search';
+
+  let entries: SearchEntry[] | null = null;
+  let loadPromise: Promise<void> | null = null;
+  let activeIndex = 0;
+  let previousOverflow = '';
+
+  const getDialog = (): HTMLDialogElement | null =>
+    document.querySelector<HTMLDialogElement>('[data-search-dialog]');
+
+  const getInput = (): HTMLInputElement | null =>
+    document.querySelector<HTMLInputElement>('[data-search-input]');
+
+  const setExpanded = (expanded: boolean): void => {
+    for (const trigger of document.querySelectorAll<HTMLElement>('[data-search-open]')) {
+      trigger.setAttribute('aria-expanded', String(expanded));
+    }
+  };
+
+  const setStatus = (message: string): void => {
+    const status = document.querySelector<HTMLElement>('[data-search-status]');
+    if (status) status.textContent = message;
+  };
+
+  const setInputExpanded = (expanded: boolean): void => {
+    getInput()?.setAttribute('aria-expanded', String(expanded));
+  };
+
+  const loadIndex = async (): Promise<void> => {
+    if (entries) return;
+    if (loadPromise) return loadPromise;
+
+    loadPromise = (async () => {
+      const response = await fetch('/search-index.json');
+      if (!response.ok) throw new Error(`Search index: ${response.status}`);
+      entries = (await response.json()) as SearchEntry[];
+    })();
+
+    try {
+      await loadPromise;
+    } catch {
+      entries = [];
+      setStatus('Không tải được chỉ mục tìm kiếm.');
+    } finally {
+      loadPromise = null;
+    }
+  };
+
+  const resultElements = (): HTMLAnchorElement[] =>
+    Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-search-result]'));
+
+  const setActive = (index: number): void => {
+    const results = resultElements();
+    if (results.length === 0) return;
+
+    activeIndex = (index + results.length) % results.length;
+
+    results.forEach((result, resultIndex) => {
+      const selected = resultIndex === activeIndex;
+      result.dataset.active = String(selected);
+      result.setAttribute('aria-selected', String(selected));
+    });
+
+    const active = results[activeIndex];
+    const input = getInput();
+    if (active && input) input.setAttribute('aria-activedescendant', active.id);
+    active?.scrollIntoView({ block: 'nearest' });
+  };
+
+  const render = (query: string): void => {
+    const resultsEl = document.querySelector<HTMLElement>('[data-search-results]');
+    const emptyEl = document.querySelector<HTMLElement>('[data-search-empty]');
+    if (!resultsEl || !emptyEl) return;
+
+    resultsEl.replaceChildren();
+
+    if (!entries) {
+      emptyEl.hidden = false;
+      emptyEl.textContent = 'Đang tải chỉ mục tìm kiếm…';
+      setStatus('Đang tải chỉ mục tìm kiếm.');
+      return;
+    }
+
+    const matches = searchEntries(entries, query, 8);
+
+    if (matches.length === 0) {
+      emptyEl.hidden = false;
+      emptyEl.textContent = 'Không tìm thấy kết quả phù hợp.';
+      setStatus('Không tìm thấy kết quả phù hợp.');
+      const input = getInput();
+      if (input) input.setAttribute('aria-activedescendant', '');
+      return;
+    }
+
+    emptyEl.hidden = true;
+
+    matches.forEach((entry, index) => {
+      const link = document.createElement('a');
+      link.className = 'search-result';
+      link.href = entry.href;
+      link.id = `search-result-${index}`;
+      link.setAttribute('role', 'option');
+      link.setAttribute('aria-selected', 'false');
+      link.dataset.searchResult = 'true';
+
+      const type = document.createElement('span');
+      type.className = 'search-result__type';
+      type.textContent = searchTypeLabels[entry.type];
+
+      const title = document.createElement('span');
+      title.className = 'search-result__title';
+      title.textContent = entry.title;
+
+      const meta = document.createElement('span');
+      meta.className = 'search-result__meta';
+      meta.textContent = entry.tags.length
+        ? `${entry.meta} · ${entry.tags.join(' · ')}`
+        : entry.meta;
+
+      link.append(type, title, meta);
+      resultsEl.append(link);
+    });
+
+    setStatus(`${matches.length} kết quả.`);
+    setActive(0);
+  };
+
+  const bindDialog = (dialog: HTMLDialogElement): void => {
+    if (dialog.dataset.bound === 'true') return;
+    dialog.dataset.bound = 'true';
+
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    dialog.addEventListener('close', () => {
+      document.documentElement.style.overflow = previousOverflow;
+      setExpanded(false);
+      setInputExpanded(false);
+      setStatus('');
+    });
+  };
+
+  const open = async (): Promise<void> => {
+    const dialog = getDialog();
+    if (!dialog || dialog.open) return;
+
+    bindDialog(dialog);
+    previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    dialog.showModal();
+    setExpanded(true);
+    setInputExpanded(true);
+
+    const input = getInput();
+    if (input) {
+      input.value = '';
+      input.focus();
+    }
+
+    if (!entries) {
+      render('');
+      await loadIndex();
+    }
+
+    render('');
+    getInput()?.focus();
+  };
+
+  const isEditable = (target: EventTarget | null): boolean => {
+    if (!(target instanceof Element)) return false;
+    return Boolean(target.closest('input, textarea, select, [contenteditable="true"]'));
+  };
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    if (target.closest('[data-search-open]')) {
+      event.preventDefault();
+      void open();
+      return;
+    }
+
+    if (target.closest('[data-search-close]')) {
+      getDialog()?.close();
+      return;
+    }
+
+    if (target.closest('[data-search-result]')) {
+      getDialog()?.close();
+    }
+  });
+
+  document.addEventListener('input', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLInputElement && target.matches('[data-search-input]')) {
+      render(target.value);
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const target = event.target;
+
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      void open();
+      return;
+    }
+
+    if (event.key === '/' && !isEditable(target)) {
+      event.preventDefault();
+      void open();
+      return;
+    }
+
+    if (!(target instanceof HTMLInputElement) || !target.matches('[data-search-input]')) {
+      return;
+    }
+
+    const results = resultElements();
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (results.length === 0) return;
+      setActive(activeIndex + (event.key === 'ArrowDown' ? 1 : -1));
+      return;
+    }
+
+    if (event.key === 'Enter') {
+      const active = results[activeIndex];
+      if (!active) return;
+      event.preventDefault();
+      active.click();
+    }
+  });
+
+  document.addEventListener('astro:before-swap', () => {
+    const dialog = getDialog();
+    if (dialog?.open) dialog.close();
+  });
+
+  const syncShortcutLabel = (): void => {
+    const isMac = /Mac|iPhone|iPad/.test(navigator.userAgent);
+    const shortcut = isMac ? '⌘ K' : 'Ctrl K';
+
+    for (const label of document.querySelectorAll<HTMLElement>('[data-search-shortcut]')) {
+      label.textContent = shortcut;
+    }
+
+    for (const trigger of document.querySelectorAll<HTMLElement>('[data-search-open]')) {
+      trigger.setAttribute('aria-label', `Tìm kiếm (${shortcut})`);
+    }
+  };
+
+  document.addEventListener('astro:page-load', syncShortcutLabel);
+  syncShortcutLabel();
+</script>

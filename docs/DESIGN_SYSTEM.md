@@ -13,9 +13,10 @@ Số mục 1–9 giữ nguyên bản gốc, vì comment trong code vẫn ghi "`d
 | 1–3 | Cấu trúc theme × mode, bảng màu, quy ước CSS variables      | [`design/theme.md`](design/theme.md)           |
 | 4   | Font, quy tắc chữ mono, thang cỡ chữ                        | [`design/typography.md`](design/typography.md) |
 | 5   | Bố cục, header, footer, breakpoint, token bố cục            | [`design/layout.md`](design/layout.md)         |
-| 6   | Thành phần chung: card, tag, link, nút, bảng facts, bộ chọn | [`design/components.md`](design/components.md) |
+| 6   | Thành phần: card, tag, icon, cover, search, bộ chọn         | [`design/components.md`](design/components.md) |
 | 6   | Riêng trang bài viết: mục lục, nút `#`, thanh tiến độ đọc   | [`design/post-page.md`](design/post-page.md)   |
 | 7   | Chuyển động: token, quy tắc, danh mục, hover                | [`design/motion.md`](design/motion.md)         |
+| —   | Registry và quy tắc tag dùng chung cho portal + lab         | [`TAGS.md`](TAGS.md)                           |
 | 8–9 | Nguyên tắc, checklist, khác biệt so với `design-reference/` | file này                                       |
 
 ## Nguồn sự thật
@@ -27,7 +28,9 @@ Số mục 1–9 giữ nguyên bản gốc, vì comment trong code vẫn ghi "`d
 ## 8. Nguyên tắc
 
 1. **Tương phản:** text chính đạt tối thiểu WCAG AA (4.5:1) trên nền ở mọi cặp theme × mode đang triển khai (hiện tại: Minimalist Editorial light và dark). Kiểm tra cả link và text phụ.
-2. **Tối giản:** tránh card lồng nhau, gradient, hiệu ứng glow, minh họa lớn.
+2. **Tối giản:** tránh card lồng nhau, gradient/glow trang trí và minh họa lớn. Ngoại lệ đã
+   chốt: cover SVG 16:9 cho bài viết ở [ADR 0009](adr/0009-cover-bai-viet-thu-cong.md); không nới
+   ngoại lệ cho thành phần khác.
 3. **Một CTA:** mỗi màn hình tối đa một hành động chính.
 4. **Nhất quán:** bố cục và typography giữ nguyên giữa các theme. Chỉ màu sắc thay đổi.
 5. **Cá nhân:** ưu tiên nội dung và giọng văn của tác giả hơn trang trí.
@@ -44,6 +47,13 @@ Số mục 1–9 giữ nguyên bản gốc, vì comment trong code vẫn ghi "`d
 - [ ] Trạng thái "đang chạy" và "sắp tới" của lab card có đủ phân biệt không khi chỉ dựa vào màu
 - [x] Animation tôn trọng `prefers-reduced-motion` (CSS guard trong `global.css` + kiểm tra
       trong `BaseLayout.astro` và `ThemeToggle.astro`)
+- [x] Search: `Ctrl/Cmd+K` và `/`, điều hướng `↑` `↓`, `Enter`, `Esc`; tìm không dấu; không thêm
+      dependency runtime; dialog có focus trap của `<dialog>` gốc
+- [x] Tag: registry `@dev-lab/tags` là nguồn duy nhất; frontmatter sai tag hoặc quá 4 tag làm build
+      thất bại; label hiển thị đã chuẩn hoá
+- [x] Cover bài viết: SVG inline dùng token, hiển thị đúng light/dark; bài thiếu cover có fallback
+      monogram; `coverAlt` bắt buộc khi có cover
+- [x] `/bai-viet`: lưới 1/2/3 cột, cover 16:9, card có một link duy nhất; trang chủ không đổi
 - [x] Theme không bị reset sau khi chuyển trang bằng View Transitions (chép `data-theme` /
       `data-mode` trong `astro:before-swap`)
 - [ ] Thời lượng chuyển động và bundle JS của `motion/mini` trên mobile (Lighthouse Performance)

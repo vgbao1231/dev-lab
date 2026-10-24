@@ -2,6 +2,7 @@
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
+import SearchDialog from '../components/SearchDialog.astro';
 import Footer from '../components/Footer.astro';
 import BackToTop from '../components/BackToTop.astro';
 import { availableThemes, defaultThemeId } from '../data/themes';
@@ -57,7 +58,7 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Patrick+Hand&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500&family=Caveat:wght@400;500&family=Lora:wght@400;500&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Patrick+Hand&display=swap"
     />
     <script is:inline set:html={themeInitScript} />
     <script is:inline set:html={motionReadyScript} />
@@ -68,6 +69,7 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       Bỏ qua tới nội dung
     </a>
     <Header />
+    <SearchDialog />
     <main id="main">
       <slot />
     </main>

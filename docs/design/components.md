@@ -35,6 +35,25 @@ Hai kiểu tiêu đề section:
   `--radius-sm`, padding `0.05rem 0.4rem`, không nền màu.
 - Khai báo **một lần ở `global.css`**; dùng cho tag bài viết, stack trong lab card và danh sách
   kỹ năng ở mục "Về mình".
+- Tag bài viết lấy từ registry dùng chung **`@dev-lab/tags`** (`packages/tags`), không phải chuỗi
+  tự do. Frontmatter ghi id (`react`, `state-management`); schema kiểm tra, sắp xếp theo
+  Technology → Domain → Approach rồi đổi thành label chuẩn (`React`, `State Management`) trước khi
+  component đọc. Mỗi bài **1–4 tag**, khuyến nghị 2–3. Danh mục và quy tắc thêm tag: [`docs/TAGS.md`](../TAGS.md).
+- Tag là metadata độc lập với `lab`, `type` và category. Không dùng tag để thay tên lab hoặc loại
+  bài; không thêm tag mới nếu registry đã có tag cùng nghĩa.
+
+### Icon
+
+- Bộ icon dùng chung ở `portal/src/components/Icon.astro`: viewBox 24, nét `1.5px`, đầu nét tròn,
+  màu `currentColor`; icon đặc (GitHub) dùng `fill`. Kích thước dùng: 14px trong metadata, 16–18px
+  trong nút/ô search, 20px ở tiêu đề trang, 24px ở brand.
+- Danh mục hiện có: `leaf`, `search`, `sun`, `moon`, `monitor`, `flask`, `file-text`, `calendar`,
+  `clock`, `github`, `x`, `enter`, `arrow-up`, `arrow-down`.
+- Không dùng emoji làm icon chức năng (emoji trong câu chữ vẫn được). Không đổ bóng, không tô nền
+  cho icon, trừ hộp icon 40×40px ở tiêu đề trang: nền `color-mix(in oklab, accent 14%, transparent)`,
+  chữ `--color-accent`, bo `--radius-lg`.
+- Icon chỉ là trang trí thì `aria-hidden` (mặc định của component); chỉ truyền `label` khi icon
+  đứng một mình và cần được đọc.
 
 ### Danh sách dự án
 
@@ -83,12 +102,44 @@ Hai kiểu tiêu đề section:
 - **Viết câu chữ:** viết hoa chữ đầu từng chip (`Cà phê`, `Đồ ngọt`, `Gura`, không phải `cà phê, đồ
 ngọt và gura`). Đây là chữ cho người đọc, không phải chỗ dán lại ghi chú thô.
 
-### Danh sách bài viết
+### Danh sách bài viết (trang chủ)
 
 - Mỗi bài là **một link khối** (`display: block`), padding dọc 16px, ngăn bằng đường kẻ.
 - Thứ tự: metadata (mono `--text-2xs`, muted) → tiêu đề (font display, `--text-lg`) → tóm tắt (muted,
   `--text-sm`).
 - **Hover:** tiêu đề đổi sang `--color-link`.
+- Mục "Bài viết mới" ở trang chủ **giữ nguyên** cấu trúc này: không thumbnail, không thời gian đọc,
+  không icon, không đổi bố cục. Card cover chỉ dùng ở `/bai-viet`.
+
+### Cover bài viết
+
+- Mỗi bài có một cover **16:9**, đặt thủ công trong frontmatter bằng hai trường:
+  - `cover`: khóa trong `portal/src/data/covers.ts` (ví dụ `react-fiber`).
+  - `coverAlt`: mô tả ảnh cho screen reader; **bắt buộc** khi có `cover`.
+- File SVG nằm ở `portal/src/assets/covers/`, được nhúng **inline** qua `import.meta.glob(... ?raw)`
+  để dùng được token màu của theme. Nhờ vậy cover tự đổi light/dark, không cần hai bộ ảnh và không
+  phụ thuộc dịch vụ tối ưu ảnh.
+- Màu trong cover chỉ dùng token: `--color-surface`, `--color-bg`, `--color-text`,
+  `--color-text-muted`, `--color-accent`, `--color-link`, `--color-border`. Không hard-code màu.
+- Bài chưa có cover dùng fallback monogram: nền `--color-bg` pha accent rất nhẹ, chữ cái đầu của
+  tiêu đề font display màu `--color-accent`, nhãn loại bài mono muted. Fallback không được tạo link
+  hay alt giả.
+
+### Card bài viết ở `/bai-viet`
+
+- Lưới card: **1 cột** mặc định, **2 cột** từ 768px, **3 cột** từ 1024px; gap 16px (20px từ 1024px).
+- Card: nền `--color-surface`, viền `1px --color-border`, bo `--radius-lg`, `overflow: hidden`, không
+  đổ bóng. Cover nằm trên, có đường kẻ dưới.
+- Thân card: metadata `type · lab` (mono `--text-2xs`, muted) → tiêu đề font display `--text-lg`
+  → tóm tắt Inter `--text-sm` muted → hàng tag → hàng đáy có ngày và thời gian đọc (mono
+  `--text-2xs`, icon 14px).
+- **Cả card là vùng bấm** của link tiêu đề bằng `::after` phủ toàn card, nhưng trong cây
+  accessibility chỉ có **một** link (link tiêu đề). Không bọc `<a>` quanh cả card.
+- **Hover** (chỉ thiết bị có con trỏ): viền pha accent 55%, card nhấc lên 2px, tiêu đề đổi
+  `--color-link`. Tôn trọng `prefers-reduced-motion`.
+- Tiêu đề card dùng `view-transition-name: vt-post-<id>`, trùng với `h1` ở trang chi tiết.
+- **Thời gian đọc** chỉ hiện ở card `/bai-viet`: đếm từ body Markdown, 200 từ/phút, tối thiểu 1
+  phút (`src/lib/reading.ts`). Không thêm vào danh sách trang chủ.
 
 ### Bảng trong bài
 
@@ -137,6 +188,34 @@ ngọt và gura`). Đây là chữ cho người đọc, không phải chỗ dán
 - Nhóm theme tự ẩn khi chỉ có một theme khả dụng. Nhãn chữ ẩn dưới 768px (vẫn còn `<label>` cho
   screen reader).
 - Nhóm mode gồm `Hệ thống`, `Sáng`, `Tối`; nhóm theme liệt kê theo `src/data/themes.ts`.
+- Trước `<select>` mode có icon 14px khớp preference: `monitor` (Hệ thống), `sun` (Sáng), `moon`
+  (Tối). Icon do CSS chọn theo `html[data-mode-preference]`, không cần JS riêng; icon là trang trí
+  nên `aria-hidden`.
+
+### Tìm kiếm
+
+- **Nút mở** nằm trong header, cạnh bộ chọn mode:
+  - ≥768px: pill cao 34px, nền `color-mix(surface 70%, transparent)`, viền `--color-border`, icon
+    search 16px, chữ `Tìm kiếm…`, `kbd` hiển thị `Ctrl K` (Mac: `⌘ K`). Hover đổi viền/chữ sang
+    `--color-accent`.
+  - <768px: thu thành nút icon vuông 34px, nền/viền trong suốt; ẩn chữ và `kbd`.
+  - Nút có `aria-haspopup="dialog"`, `aria-expanded` được JS cập nhật.
+- **Dialog** dùng `<dialog>` gốc + `showModal()` để có top layer, focus trap và Esc sẵn. Panel rộng
+  tối đa 640px, nền `--color-surface`, viền `--color-border`, bo `--radius-lg`, bóng mềm bằng
+  `color-mix`. Backdrop pha `--color-bg` 62% + blur 4px.
+- **Nội dung:** ô input `type="search"` (ẩn nút clear mặc định), nút đóng `x`, danh sách kết quả
+  `role="listbox"`, mỗi kết quả `role="option"`; footer gợi ý phím `↑` `↓` `↵` `esc` (ẩn dưới
+  640px).
+- **Kết quả** gồm bài viết, lab và trang tĩnh; tối đa 8 mục. Mỗi mục có nhãn loại (Bài viết /
+  Lab / Trang), tiêu đề và metadata. Mục đang chọn có nền accent 12%. Không nhóm theo loại để
+  điều hướng bàn phím đơn giản.
+- **Bàn phím:** `Ctrl/Cmd+K` hoặc `/` (khi không focus vào input/textarea/select/contenteditable)
+  mở dialog; `↑`/`↓` đổi mục, `Enter` mở, `Esc` đóng. Click ra ngoài panel cũng đóng.
+- **Tìm không dấu:** chuẩn hoá NFD, bỏ combining mark, đổi `đ` → `d`, lowercase; nhờ vậy `fiber`
+  khớp `Fiber`, `reconciliation` khớp `Reconciliation`.
+- **Chỉ mục** sinh lúc build ở `/search-index.json`; client fetch lười ở lần mở đầu tiên và cache
+  trong bộ nhớ. Không thêm dependency runtime, không gọi API bên ngoài.
+- **Không dùng** dialog cho mobile menu; menu mobile vẫn là việc riêng (mục 1.3 roadmap).
 
 ### Nút lên đầu trang
 

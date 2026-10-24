@@ -18,6 +18,86 @@ const latestPosts = (await getCollection('posts', ({ data }) => !data.draft))
  */
 const hasAbout = profile.about.length > 0 || profileFacts.length > 0 || profile.skills.length > 0;
 const hasProjects = profile.projects.length > 0;
+
+/*
+ * Danh sách hạt bụi mờ lơ lửng (floating dust particles) trang trí nền:
+ * x (% chiều ngang), y (% vị trí dọc trải đều từ đầu tới cuối trang),
+ * s (kích thước nhỏ tinh tế 4px - 9px), anim (loại nhịp thở 1-4),
+ * p (hệ số parallax nhẹ), delay (độ lệch pha để các hạt thở so le).
+ */
+const dustParticles = [
+  // 1. Khu vực Hero (0% - 18%)
+  { x: 10, y: 3, s: 5, anim: 1, p: 0.5, delay: 0 },
+  { x: 22, y: 7, s: 4, anim: 2, p: -0.4, delay: 1.8 },
+  { x: 38, y: 5, s: 7, anim: 3, p: 0.5, delay: 3.2 },
+  { x: 48, y: 11, s: 5, anim: 4, p: -0.6, delay: 0.9 },
+  { x: 62, y: 8, s: 8, anim: 1, p: 0.6, delay: 2.4 },
+  { x: 76, y: 4, s: 4, anim: 2, p: -0.5, delay: 4.1 },
+  { x: 88, y: 10, s: 6, anim: 3, p: 0.4, delay: 1.5 },
+  { x: 94, y: 16, s: 4, anim: 4, p: -0.3, delay: 2.8 },
+  { x: 14, y: 14, s: 7, anim: 2, p: 0.5, delay: 3.6 },
+  { x: 32, y: 16, s: 5, anim: 1, p: -0.4, delay: 0.5 },
+  { x: 5, y: 9, s: 6, anim: 3, p: 0.4, delay: 2.2 },
+  { x: 54, y: 4, s: 4, anim: 2, p: -0.5, delay: 1.1 },
+  { x: 70, y: 15, s: 6, anim: 4, p: 0.5, delay: 3.8 },
+  { x: 82, y: 17, s: 5, anim: 1, p: -0.3, delay: 0.7 },
+
+  // 2. Khu vực Dev Lab & Về mình (18% - 38%)
+  { x: 6, y: 22, s: 5, anim: 3, p: -0.5, delay: 2.1 },
+  { x: 24, y: 26, s: 7, anim: 4, p: 0.6, delay: 4.5 },
+  { x: 42, y: 21, s: 4, anim: 1, p: -0.4, delay: 1.2 },
+  { x: 58, y: 28, s: 6, anim: 2, p: 0.5, delay: 3.0 },
+  { x: 74, y: 23, s: 5, anim: 3, p: -0.6, delay: 0.8 },
+  { x: 90, y: 31, s: 7, anim: 4, p: 0.4, delay: 2.7 },
+  { x: 18, y: 35, s: 4, anim: 1, p: -0.3, delay: 4.0 },
+  { x: 52, y: 36, s: 6, anim: 2, p: 0.6, delay: 1.6 },
+  { x: 82, y: 37, s: 4, anim: 3, p: -0.5, delay: 3.3 },
+  { x: 12, y: 29, s: 6, anim: 2, p: 0.5, delay: 1.4 },
+  { x: 34, y: 33, s: 5, anim: 1, p: -0.4, delay: 2.6 },
+  { x: 66, y: 33, s: 7, anim: 4, p: 0.6, delay: 0.4 },
+  { x: 96, y: 25, s: 4, anim: 2, p: -0.3, delay: 3.7 },
+
+  // 3. Khu vực Các lab (38% - 60%)
+  { x: 8, y: 43, s: 6, anim: 4, p: 0.5, delay: 0.7 },
+  { x: 28, y: 47, s: 4, anim: 1, p: -0.4, delay: 2.9 },
+  { x: 46, y: 42, s: 8, anim: 2, p: 0.6, delay: 1.4 },
+  { x: 66, y: 49, s: 5, anim: 3, p: -0.5, delay: 3.8 },
+  { x: 84, y: 45, s: 7, anim: 4, p: 0.5, delay: 2.0 },
+  { x: 16, y: 54, s: 4, anim: 1, p: -0.3, delay: 4.3 },
+  { x: 38, y: 58, s: 6, anim: 2, p: 0.5, delay: 1.1 },
+  { x: 72, y: 56, s: 4, anim: 3, p: -0.4, delay: 3.5 },
+  { x: 92, y: 59, s: 7, anim: 4, p: 0.6, delay: 0.2 },
+  { x: 4, y: 51, s: 5, anim: 1, p: 0.4, delay: 2.5 },
+  { x: 22, y: 41, s: 6, anim: 3, p: -0.5, delay: 1.9 },
+  { x: 56, y: 53, s: 5, anim: 2, p: 0.4, delay: 3.2 },
+  { x: 80, y: 53, s: 6, anim: 1, p: -0.4, delay: 0.9 },
+
+  // 4. Khu vực Bài viết mới & Dự án khác (60% - 80%)
+  { x: 12, y: 65, s: 5, anim: 1, p: -0.5, delay: 2.6 },
+  { x: 30, y: 69, s: 7, anim: 2, p: 0.6, delay: 4.2 },
+  { x: 54, y: 64, s: 4, anim: 3, p: -0.4, delay: 1.7 },
+  { x: 78, y: 72, s: 6, anim: 4, p: 0.5, delay: 3.1 },
+  { x: 20, y: 77, s: 4, anim: 1, p: -0.3, delay: 0.9 },
+  { x: 44, y: 79, s: 8, anim: 2, p: 0.6, delay: 2.3 },
+  { x: 86, y: 78, s: 5, anim: 3, p: -0.5, delay: 4.0 },
+  { x: 6, y: 72, s: 4, anim: 2, p: 0.4, delay: 1.5 },
+  { x: 38, y: 63, s: 6, anim: 4, p: -0.6, delay: 3.4 },
+  { x: 68, y: 67, s: 5, anim: 1, p: 0.5, delay: 0.8 },
+  { x: 94, y: 74, s: 6, anim: 2, p: -0.3, delay: 2.1 },
+
+  // 5. Khu vực Liên hệ & Đáy trang (80% - 98%)
+  { x: 8, y: 85, s: 6, anim: 4, p: 0.4, delay: 1.3 },
+  { x: 34, y: 88, s: 4, anim: 1, p: -0.4, delay: 3.7 },
+  { x: 60, y: 84, s: 7, anim: 2, p: 0.5, delay: 0.6 },
+  { x: 82, y: 89, s: 5, anim: 3, p: -0.5, delay: 2.5 },
+  { x: 22, y: 94, s: 4, anim: 4, p: -0.3, delay: 4.4 },
+  { x: 50, y: 96, s: 6, anim: 1, p: 0.5, delay: 1.9 },
+  { x: 76, y: 95, s: 5, anim: 2, p: -0.4, delay: 3.0 },
+  { x: 14, y: 91, s: 5, anim: 3, p: 0.5, delay: 2.8 },
+  { x: 42, y: 86, s: 6, anim: 1, p: -0.4, delay: 1.0 },
+  { x: 68, y: 92, s: 4, anim: 4, p: 0.4, delay: 3.6 },
+  { x: 92, y: 91, s: 6, anim: 2, p: -0.5, delay: 0.5 },
+];
 ---
 
 <BaseLayout title="Dev Lab — blog, lab và portfolio">
@@ -26,144 +106,290 @@ const hasProjects = profile.projects.length > 0;
     nên mở đầu bằng "ai đang viết" rồi mới tới "chỗ này là gì" (khối Dev Lab ngay dưới).
     Lời chào lấy tên từ `profile.ts`, câu slogan lấy từ `profile.tagline`.
   */}
-  <section class="section section--hero container" data-animate>
-    <div class="measure">
-      <h1 style="view-transition-name: page-title">Xin chào, tui là {profile.name}</h1>
-      {profile.tagline && <p class="lead">{profile.tagline}</p>}
-      {profile.slogan && <p class="kicker kicker--accent">// {profile.slogan}</p>}
-      {/* Ba lối vào chính; cả ba đều có mũi tên để cùng một kiểu. */}
-      <p class="link-row">
-        <a href="/labs">
-          Xem các lab{' '}
-          <span class="cta__arrow" aria-hidden="true">
-            →
-          </span>
-        </a>
-        <a href="/bai-viet">
-          Đọc bài viết{' '}
-          <span class="cta__arrow" aria-hidden="true">
-            →
-          </span>
-        </a>
-        <a href="/lien-he">
-          Liên hệ{' '}
-          <span class="cta__arrow" aria-hidden="true">
-            →
-          </span>
-        </a>
-      </p>
-    </div>
-  </section>
 
-  <section class="section container" data-animate>
-    <div class="measure">
-      <p class="kicker">~/devlab{profile.role ? ` · ${profile.role}` : ''}</p>
-      <h2>Dev Lab</h2>
-      <p>
-        Hệ sinh thái blog và lab kỹ thuật: ghi chép, thử nghiệm có số đo và giải thích cơ chế của
-        các công nghệ trong công việc hằng ngày — frontend, backend, DevOps và những chủ đề liên
-        quan.
-      </p>
-      <p class="kicker kicker--accent">// Học bằng cách xây, rồi đo lại những gì mình đã xây.</p>
-      <p class="section-intro">
-        Mỗi lab tập trung vào một công nghệ hoặc một lĩnh vực, có stack và cách triển khai riêng.
-      </p>
-    </div>
-  </section>
-
-  {hasAbout && (
-    <section class="section container" data-animate>
-      <div class="measure">
-        <p class="eyebrow">Về mình</p>
-        {profile.about.map((paragraph) => (
-          <p>{paragraph}</p>
-        ))}
-        {profileFacts.length > 0 && (
-          <dl class="facts">
-            {profileFacts.map((fact) => (
-              <div class="facts__row">
-                <dt class="facts__label">{fact.label}</dt>
-                <dd class="facts__values">
-                  {fact.items.map((item) => (
-                    <span class="facts__chip">{item}</span>
-                  ))}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        )}
-        {profile.skills.length > 0 && (
-          <>
-            <p class="facts__label">Kỹ năng</p>
-            <ul class="skill-list">
-              {profile.skills.map((skill) => (
-                <li class="tag">{skill}</li>
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
-    </section>
-  )}
-
-  <section class="section container" data-animate>
-    <div class="section-head measure">
-      <h2>Các lab</h2>
-      <span class="section-note">Mỗi lab là một site riêng</span>
-    </div>
-    <div class="lab-grid">
-      {labs.map((lab) => (
-        <LabCard lab={lab} />
+  <div class="home-wrapper">
+    {/*
+      Blobs + dots trang trí nền: 4 blob radial-gradient lớn + 16 dot nhỏ mờ.
+      JS trong <script> sẽ gán id "blob-a"…"blob-d" và ".home-dot" để animate theo
+      mouse/scroll. aria-hidden để screen reader bỏ qua hoàn toàn.
+    */}
+    <div class="home-deco" aria-hidden="true">
+      <div
+        id="blob-a"
+        class="home-blob"
+        style="left:52%;top:-200px;width:780px;height:560px;background:radial-gradient(closest-side,rgba(98,130,72,.34),rgba(98,130,72,0))"
+      ></div>
+      <div
+        id="blob-b"
+        class="home-blob"
+        style="left:-260px;top:300px;width:620px;height:620px;background:radial-gradient(closest-side,rgba(84,112,60,.26),rgba(84,112,60,0))"
+      ></div>
+      <div
+        id="blob-c"
+        class="home-blob"
+        style="right:-280px;top:340px;width:640px;height:640px;background:radial-gradient(closest-side,rgba(70,100,70,.24),rgba(70,100,70,0))"
+      ></div>
+      <div
+        id="blob-d"
+        class="home-blob"
+        style="left:28%;top:860px;width:720px;height:420px;background:radial-gradient(closest-side,rgba(92,120,66,.2),rgba(92,120,66,0))"
+      ></div>
+      <div
+        id="blob-e"
+        class="home-blob"
+        style="left:-220px;top:1600px;width:680px;height:680px;background:radial-gradient(closest-side,rgba(70,100,70,.2),rgba(70,100,70,0))"
+      ></div>
+      <div
+        id="blob-f"
+        class="home-blob"
+        style="right:-240px;top:2300px;width:700px;height:520px;background:radial-gradient(closest-side,rgba(92,120,66,.18),rgba(92,120,66,0))"
+      ></div>
+      {dustParticles.map((d) => (
+        <div
+          class="home-dot"
+          data-parallax={d.p}
+          style={`left:${d.x}%;top:${d.y}%;width:${d.s}px;height:${d.s}px;`}
+        >
+          <div
+            class={`home-dot__glow home-dot__glow--${d.anim}`}
+            style={`animation-delay: -${d.delay}s;`}
+          />
+        </div>
       ))}
     </div>
-  </section>
 
-  <section class="section container" data-animate>
-    <div class="measure">
-      <p class="eyebrow">Bài viết mới</p>
-      {latestPosts.length === 0 ? (
-        <p class="meta">Chưa có bài viết nào.</p>
-      ) : (
-        <>
-          <PostList posts={latestPosts} />
+    <section class="section section--hero container" data-animate>
+      <div class="hero-inner">
+        <div class="hero-content">
+          {/*
+            Greeting line: icon lá nhỏ + "Xin chào, tui là" — theo reference.
+            h1 lớn Caveat (92px).
+          */}
+          <div class="hero-greeting">
+            <svg
+              aria-hidden="true"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#9dbb90"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20 4C10 4 5 9 5 15c0 2 .6 3.5 1.5 4.5M20 4c0 8-4 13-11 13M6.5 19.5C8 14 12 10 16 8" />
+            </svg>
+            Xin chào, tui là
+          </div>
+          <h1 class="hero-name" style="view-transition-name: page-title">
+            {profile.name}
+          </h1>
+          {profile.tagline && <p class="hero-tagline">{profile.tagline}</p>}
+          {/* Ba lối vào chính; cả ba đều có mũi tên để cùng một kiểu. */}
           <p class="link-row">
+            <a href="/labs">
+              Xem các lab{' '}
+              <span class="cta__arrow" aria-hidden="true">
+                →
+              </span>
+            </a>
             <a href="/bai-viet">
-              Tất cả bài viết{' '}
+              Đọc bài viết{' '}
+              <span class="cta__arrow" aria-hidden="true">
+                →
+              </span>
+            </a>
+            <a href="/lien-he">
+              Liên hệ{' '}
               <span class="cta__arrow" aria-hidden="true">
                 →
               </span>
             </a>
           </p>
-        </>
-      )}
-    </div>
-  </section>
+        </div>
 
-  {hasProjects && (
-    <section class="section container" data-animate>
-      <div class="measure">
-        <p class="eyebrow">Dự án khác</p>
-        <ProjectList projects={profile.projects} />
+        {/*
+          Visual cột phải: SVG cây mầm + ghi chú cursive.
+          .fx-sprout và .fx-note nhận transform từ JS parallax.
+          aria-hidden: cả khối là trang trí thuần.
+        */}
+        <div class="hero-visual" aria-hidden="true">
+          <div id="fx-sprout" class="hero-fx">
+            <svg width="340" height="230" viewBox="0 0 340 230" fill="none">
+              <defs>
+                <radialGradient id="g1" cx="50%" cy="60%" r="50%">
+                  <stop offset="0" stop-color="#7f9c74" stop-opacity=".28" />
+                  <stop offset="1" stop-color="#7f9c74" stop-opacity="0" />
+                </radialGradient>
+                {/* Gradient g2 của gò đất: mờ dần về opacity 0 ở đáy để hòa quyện êm ái vào nền */}
+                <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#2c3123" stop-opacity="1" />
+                  <stop offset="45%" stop-color="#22271c" stop-opacity="0.9" />
+                  <stop offset="75%" stop-color="#161b11" stop-opacity="0.45" />
+                  <stop offset="100%" stop-color="#0b0d09" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <ellipse cx="170" cy="90" rx="130" ry="90" fill="url(#g1)" />
+              <path d="M10 225C50 168 110 148 170 156C230 148 292 172 330 225Z" fill="url(#g2)" />
+              <path
+                d="M170 158C166 128 172 100 166 66"
+                stroke="#7f9c74"
+                stroke-width="3"
+                stroke-linecap="round"
+              />
+              <path d="M166 70C140 58 130 38 136 18C162 24 174 46 166 70Z" fill="#5d7854" />
+              <path
+                d="M168 96C190 88 204 70 202 52C180 56 166 74 168 96Z"
+                fill="#7f9c74"
+                fill-opacity=".85"
+              />
+            </svg>
+          </div>
+          <p id="fx-note" class="hero-note hero-fx">
+            Small steps
+            <br />
+            Big progress
+          </p>
+        </div>
       </div>
     </section>
-  )}
 
-  <section class="section container" data-animate>
-    <div class="measure">
-      <p class="eyebrow">Liên hệ</p>
-      <p class="section-intro">
-        Góp ý về nội dung, báo lỗi trong bài viết hoặc trao đổi về kỹ thuật đều được hoan nghênh.
-      </p>
-      <p class="link-row">
-        {profileLinks.map((link) => (
-          <a href={link.href} rel={link.href.startsWith('http') ? 'me' : undefined}>
-            {link.label}
+    {hasAbout && (
+      <section class="section container" data-animate>
+        <div class="measure">
+          <p class="eyebrow">Về mình</p>
+          {profile.about.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+          {profileFacts.length > 0 && (
+            <dl class="facts">
+              {profileFacts.map((fact) => (
+                <div class="facts__row">
+                  <dt class="facts__label">{fact.label}</dt>
+                  <dd class="facts__values">
+                    {fact.items.map((item) => (
+                      <span class="facts__chip">{item}</span>
+                    ))}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          {profile.skills.length > 0 && (
+            <>
+              <p class="facts__label">Kỹ năng</p>
+              <ul class="skill-list">
+                {profile.skills.map((skill) => (
+                  <li class="tag">{skill}</li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+      </section>
+    )}
+
+    <section class="section container" data-animate>
+      <div class="measure">
+        <p class="kicker">~/devlab{profile.role ? ` · ${profile.role}` : ''}</p>
+        <h2>Dev Lab</h2>
+        <p>
+          Hệ sinh thái blog và lab kỹ thuật: ghi chép, thử nghiệm có số đo và giải thích cơ chế của
+          các công nghệ trong công việc hằng ngày — frontend, backend, DevOps và những chủ đề liên
+          quan.
+        </p>
+        <p class="kicker kicker--accent">// Học bằng cách xây, rồi đo lại những gì mình đã xây.</p>
+        <p class="section-intro">
+          Mỗi lab tập trung vào một công nghệ hoặc một lĩnh vực, có stack và cách triển khai riêng.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--labs container" data-animate>
+      <div class="labs-layout">
+        <!-- Left sidebar: icon + heading + mô tả + link xem tất cả -->
+        <div class="labs-sidebar">
+          <div class="labs-sidebar__heading">
+            <svg
+              aria-hidden="true"
+              width="26"
+              height="26"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#9dbb90"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M9 3h6M10 3v6L5 19a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 19l-5-10V3" />
+            </svg>
+            <h2>Các lab</h2>
+          </div>
+          <p class="labs-sidebar__desc">
+            Mỗi lab là một chủ đề công nghệ, được xây dựng thành dự án nhỏ với bài viết, ghi chú và
+            phần thử nghiệm thực tế.
+          </p>
+          <a class="labs-sidebar__link" href="/labs">
+            Xem tất cả các lab <span aria-hidden="true">→</span>
           </a>
-        ))}
-        <a href="/lien-he">Trang liên hệ</a>
-      </p>
-    </div>
-  </section>
+        </div>
+
+        <!-- Right: lưới card lab -->
+        <div class="lab-grid">
+          {labs.map((lab) => (
+            <LabCard lab={lab} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" data-animate>
+      <div class="measure">
+        <p class="eyebrow">Bài viết mới</p>
+        {latestPosts.length === 0 ? (
+          <p class="meta">Chưa có bài viết nào.</p>
+        ) : (
+          <>
+            <PostList posts={latestPosts} />
+            <p class="link-row">
+              <a href="/bai-viet">
+                Tất cả bài viết{' '}
+                <span class="cta__arrow" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            </p>
+          </>
+        )}
+      </div>
+    </section>
+
+    {hasProjects && (
+      <section class="section container" data-animate>
+        <div class="measure">
+          <p class="eyebrow">Dự án khác</p>
+          <ProjectList projects={profile.projects} />
+        </div>
+      </section>
+    )}
+
+    <section class="section container" data-animate>
+      <div class="measure">
+        <p class="eyebrow">Liên hệ</p>
+        <p class="section-intro">
+          Góp ý về nội dung, báo lỗi trong bài viết hoặc trao đổi về kỹ thuật đều được hoan nghênh.
+        </p>
+        <p class="link-row">
+          {profileLinks.map((link) => (
+            <a href={link.href} rel={link.href.startsWith('http') ? 'me' : undefined}>
+              {link.label}
+            </a>
+          ))}
+          <a href="/lien-he">Trang liên hệ</a>
+        </p>
+      </div>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>
@@ -174,8 +400,7 @@ const hasProjects = profile.projects.length > 0;
   }
 
   /*
-   * Bảng facts giờ là component dùng chung, khai báo ở `global.css` (mục 6 của
-   * docs/DESIGN_SYSTEM.md).
+   * Bảng facts: component dùng chung ở `global.css`.
    */
   .skill-list {
     display: flex;
@@ -188,4 +413,381 @@ const hasProjects = profile.projects.length > 0;
     font-size: var(--text-2xs);
     color: var(--color-text-muted);
   }
+
+  /* ─── Background & Blobs + dots nền trang trí theo reference ──────── */
+
+  /*
+   * Wrapper trang chủ: background radial-gradient và #0b0d09 chuẩn reference.
+   * Font Be Vietnam Pro; overflow: hidden giữ blobs không tràn ra ngoài.
+   */
+  .home-wrapper {
+    position: relative;
+    overflow: hidden;
+    color: #e9e5d3;
+    font-family: var(--font-sans);
+    background:
+      radial-gradient(ellipse 90% 38% at 50% 0%, rgba(38, 50, 28, 0.55), rgba(11, 13, 9, 0) 70%),
+      #0b0d09;
+  }
+
+  :global(html[data-mode='light']) .home-wrapper {
+    background:
+      radial-gradient(
+        ellipse 90% 38% at 50% 0%,
+        color-mix(in oklab, var(--color-accent) 8%, transparent),
+        transparent 70%
+      ),
+      var(--color-bg);
+    color: var(--color-text);
+  }
+
+  .home-deco {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  :global(html[data-mode='light']) .home-deco {
+    display: none;
+  }
+
+  /*
+   * Blob: hình tròn lớn radial-gradient xanh lá mờ; transition 2.4s cubic-bezier(.25,.55,.3,1).
+   */
+  .home-blob {
+    position: absolute;
+    pointer-events: none;
+    will-change: transform;
+    transition: transform 2.4s cubic-bezier(0.25, 0.55, 0.3, 1);
+  }
+
+  /*
+   * Hạt bụi mờ lơ lửng (floating dust particles):
+   * Kích thước nhỏ 4px - 8px, phát sáng nhẹ dịu, không chói như sao.
+   * .home-dot nhận transform parallax (chuột + scroll) từ JS.
+   * .home-dot__glow bên trong chạy keyframe float lơ lửng, nhấp nháy thở hữu cơ.
+   */
+  .home-dot {
+    position: absolute;
+    pointer-events: none;
+    will-change: transform;
+    transition: transform 2.8s cubic-bezier(0.25, 0.55, 0.3, 1);
+  }
+
+  .home-dot__glow {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    filter: blur(0.5px);
+    background: radial-gradient(
+      circle,
+      rgba(215, 235, 195, 0.8) 0%,
+      rgba(165, 205, 145, 0.4) 50%,
+      rgba(125, 175, 105, 0) 100%
+    );
+    box-shadow: 0 0 8px rgba(185, 225, 160, 0.5);
+  }
+
+  .home-dot__glow--1 {
+    animation: float-dust-1 8s ease-in-out infinite;
+  }
+  .home-dot__glow--2 {
+    animation: float-dust-2 10s ease-in-out infinite;
+  }
+  .home-dot__glow--3 {
+    animation: float-dust-3 12s ease-in-out infinite;
+  }
+  .home-dot__glow--4 {
+    animation: float-dust-4 9s ease-in-out infinite;
+  }
+
+  @keyframes float-dust-1 {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 0.3;
+    }
+    50% {
+      transform: translate3d(6px, -8px, 0) scale(1.1);
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes float-dust-2 {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1.05);
+      opacity: 0.32;
+    }
+    50% {
+      transform: translate3d(-7px, -6px, 0) scale(0.9);
+      opacity: 0.15;
+    }
+  }
+
+  @keyframes float-dust-3 {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(0.95);
+      opacity: 0.18;
+    }
+    50% {
+      transform: translate3d(5px, 7px, 0) scale(1.12);
+      opacity: 0.38;
+    }
+  }
+
+  @keyframes float-dust-4 {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 0.28;
+    }
+    50% {
+      transform: translate3d(-5px, 6px, 0) scale(0.88);
+      opacity: 0.14;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-blob,
+    .home-dot,
+    .hero-fx {
+      transition: none !important;
+    }
+    .home-dot__glow {
+      animation: none !important;
+    }
+  }
+
+  /* ─── Hero layout ──────────────────────────────────────────────────── */
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px 40px;
+    padding-bottom: 16px;
+  }
+
+  .hero-content {
+    flex: 1 1 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /*
+   * Greeting line "Xin chào, tui là": icon lá + text 15px #cfcab8.
+   */
+  .hero-greeting {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    color: #cfcab8;
+    margin-bottom: 2px;
+  }
+
+  .hero-greeting svg {
+    flex-shrink: 0;
+    color: #9dbb90;
+  }
+
+  /*
+   * Tên hero: Caveat, cursive, 92px (clamp cho mobile), #f1ecd9 theo reference.
+   */
+  .hero-name {
+    font-family: var(--font-caveat), cursive;
+    font-weight: 400;
+    font-size: clamp(3.5rem, 8vw, 92px);
+    line-height: 1.05;
+    color: #f1ecd9;
+    letter-spacing: 0.01em;
+    margin: 2px 0 6px;
+  }
+
+  /*
+   * Tagline dưới tên: 15px, line-height 1.75, max-width 360px, #aaa799, weight 300.
+   */
+  .hero-tagline {
+    max-width: 360px;
+    font-size: 15px;
+    line-height: 1.75;
+    color: #aaa799;
+    font-weight: 300;
+    margin: 0 0 28px;
+  }
+
+  .hero-visual {
+    flex: 1 1 280px;
+    position: relative;
+    min-height: 240px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  /*
+   * .hero-fx: transition transform 1s cubic-bezier(.22,.8,.3,1) theo reference .fx.
+   */
+  .hero-fx {
+    transition: transform 1s cubic-bezier(0.22, 0.8, 0.3, 1);
+  }
+
+  /*
+   * Ghi chú "Small steps / Big progress": Caveat, 22px, line-height 1.15, #b4b09f, rotate -10deg.
+   */
+  .hero-note {
+    position: absolute;
+    right: 6%;
+    top: 18%;
+    font-family: var(--font-caveat), cursive;
+    font-size: 22px;
+    line-height: 1.15;
+    color: #b4b09f;
+    rotate: -10deg;
+    transform-origin: left center;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  /* ─── Labs section layout ───────────────────────────────────────────── */
+
+  .labs-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px 40px;
+  }
+
+  .labs-sidebar {
+    flex: 1 1 260px;
+    max-width: 330px;
+  }
+
+  .labs-sidebar__heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #efe9d6;
+  }
+
+  .labs-sidebar__heading h2 {
+    margin: 0;
+    font-family: var(--font-serif), serif;
+    font-weight: 400;
+    font-size: 28px;
+    color: #efe9d6;
+  }
+
+  .labs-sidebar__desc {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #a29f92;
+    font-weight: 300;
+    margin: 16px 0 24px;
+  }
+
+  .labs-sidebar__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #efe9d6;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .labs-sidebar__link:hover {
+    color: #b9d3aa;
+    background-image: none;
+  }
 </style>
+
+<script>
+  /*
+   * Parallax trang chủ: blobs + dots + SVG cây mầm di chuyển theo con trỏ chuột và scroll.
+   * Port chuẩn xác từ logic renderVals() trong design-reference/home-html/Main.dc.html.
+   *
+   * Coordinates: nx, ny chuẩn hoá từ -0.5 tới 0.5 (clientX / innerWidth - 0.5).
+   * Tắt hoàn toàn khi prefers-reduced-motion: reduce.
+   */
+  const initParallax = () => {
+    const reduce =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+
+    const blobA = document.getElementById('blob-a');
+    if (!blobA) return;
+
+    const blobB = document.getElementById('blob-b');
+    const blobC = document.getElementById('blob-c');
+    const blobD = document.getElementById('blob-d');
+    const blobE = document.getElementById('blob-e');
+    const blobF = document.getElementById('blob-f');
+    const fxSprout = document.getElementById('fx-sprout');
+    const fxNote = document.getElementById('fx-note');
+    const dots = Array.from(document.querySelectorAll<HTMLElement>('.home-dot'));
+
+    let nx = 0;
+    let ny = 0;
+    let sy = window.scrollY || 0;
+
+    const t = (x: number, y: number) => `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+
+    const tb = (x: number, y: number, r: number, sc: number) =>
+      `${t(x, y)} rotate(${r.toFixed(1)}deg) scale(${sc.toFixed(3)})`;
+
+    let raf = 0;
+    const apply = () => {
+      const m = Math.hypot(nx, ny);
+
+      if (blobA)
+        blobA.style.transform = tb(nx * -42, ny * -28 - sy * 0.08, nx * -3.5, 1 + m * 0.07);
+      if (blobB) blobB.style.transform = tb(nx * 52, ny * 36 - sy * 0.14, ny * 4.5, 1 + m * 0.09);
+      if (blobC) blobC.style.transform = tb(nx * -56, ny * 32 - sy * 0.05, nx * 4, 1 + m * 0.08);
+      if (blobD) blobD.style.transform = tb(nx * 36, ny * -24 - sy * 0.12, nx * -4.5, 1 + m * 0.07);
+      if (blobE) blobE.style.transform = tb(nx * 48, ny * 28 - sy * 0.06, ny * -3, 1 + m * 0.08);
+      if (blobF) blobF.style.transform = tb(nx * -40, ny * -20 - sy * 0.05, nx * 3, 1 + m * 0.07);
+
+      if (fxSprout) fxSprout.style.transform = t(nx * -18, ny * -12 - sy * 0.05);
+      if (fxNote) fxNote.style.transform = t(nx * 14, ny * 10);
+
+      dots.forEach((dot) => {
+        const p = Number(dot.dataset.parallax || 1);
+        dot.style.transform = t(nx * p * -100, ny * p * -80 - sy * p * 0.06);
+      });
+
+      raf = 0;
+    };
+
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(apply);
+    };
+
+    const onMove = (e: MouseEvent) => {
+      const w = window.innerWidth || 1440;
+      const h = window.innerHeight || 800;
+      nx = e.clientX / w - 0.5;
+      ny = e.clientY / h - 0.5;
+      schedule();
+    };
+
+    const onScroll = () => {
+      sy = window.scrollY || 0;
+      schedule();
+    };
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    schedule();
+  };
+
+  initParallax();
+  document.addEventListener('astro:page-load', initParallax);
+</script>
