@@ -1,242 +1,250 @@
-# Design: Thành phần
+# Design: Components
 
-> Một phần của design system; chỉ mục và bảng định tuyến ở [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
-> Số mục giữ nguyên bản gốc vì comment trong code trỏ tới "mục N".
+> Part of the design system; index and routing table in [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
+> Section numbers stay as in the original because comments in the code point to "mục N".
 
-## 6. Thành phần (chung)
+## 6. Components (shared)
 
-Hai kiểu tiêu đề section:
+Two kinds of section headings:
 
-- **Tiêu đề chính** (`h2`, font display, `--text-xl`): dùng cho section quan trọng nhất — hiện
-  là "Dev Lab" và "Các lab".
-- **Nhãn section (eyebrow)**: JetBrains Mono, `--text-sm`, `uppercase`, `letter-spacing: 0.08em`,
-  màu `--color-text-muted`. Dùng cho các section còn lại (`Bài viết mới`, `Dự án khác`,
+- **Main heading** (`h2`, display font, `--text-xl`): used for the most important section — currently
+  "Dev Lab". The home-page Labs sidebar is the intentional exception from [ADR 0012](../adr/0012-home-layout-and-parallax.md):
+  `h2` in Lora `1.75rem`.
+- **Section label (eyebrow)**: JetBrains Mono, `--text-sm`, `uppercase`, `letter-spacing: 0.08em`,
+  color `--color-text-muted`. Used for the remaining sections (`Bài viết mới`, `Dự án khác`,
   `Liên hệ`).
 
 ### Lab card
 
-- Khi lab đã có địa chỉ, **cả card bấm được**: card là `<article>`, link ở tiêu đề được kéo
-  phủ toàn card bằng `::after`, nên có con trỏ pointer. Khi chưa có địa chỉ, card là khối tĩnh:
-  không hover, không con trỏ pointer.
-- Nền `--color-surface`, viền `1px solid var(--color-border)`, bo `--radius-lg` (8px), padding
-  18px, không đổ bóng.
-- Bố cục: hàng đầu gồm tên lab (`h3`, display, `--text-lg`) và trạng thái (mono `--text-xs`) ở hai
-  đầu; đoạn mô tả màu `--color-text-muted` (`--text-sm`); hàng chip stack.
-- **Hover** (chỉ khi là link): viền đổi `--color-accent`, card nhấc lên `translateY(-1px)`.
+- When a lab has an address, **the whole card is clickable**: the card is an `<article>`, the link in the title is
+  stretched over the whole card with `::after`, so it shows a pointer cursor. When there is no address, the card is a static block:
+  no hover, no pointer cursor.
+- Background `--color-surface`, border `1px solid var(--color-border)`, 12px radius, 10px padding,
+  10px gap, no shadow.
+- Layout (top to bottom):
+  - 72px cover area with 8px radius; its background comes from `coverBg` in `src/data/labs.ts`.
+  - Category chip: `0.6875rem`, `rgba(125, 154, 114, .16)` background, `#bcd1ad` text.
+  - Lab name (`h3`) in Lora `var(--text-sm)`, weight 500, `#efe9d6`.
+  - Summary in `0.78125rem`, `#9a978a`, weight 300.
+  - Meta line in `var(--text-2xs)` with a calendar icon and the status label.
+- **Hover** (only when it is a link): border changes to `rgba(157, 187, 144, .42)`, card lifts
+  `translateY(-3px)`.
+- The literal colours and sizes in this section are existing known deviations from the token rule;
+  see "Known deviations" in [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md). Do not copy them to new components.
 
-### Trạng thái lab
+### Lab status
 
-- Chấm tròn 8px, viền `--color-text-muted`; trạng thái "đang chạy" tô đầy `--color-accent`.
-- Luôn kèm **nhãn chữ** (`Đang chạy`, `Sắp tới`, `Dự kiến`) — không phân biệt chỉ bằng màu.
+- A **text label** (`Đang chạy`, `Sắp tới`, `Dự kiến`) next to a 14px calendar icon, in the card's meta line.
+- Status is never distinguished by colour alone.
 
 ### Tag
 
-- JetBrains Mono, `--text-2xs`, màu `--color-text-muted`, viền `1px solid --color-border`, bo
-  `--radius-sm`, padding `0.05rem 0.4rem`, không nền màu.
-- Khai báo **một lần ở `global.css`**; dùng cho tag bài viết, stack trong lab card và danh sách
-  kỹ năng ở mục "Về mình".
-- Tag bài viết lấy từ registry dùng chung **`@dev-lab/tags`** (`packages/tags`), không phải chuỗi
-  tự do. Frontmatter ghi id (`react`, `state-management`); schema kiểm tra, sắp xếp theo
-  Technology → Domain → Approach rồi đổi thành label chuẩn (`React`, `State Management`) trước khi
-  component đọc. Mỗi bài **1–4 tag**, khuyến nghị 2–3. Danh mục và quy tắc thêm tag: [`docs/TAGS.md`](../TAGS.md).
-- Tag là metadata độc lập với `lab`, `type` và category. Không dùng tag để thay tên lab hoặc loại
-  bài; không thêm tag mới nếu registry đã có tag cùng nghĩa.
+- JetBrains Mono, `--text-2xs`, color `--color-text-muted`, border `1px solid --color-border`, radius
+  `--radius-sm`, padding `0.05rem 0.4rem`, no background color.
+- Declared **once in `global.css`**; used for post tags, the stack in lab cards and the skills list in the
+  "Về mình" section.
+- Post tags come from the shared **`@dev-lab/tags`** registry (`packages/tags`), not free-form strings. Frontmatter
+  stores the id (`react`, `state-management`); the schema validates, sorts by
+  Technology → Domain → Approach, then converts to canonical labels (`React`, `State Management`) before the
+  component reads them. Each post has **1–4 tags**, 2–3 recommended. Catalogue and tag-adding rules: [`docs/TAGS.md`](../TAGS.md).
+- Tags are metadata independent of `lab`, `type` and category. Do not use tags to replace the lab name or post
+  type; do not add a new tag if the registry already has one with the same meaning.
 
 ### Icon
 
-- Bộ icon dùng chung ở `portal/src/components/Icon.astro`: viewBox 24, nét `1.5px`, đầu nét tròn,
-  màu `currentColor`; icon đặc (GitHub) dùng `fill`. Kích thước dùng: 14px trong metadata, 16–18px
-  trong nút/ô search, 20px ở tiêu đề trang, 24px ở brand.
-- Danh mục hiện có: `leaf`, `search`, `sun`, `moon`, `monitor`, `flask`, `file-text`, `calendar`,
+- Shared icon set in `portal/src/components/Icon.astro`: viewBox 24, `1.5px` stroke, round caps,
+  `currentColor`; solid icons (GitHub) use `fill`. Sizes in use: 14px in metadata, 16–18px
+  in buttons/search field, 20px in page headings, 24px in the brand.
+- Current catalogue: `leaf`, `search`, `sun`, `moon`, `monitor`, `flask`, `file-text`, `calendar`,
   `clock`, `github`, `x`, `enter`, `arrow-up`, `arrow-down`.
-- Không dùng emoji làm icon chức năng (emoji trong câu chữ vẫn được). Không đổ bóng, không tô nền
-  cho icon, trừ hộp icon 40×40px ở tiêu đề trang: nền `color-mix(in oklab, accent 14%, transparent)`,
-  chữ `--color-accent`, bo `--radius-lg`.
-- Icon chỉ là trang trí thì `aria-hidden` (mặc định của component); chỉ truyền `label` khi icon
-  đứng một mình và cần được đọc.
+- Do not use emoji as functional icons (emoji in prose is fine). No shadows, no background fill
+  for icons, except the 40×40px icon box in page headings: background `color-mix(in oklab, accent 14%, transparent)`,
+  color `--color-accent`, radius `--radius-lg`.
+- Icons that are purely decorative get `aria-hidden` (the component default); only pass `label` when the icon
+  stands alone and needs to be read.
 
-### Danh sách dự án
+### Project list
 
-- Cấu trúc hàng giống `Danh sách bài viết`: mỗi dự án là một hàng, ngăn bằng đường kẻ
-  `1px --color-border` (hàng cuối thêm đường dưới), padding dọc 16px.
-- Trong hàng: tên dự án (font display, `--text-lg`) và stack (mono `--text-2xs`, muted) nằm hai đầu
-  một hàng `flex` baseline; mô tả một câu (`--text-sm`, muted) ở dòng dưới.
-- Tên **chỉ là link khi có `href`**; chưa có bản công khai thì để chữ thường, không tạo link chết.
+- Row structure like the `Post list`: each project is one row, separated by a `1px --color-border`
+  rule (the last row adds a bottom rule), 16px vertical padding.
+- Inside a row: project name (display font, `--text-lg`) and stack (mono `--text-2xs`, muted) at opposite ends
+  of a baseline `flex` row; a one-sentence description (`--text-sm`, muted) on the line below.
+- The name **is only a link when there is an `href`**; without a public version, leave it as plain text and do not create a dead link.
 
-### Nguồn thông tin portfolio
+### Portfolio data sources
 
-- `portal/src/data/profile.ts` là nguồn duy nhất cho tên, câu slogan ở hero (`tagline`), khẩu hiệu
-  dạng ghi chú (`slogan`), vai trò, vị trí, email, link liên hệ, kỹ năng, đoạn giới thiệu và danh
-  sách dự án. Hero, khối Dev Lab (kicker vai trò), mục "Về mình", footer và trang liên hệ đều đọc từ
-  đây — sửa một chỗ, cả năm nơi cập nhật.
-- Trường nào để trống thì UI **bỏ qua**: `profileFacts` lọc sẵn dòng rỗng, `profileLinks` chỉ thêm
-  `mailto:` khi có `email`, hai mục "Về mình" và "Dự án khác" ở trang chủ ẩn hẳn khi chưa có dữ
-  liệu, `tagline`/`slogan` trống thì hero bỏ dòng đó.
-- **Chỉ khai báo thứ đã được phép hiển thị công khai.** Trạng thái hiện tại (2026-10-19): tên, vai
-  trò, vị trí, email, GitHub — đã cho phép; LinkedIn, CV, ảnh đại diện — chưa.
+- `portal/src/data/profile.ts` is the single source for the name, the hero slogan line (`tagline`), the
+  note-style motto (`slogan`), role, location, email, contact links, skills, intro paragraph and
+  project list. The hero, the Dev Lab block (role kicker), the "Về mình" section, the footer and the contact page all read from
+  here — edit one place, all five places update.
+- Any empty field is **skipped** by the UI: `profileFacts` filters out empty rows in advance, `profileLinks` only adds
+  `mailto:` when there is an `email`, the "Về mình" and "Dự án khác" sections on the home page are hidden entirely when there is no
+  data, and when `tagline`/`slogan` are empty the hero drops that line.
+- **Only declare what may be shown publicly.** Current state (2026-10-19): name, role,
+  location, email, GitHub — approved; LinkedIn, CV, avatar — not yet.
 
-### Bảng facts
+### Facts table
 
-- Dùng ở mục "Về mình" (trang chủ) và trang liên hệ. Mỗi dòng: **nhãn** mono `--text-xs` màu muted ở
-  cột trái cố định (`flex: 0 0 7rem`, nhờ vậy nhãn các dòng thẳng cột), **giá trị** là một hàng
-  **chip** bên phải. Dòng cách nhau 12px (`gap` của grid trên `.facts`), **không kẻ đường phân dòng**:
-  chip đã tự tạo khối, mà cả trang thì đã nhiều đường ngang.
-- **Chip** (`.facts__chip`): nền `--color-surface`, viền `1px --color-border`, bo `--radius-lg`, chữ
-  **font display** (Patrick Hand) `--text-base` màu `--color-text`. Không thêm token màu mới — cặp
-  `surface`/`border` đã ăn theo cả theme lẫn mode. Chữ để `--color-text` chứ **không** dùng accent:
-  cả hàng chip cùng màu accent sẽ tranh chỗ nhấn với kicker và mục lục.
-- Chip dùng chung cặp token với `.tag` nhưng khác vai: `.tag` là nhãn kỹ thuật (mono 12px, bo
-  `--radius-sm`), chip facts là giá trị cho người đọc (font display 17px, bo `--radius-lg`).
-- `align-items: baseline` trên hàng: nhãn mono và chữ trong chip khác ascent nên căn theo đường chân
-  chữ mới thẳng; hàng chip xuống dòng thì nhãn vẫn bám dòng đầu.
-- **Mỗi chip một ý.** `Ngoại ngữ` là hai chip (`Tiếng Việt` / `Tiếng Anh · TOEIC 940`), `Ngoài code`
-  là bốn chip. Gộp cả câu vào một chip là quay lại đúng kiểu dòng chữ cũ.
-- **Dưới 560px:** nhãn lên trên, hàng chip xuống dưới và căn trái — chip dài như `Tiếng Anh · TOEIC
-940` cần trọn bề ngang để không bị bẻ giữa chip.
-- `profileFacts` dựng từ `profile.location` (**Khu vực**) cộng `profile.facts`; dòng nào không có
-  chip nào thì tự bị lọc, nên trường trống không để lại nhãn rỗng.
-- **Vai trò không nằm trong bảng facts.** Nó đã hiện ở kicker khối Dev Lab; lặp lại ở đây là thừa.
-- **Chọn dòng nào:** facts là chỗ của thứ **gần như không đổi** (`Ngoại ngữ`, `Nhiên liệu`,
-  `Ngoài code`…). Những thứ thay đổi theo thời gian (đang làm ở đâu, đang học gì) **không** để ở
-  đây — vừa phải cập nhật liên tục, vừa làm bảng facts thành CV. Muốn kể thì viết vào `about`.
-- **Viết câu chữ:** viết hoa chữ đầu từng chip (`Cà phê`, `Đồ ngọt`, `Gura`, không phải `cà phê, đồ
-ngọt và gura`). Đây là chữ cho người đọc, không phải chỗ dán lại ghi chú thô.
+- Used in the "Về mình" section (home page) and on the contact page. Each row: a mono **label** at `--text-xs` in muted color
+  in a fixed left column (`flex: 0 0 7rem`, so labels line up across rows), and the **value** is a **chip**
+  row on the right. Rows are 12px apart (grid `gap` on `.facts`), with **no row dividers**:
+  chips already form blocks, and the page already has plenty of horizontal rules.
+- **Chip** (`.facts__chip`): background `--color-surface`, border `1px --color-border`, radius `--radius-lg`, text in the
+  **display font** (Patrick Hand) at `--text-base` in `--color-text`. Do not add a new color token — the
+  `surface`/`border` pair already follows both theme and mode. Text uses `--color-text` and **not** accent:
+  a whole chip row in accent would compete for emphasis with the kicker and the TOC.
+- Chips share the token pair with `.tag` but play a different role: `.tag` is a technical label (mono 12px, radius
+  `--radius-sm`), a facts chip is a value for the reader (display font 17px, radius `--radius-lg`).
+- `align-items: baseline` on the row: the mono label and the text inside chips have different ascents, so aligning on the text
+  baseline is what makes them line up; when the chip row wraps, the label stays on the first line.
+- **One idea per chip.** `Ngoại ngữ` is two chips (`Tiếng Việt` / `Tiếng Anh · TOEIC 940`), `Ngoài code`
+  is four chips. Merging a whole sentence into one chip goes back to the old line-of-text style.
+- **Below 560px:** the label moves above, the chip row goes below and aligns left — long chips like `Tiếng Anh · TOEIC
+940` need the full width so they are not broken mid-chip.
+- `profileFacts` is built from `profile.location` (**Khu vực**) plus `profile.facts`; any row with no
+  chips is filtered out, so empty fields do not leave an empty label.
+- **Role is not in the facts table.** It already appears in the Dev Lab kicker; repeating it here is redundant.
+- **Which rows to choose:** facts are for things that are **nearly constant** (`Ngoại ngữ`, `Nhiên liệu`,
+  `Ngoài code`…). Things that change over time (where you work, what you are learning) do **not** belong
+  here — they would need constant updating and would turn the facts table into a CV. To tell those, write them in `about`.
+- **Wording:** capitalize the first word of each chip (`Cà phê`, `Đồ ngọt`, `Gura`, not `cà phê, đồ
+ngọt và gura`). This is text for readers, not a place to paste raw notes back in.
 
-### Danh sách bài viết (trang chủ)
+### Post list (home page)
 
-- Mỗi bài là **một link khối** (`display: block`), padding dọc 16px, ngăn bằng đường kẻ.
-- Thứ tự: metadata (mono `--text-2xs`, muted) → tiêu đề (font display, `--text-lg`) → tóm tắt (muted,
+- Each post is **a single block link** (`display: block`), 16px vertical padding, separated by a rule.
+- Order: metadata (mono `--text-2xs`, muted) → title (display font, `--text-lg`) → summary (muted,
   `--text-sm`).
-- **Hover:** tiêu đề đổi sang `--color-link`.
-- Mục "Bài viết mới" ở trang chủ **giữ nguyên** cấu trúc này: không thumbnail, không thời gian đọc,
-  không icon, không đổi bố cục. Card cover chỉ dùng ở `/bai-viet`.
+- **Hover:** the title changes to `--color-link`.
+- The "Bài viết mới" section on the home page **keeps** this structure: no thumbnail, no reading time,
+  no icon, no layout change. Cover cards are only used on `/bai-viet`.
 
-### Cover bài viết
+### Post cover
 
-- Mỗi bài có một cover **16:9**, đặt thủ công trong frontmatter bằng hai trường:
-  - `cover`: khóa trong `portal/src/data/covers.ts` (ví dụ `react-fiber`).
-  - `coverAlt`: mô tả ảnh cho screen reader; **bắt buộc** khi có `cover`.
-- File SVG nằm ở `portal/src/assets/covers/`, được nhúng **inline** qua `import.meta.glob(... ?raw)`
-  để dùng được token màu của theme. Nhờ vậy cover tự đổi light/dark, không cần hai bộ ảnh và không
-  phụ thuộc dịch vụ tối ưu ảnh.
-- Màu trong cover chỉ dùng token: `--color-surface`, `--color-bg`, `--color-text`,
-  `--color-text-muted`, `--color-accent`, `--color-link`, `--color-border`. Không hard-code màu.
-- Bài chưa có cover dùng fallback monogram: nền `--color-bg` pha accent rất nhẹ, chữ cái đầu của
-  tiêu đề font display màu `--color-accent`, nhãn loại bài mono muted. Fallback không được tạo link
-  hay alt giả.
+- Each post has a **16:9** cover, set by hand in frontmatter with two fields:
+  - `cover`: a key in `portal/src/data/covers.ts` (for example `react-fiber`).
+  - `coverAlt`: the image description for screen readers; **required** when there is a `cover`.
+- The SVG file lives in `portal/src/assets/covers/` and is embedded **inline** via `import.meta.glob(... ?raw)`
+  so it can use the theme's color tokens. That way the cover switches light/dark by itself, with no need for two image
+  sets and no dependency on an image optimization service.
+- Cover colors use tokens only: `--color-surface`, `--color-bg`, `--color-text`,
+  `--color-text-muted`, `--color-accent`, `--color-link`, `--color-border`. Do not hard-code colors.
+- Posts without a cover use a monogram fallback: `--color-bg` background with a very light accent tint, the title's first letter
+  in the display font in `--color-accent`, and a muted mono post-type label. The fallback must not create a link
+  or a fake alt.
 
-### Card bài viết ở `/bai-viet`
+### Post card on `/bai-viet`
 
-- Lưới card: **1 cột** mặc định, **2 cột** từ 768px, **3 cột** từ 1024px; gap 16px (20px từ 1024px).
-- Card: nền `--color-surface`, viền `1px --color-border`, bo `--radius-lg`, `overflow: hidden`, không
-  đổ bóng. Cover nằm trên, có đường kẻ dưới.
-- Thân card: metadata `type · lab` (mono `--text-2xs`, muted) → tiêu đề font display `--text-lg`
-  → tóm tắt Inter `--text-sm` muted → hàng tag → hàng đáy có ngày và thời gian đọc (mono
-  `--text-2xs`, icon 14px).
-- **Cả card là vùng bấm** của link tiêu đề bằng `::after` phủ toàn card, nhưng trong cây
-  accessibility chỉ có **một** link (link tiêu đề). Không bọc `<a>` quanh cả card.
-- **Hover** (chỉ thiết bị có con trỏ): viền pha accent 55%, card nhấc lên 2px, tiêu đề đổi
-  `--color-link`. Tôn trọng `prefers-reduced-motion`.
-- Tiêu đề card dùng `view-transition-name: vt-post-<id>`, trùng với `h1` ở trang chi tiết.
-- **Thời gian đọc** chỉ hiện ở card `/bai-viet`: đếm từ body Markdown, 200 từ/phút, tối thiểu 1
-  phút (`src/lib/reading.ts`). Không thêm vào danh sách trang chủ.
+- Card grid: **1 column** by default, **2 columns** from 768px, **3 columns** from 1024px; gap 16px (20px from 1024px).
+- Card: background `--color-surface`, border `1px --color-border`, radius `--radius-lg`, `overflow: hidden`, no
+  shadow. The cover sits on top, with a rule below it.
+- Card body: `type · lab` metadata (mono `--text-2xs`, muted) → title in display font `--text-lg`
+  → summary in Inter `--text-sm` muted → tag row → bottom row with date and reading time (mono
+  `--text-2xs`, 14px icons).
+- **The whole card is the click target** of the title link via an `::after` overlay covering the whole card, but the
+  accessibility tree contains only **one** link (the title link). Do not wrap an `<a>` around the whole card.
+- **Hover** (pointer devices only): border tinted 55% accent, card lifts 2px, title changes to
+  `--color-link`. Respects `prefers-reduced-motion`.
+- The card title uses `view-transition-name: vt-post-<id>`, matching the `h1` on the detail page.
+- **Reading time** only appears on `/bai-viet` cards: counted from the Markdown body, 200 words/minute, minimum 1
+  minute (`src/lib/reading.ts`). Not added to the home list.
 
-### Bảng trong bài
+### In-post tables
 
-- Bảng Markdown đã có style cơ bản trong `portal/src/pages/bai-viet/[...slug].astro`:
-  `border-collapse`, viền `1px --color-border`, chữ Inter `--text-sm`, ô tiêu đề màu
-  `--color-text-muted`, hover hàng đổi nền sang `--color-bg`.
-- Chưa có "bảng số liệu" riêng (khung `--color-surface`, font mono). Khi cần, chốt spec mới thay
-  vì coi các gạch đầu dòng dưới đây là hiện hành:
-  - Bọc trong khung nền `--color-surface`, viền 1px, bo `--radius-lg`, `overflow-x: auto`.
-  - Font JetBrains Mono 12px. Ô tiêu đề cột màu `--color-text-muted`, weight 400, **căn trái**.
-  - Ô dữ liệu màu `--color-text-muted`; **cột đầu** màu `--color-text`, weight 500.
-  - Hàng ngăn bằng đường kẻ mảnh; **hover hàng** đổi nền sang `--color-bg`.
+- Markdown tables already have base styles in `portal/src/pages/bai-viet/[...slug].astro`:
+  `border-collapse`, `1px --color-border` borders, Inter text at `--text-sm`, header cells in
+  `--color-text-muted`, row hover changes the background to `--color-bg`.
+- There is no separate "data table" yet (`--color-surface` frame, mono font). When needed, agree on a new spec instead
+  of treating the bullets below as current:
+  - Wrapped in a `--color-surface` frame, 1px border, radius `--radius-lg`, `overflow-x: auto`.
+  - JetBrains Mono 12px. Column header cells in `--color-text-muted`, weight 400, **left-aligned**.
+  - Data cells in `--color-text-muted`; the **first column** in `--color-text`, weight 500.
+  - Rows separated by a thin rule; **row hover** changes the background to `--color-bg`.
 
 ### Link
 
-- Màu `--color-link`, mặc định **không gạch chân**; gạch chân hiện khi hover (chuyển động ở
-  mục 7.4, `motion.md`).
-- Link trong nav: màu `--color-text-muted`; hover đổi `--color-accent` **và** hiện một nền pill
-  accent mờ nở ra sau chữ (`color-mix(in oklab, accent 16%, transparent)`, `scale(0.85)` → `1`,
-  `opacity 0` → `1`); không gạch chân.
-- Hiệu ứng hover của nav và brand chỉ áp trong `@media (hover: hover) and (pointer: fine)` để
-  không dính trạng thái trên thiết bị cảm ứng.
-- Trang hiện tại: `aria-current="page"`, màu `--color-text`; riêng link nav dùng màu `--color-accent` và nền pill.
+- Color `--color-link`, **no underline** by default; the underline appears on hover (motion in
+  section 7.4, `motion.md`).
+- Nav links: color `--color-text-muted`; hover changes to `--color-accent` **and** shows a translucent accent pill
+  background expanding behind the text (`color-mix(in oklab, accent 16%, transparent)`, `scale(0.85)` → `1`,
+  `opacity 0` → `1`); no underline.
+- Nav and brand hover effects apply only inside `@media (hover: hover) and (pointer: fine)` so no
+  state sticks on touch devices.
+- Current page: `aria-current="page"`, color `--color-text`; nav links specifically use `--color-accent` and the pill background.
 
-### Nút
+### Button
 
-| Biến thể   | Nền              | Viền                 | Chữ                  | Hover                                     |
-| ---------- | ---------------- | -------------------- | -------------------- | ----------------------------------------- |
-| `ghost`    | trong suốt       | không                | `--color-text-muted` | nền `--color-surface`, chữ `--color-text` |
-| `outlined` | trong suốt       | `1px --color-border` | `--color-text`       | viền `--color-accent`                     |
-| `filled`   | `--color-accent` | không                | `--color-bg`         | nền `color-mix(in oklab, accent 88%, bg)` |
+| Variant    | Background       | Border               | Text                 | Hover                                             |
+| ---------- | ---------------- | -------------------- | -------------------- | ------------------------------------------------- |
+| `ghost`    | transparent      | none                 | `--color-text-muted` | background `--color-surface`, text `--color-text` |
+| `outlined` | transparent      | `1px --color-border` | `--color-text`       | border `--color-accent`                           |
+| `filled`   | `--color-accent` | none                 | `--color-bg`         | background `color-mix(in oklab, accent 88%, bg)`  |
 
-- Chưa biến thể nào được dùng. `ghost`, `outlined`, `filled` để dành cho CTA và form sau này; khi
-  dùng thì theo bảng trên.
-- Trạng thái "đang chọn" biểu diễn bằng ngữ nghĩa của chính phần tử (`checked` của `<input>`,
-  `value` của `<select>`), không dùng class `.active` rời.
-- Không tự chế màu accent đậm hơn cho `filled`; dùng `color-mix` để đổi đúng theo theme × mode.
+- No variant is used yet. `ghost`, `outlined`, `filled` are reserved for future CTAs and forms; when
+  used, follow the table above.
+- The "selected" state is expressed by the element's own semantics (`checked` on `<input>`,
+  `value` on `<select>`), not by a detached `.active` class.
+- Do not invent a darker accent color for `filled`; use `color-mix` so it tracks theme × mode.
 
-### Bộ chọn theme / mode
+### Theme / mode selector
 
-- Hai trục độc lập, mỗi trục là một `<label>` bọc `<select>` gốc: nhãn mono `--text-2xs` và
-  `<select>` mono `--text-2xs`, nền `--color-surface`, viền `1px --color-border`, bo
-  `--radius-md`; hover đổi viền sang `--color-accent`.
-- Dùng `<select>` gốc để giữ hành vi và bàn phím của hệ điều hành, không phải vẽ lại mũi tên
-  (nếu vẽ thì phải hard-code màu trong component).
-- Nhóm theme tự ẩn khi chỉ có một theme khả dụng. Nhãn chữ ẩn dưới 768px (vẫn còn `<label>` cho
-  screen reader).
-- Nhóm mode gồm `Hệ thống`, `Sáng`, `Tối`; nhóm theme liệt kê theo `src/data/themes.ts`.
-- Trước `<select>` mode có icon 14px khớp preference: `monitor` (Hệ thống), `sun` (Sáng), `moon`
-  (Tối). Icon do CSS chọn theo `html[data-mode-preference]`, không cần JS riêng; icon là trang trí
-  nên `aria-hidden`.
+- Two independent axes, each axis is a `<label>` wrapping a native `<select>`: mono label at `--text-2xs` and
+  mono `<select>` at `--text-2xs`, background `--color-surface`, border `1px --color-border`, radius
+  `--radius-md`; hover changes the border to `--color-accent`.
+- Uses a native `<select>` to keep OS behavior and keyboard support rather than redrawing the arrow
+  (redrawing would mean hard-coding colors in the component).
+- The theme group hides itself when only one theme is available. The text label is hidden below 768px (the
+  `<label>` remains for screen readers).
+- The mode group contains `Hệ thống`, `Sáng`, `Tối`; the theme group lists themes from `src/data/themes.ts`.
+- Before the mode `<select>` there is a 14px icon matching the preference: `monitor` (Hệ thống), `sun` (Sáng), `moon`
+  (Tối). The icon is chosen by CSS based on `html[data-mode-preference]`, no separate JS needed; the icon is decorative
+  so `aria-hidden`.
 
-### Tìm kiếm
+### Search
 
-- **Nút mở** nằm trong header, cạnh bộ chọn mode:
-  - ≥768px: pill cao 34px, nền `color-mix(surface 70%, transparent)`, viền `--color-border`, icon
-    search 16px, chữ `Tìm kiếm…`, `kbd` hiển thị `Ctrl K` (Mac: `⌘ K`). Hover đổi viền/chữ sang
+- **Open button** sits in the header, next to the mode selector:
+  - ≥768px: 34px-tall pill, background `color-mix(surface 70%, transparent)`, border `--color-border`, 16px search
+    icon, text `Tìm kiếm…`, `kbd` showing `Ctrl K` (Mac: `⌘ K`). Hover changes border/text to
     `--color-accent`.
-  - <768px: thu thành nút icon vuông 34px, nền/viền trong suốt; ẩn chữ và `kbd`.
-  - Nút có `aria-haspopup="dialog"`, `aria-expanded` được JS cập nhật.
-- **Dialog** dùng `<dialog>` gốc + `showModal()` để có top layer, focus trap và Esc sẵn. Panel rộng
-  tối đa 640px, nền `--color-surface`, viền `--color-border`, bo `--radius-lg`, bóng mềm bằng
-  `color-mix`. Backdrop pha `--color-bg` 62% + blur 4px.
-- **Nội dung:** ô input `type="search"` (ẩn nút clear mặc định), nút đóng `x`, danh sách kết quả
-  `role="listbox"`, mỗi kết quả `role="option"`; footer gợi ý phím `↑` `↓` `↵` `esc` (ẩn dưới
+  - <768px: collapses into a 34px square icon button, transparent background/border; text and `kbd` hidden.
+  - The button has `aria-haspopup="dialog"`, `aria-expanded` updated by JS.
+- **Dialog** uses a native `<dialog>` + `showModal()` for the top layer, focus trap and Esc out of the box. Panel at most
+  640px wide, background `--color-surface`, border `--color-border`, radius `--radius-lg`, soft shadow via
+  `color-mix`. Backdrop tinted 62% `--color-bg` + 4px blur.
+- **Content:** `type="search"` input (native clear button hidden), `x` close button, `role="listbox"` result list,
+  each result `role="option"`; footer with key hints `↑` `↓` `↵` `esc` (hidden below
   640px).
-- **Kết quả** gồm bài viết, lab và trang tĩnh; tối đa 8 mục. Mỗi mục có nhãn loại (Bài viết /
-  Lab / Trang), tiêu đề và metadata. Mục đang chọn có nền accent 12%. Không nhóm theo loại để
-  điều hướng bàn phím đơn giản.
-- **Bàn phím:** `Ctrl/Cmd+K` hoặc `/` (khi không focus vào input/textarea/select/contenteditable)
-  mở dialog; `↑`/`↓` đổi mục, `Enter` mở, `Esc` đóng. Click ra ngoài panel cũng đóng.
-- **Tìm không dấu:** chuẩn hoá NFD, bỏ combining mark, đổi `đ` → `d`, lowercase; nhờ vậy `fiber`
-  khớp `Fiber`, `reconciliation` khớp `Reconciliation`.
-- **Chỉ mục** sinh lúc build ở `/search-index.json`; client fetch lười ở lần mở đầu tiên và cache
-  trong bộ nhớ. Không thêm dependency runtime, không gọi API bên ngoài.
-- **Không dùng** dialog cho mobile menu; menu mobile vẫn là việc riêng (mục 1.3 roadmap).
+- **Results** include posts, labs and static pages, up to 8 items. Each item has a type label (Bài viết /
+  Lab / Trang), title and metadata. The selected item has a 12% accent background. No grouping by type, to keep
+  keyboard navigation simple.
+- **Keyboard:** `Ctrl/Cmd+K` or `/` (when not focused in an input/textarea/select/contenteditable)
+  opens the dialog; `↑`/`↓` change item, `Enter` opens, `Esc` closes. Clicking outside the panel also closes it.
+- **Accent-insensitive search:** NFD normalization, strip combining marks, map `đ` → `d`, lowercase; so `fiber`
+  matches `Fiber`, `reconciliation` matches `Reconciliation`.
+- **Index** generated at build time at `/search-index.json`; the client fetches lazily on first open and caches
+  in memory. No runtime dependency added, no external API calls.
+- **Not used** for a mobile menu; the mobile menu remains separate work (roadmap section 1.3).
 
-### Nút lên đầu trang
+### Back-to-top button
 
-- Nút tròn `--radius-pill`, 40×40px, cố định ở góc dưới phải (cách mép `--space-inline`), nền
-  `--color-surface`, viền `1px --color-border`, chữ `--color-text-muted`; hover đổi chữ và viền
-  sang `--color-accent`.
-- Ẩn ở đầu trang; chỉ hiện khi đã cuộn quá 600px. Hiện dần bằng `animation` (opacity +
-  `translateY(4px)`), ẩn ngay bằng thuộc tính `hidden` để không còn nhận focus.
-- Bấm thì cuộn mượt lên đầu trang; khi `prefers-reduced-motion: reduce` thì nhảy thẳng.
+- Round button `--radius-pill`, 40×40px, fixed in the bottom-right corner (`--space-inline` from the edge), background
+  `--color-surface`, border `1px --color-border`, color `--color-text-muted`; hover changes text and border
+  to `--color-accent`.
+- Hidden at the top of the page; only appears after scrolling past 600px. Fades in with `animation` (opacity +
+  `translateY(4px)`), hides immediately via the `hidden` attribute so it can no longer receive focus.
+- Clicking smooth-scrolls to the top; with `prefers-reduced-motion: reduce` it jumps straight there.
 
 ### Code block
 
-- Nền `--color-surface`, font JetBrains Mono, bo `--radius-sm`, `overflow-x: auto`.
+- Background `--color-surface`, JetBrains Mono font, radius `--radius-sm`, `overflow-x: auto`.
 
-### Hàng link
+### Link row
 
-- Một hàng link inline, font mono `--text-xs` (14px) cho **đồng bộ toàn site**: nav, footer, khối
-  liên hệ, CTA ở hero, dòng "Tất cả bài viết", link quay lại ở cuối bài, `skip-link` đều dùng mono.
-- Các hàng link inline dùng chung class `.link-row` trong `global.css`. Nav, footer và `skip-link`
-  có layout riêng nên tự khai báo font mono trong component, không gắn `.link-row`.
-- Danh sách liên hệ lấy từ `profileLinks` trong `data/profile.ts`, nên **chỉ hiện những link đã
-  có** — không để chỗ trống cho link chưa tồn tại.
-- Hai ngoại lệ có chủ ý (xem mục 4, `typography.md`): link là **tiêu đề** giữ font display, link **trong câu văn**
-  giữ font nội dung.
+- A single inline link row, mono at `--text-xs` (14px) for **site-wide consistency**: nav, footer, the contact block,
+  hero CTAs, the "Tất cả bài viết" line, the back link at the end of posts, and `skip-link` all use mono.
+- Inline link rows share the `.link-row` class in `global.css`. Nav, footer and `skip-link`
+  have their own layout, so they declare mono in the component without `.link-row`.
+- The contact list comes from `profileLinks` in `data/profile.ts`, so **only existing links are shown** — no empty
+  slot for a link that does not exist.
+- Two deliberate exceptions (see section 4, `typography.md`): links that are **headings** keep the display font, links **inside
+  sentences** keep the body font.

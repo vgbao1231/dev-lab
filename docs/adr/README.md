@@ -1,41 +1,41 @@
 # Architecture Decision Records (ADR)
 
-Mỗi file ghi **một** quyết định: bối cảnh, quyết định, và đánh đổi. Dùng để trả lời "vì sao lại làm vậy" mà không cần lục lịch sử commit.
+Each file records **one** decision: the context, the decision, and the trade-offs. Use it to answer "why was it done this way" without digging through commit history.
 
-Quy ước:
+Conventions:
 
-- Tên file `NNNN-ten-ngan.md`, đánh số tăng dần.
-- Không sửa nội dung ADR cũ. Quyết định đổi thì thêm ADR mới và ghi "Thay thế ADR NNNN".
-- Spec (giá trị, quy tắc hiện hành) nằm ở `docs/design/`; ADR chỉ giữ lý do.
+- File name `NNNN-short-name.md`, numbered in ascending order.
+- Do not edit the content of old ADRs. If a decision changes, add a new ADR and write "Supersedes ADR NNNN".
+- The spec (values, current rules) lives in `docs/design/`; ADRs keep only the rationale.
 
-Mẫu:
+Template:
 
 ```md
-# NNNN. Tiêu đề quyết định
+# NNNN. Decision title
 
-Trạng thái: Accepted | Superseded by NNNN
-Ngày: YYYY-MM-DD
+Status: Accepted | Superseded by NNNN
+Date: YYYY-MM-DD
 
-## Bối cảnh
+## Context
 
-## Quyết định
+## Decision
 
-## Hệ quả
+## Consequences
 ```
 
-## Danh sách
+## List
 
-| ADR                                                 | Quyết định                                                 |
-| --------------------------------------------------- | ---------------------------------------------------------- |
-| [0001](0001-astro-tinh-va-pnpm-workspace.md)        | Portal Astro tĩnh, các lab độc lập trong pnpm workspace    |
-| [0002](0002-theme-va-mode-hai-truc-doc-lap.md)      | Theme và mode là hai trục độc lập                          |
-| [0003](0003-font-display-patrick-hand.md)           | Patrick Hand làm font display thay Balsamiq Sans           |
-| [0004](0004-chuyen-trang-bang-view-transitions.md)  | Chuyển trang bằng View Transitions                         |
-| [0005](0005-chu-mono-nho-hon-inter-2px.md)          | Chữ mono luôn nhỏ hơn chữ Inter cùng vai trò 2px           |
-| [0006](0006-header-capsule-dinh.md)                 | Header dính dạng capsule mờ                                |
-| [0007](0007-tien-do-doc-bang-animation-timeline.md) | Thanh tiến độ đọc chạy bằng `animation-timeline: scroll()` |
-| [0008](0008-moi-lab-mot-project-pages.md)           | Mỗi lab là một project Cloudflare Pages riêng              |
-| [0009](0009-cover-bai-viet-thu-cong.md)             | Cover bài viết đặt thủ công, SVG inline theo theme         |
-| [0010](0010-tag-dung-chung-package.md)              | Tag dùng chung qua package `@dev-lab/tags`                 |
-| [0011](0011-command-palette-tim-kiem.md)            | Command palette tìm kiếm, index sinh lúc build             |
-| [0012](0012-giao-dien-home-va-hieu-ung-parallax.md) | Giao diện trang chủ và hiệu ứng parallax nền               |
+| ADR                                              | Decision                                                         |
+| ------------------------------------------------ | ---------------------------------------------------------------- |
+| [0001](0001-astro-static-and-pnpm-workspace.md)  | Static Astro portal, independent labs in a pnpm workspace        |
+| [0002](0002-theme-mode-independent-axes.md)      | Theme and mode are two independent axes                          |
+| [0003](0003-patrick-hand-display-font.md)        | Patrick Hand as the display font instead of Balsamiq Sans        |
+| [0004](0004-view-transition-navigation.md)       | Page navigation with View Transitions                            |
+| [0005](0005-mono-2px-smaller-than-inter.md)      | Mono text is always 2px smaller than Inter text in the same role |
+| [0006](0006-sticky-capsule-header.md)            | Sticky capsule header with a translucent background              |
+| [0007](0007-reading-progress-scroll-timeline.md) | Reading progress bar driven by `animation-timeline: scroll()`    |
+| [0008](0008-one-pages-project-per-lab.md)        | Each lab is its own Cloudflare Pages project                     |
+| [0009](0009-manual-post-covers.md)               | Post covers are assigned manually, inline SVG per theme          |
+| [0010](0010-shared-tag-package.md)               | Shared tags through the `@dev-lab/tags` package                  |
+| [0011](0011-search-command-palette.md)           | Search command palette, index generated at build time            |
+| [0012](0012-home-layout-and-parallax.md)         | Home page layout and background parallax effect                  |

@@ -1,35 +1,35 @@
-# Design: Theme và màu sắc
+# Design: Theme and color
 
-> Một phần của design system; chỉ mục và bảng định tuyến ở [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
-> Số mục giữ nguyên bản gốc vì comment trong code trỏ tới "mục N".
+> Part of the design system; index and routing table in [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
+> Section numbers stay as in the original because comments in the code point to "mục N".
 
-## 1. Cấu trúc theme
+## 1. Theme structure
 
-Hai trục **độc lập**, người dùng chọn riêng từng trục:
+Two **independent** axes, the user picks each one separately:
 
-- **Theme:** bộ nhận diện màu sắc, mỗi theme có tên riêng và tinh thần riêng — Minimalist Editorial, Digital Garden, và các theme thêm sau này.
-- **Chế độ (mode):** Light, Dark, hoặc Hệ thống (theo cài đặt thiết bị). Mode không gắn cứng với theme.
+- **Theme:** a color identity; each theme has its own name and spirit — Minimalist Editorial, Digital Garden, and later themes.
+- **Mode:** Light, Dark, or Hệ thống (follows the device setting). Mode is not hard-wired to a theme.
 
-Vì hai trục độc lập, số tổ hợp **không cố định**: mỗi theme chỉ cần định nghĩa bảng màu cho light và dark của chính nó.
+Because the two axes are independent, the number of combinations is **not fixed**: each theme only needs to define its own light and dark palettes.
 
-Theme được gắn lên `<html>` bằng hai thuộc tính:
+The theme is applied to `<html>` with two attributes:
 
 ```html
 <html data-theme="minimalist-editorial" data-mode="dark"></html>
 ```
 
-Cách mở rộng: thêm theme mới = thêm bảng màu vào file này (`docs/design/theme.md`) + thêm block CSS variables cho theme đó + đăng ký trong `portal/src/data/themes.ts`. Bố cục và typography **không** đổi theo theme, chỉ màu sắc đổi.
+How to extend: adding a new theme = adding a palette to this file (`docs/design/theme.md`) + adding a CSS variables block for that theme + registering it in `portal/src/data/themes.ts`. Layout and typography do **not** change per theme; only color changes.
 
-### Phạm vi triển khai
+### Implementation scope
 
-- **Giai đoạn hiện tại:** chỉ triển khai **Minimalist Editorial** (đủ light + dark). Bộ chọn theme tự ẩn khi chỉ có một theme khả dụng, và tự hiện khi có từ hai theme trở lên.
-- **Sau này:** Digital Garden và các theme khác. Bảng màu của Digital Garden đã ghi ở mục 2.2 nhưng **chưa** đưa vào code.
+- **Current phase:** only **Minimalist Editorial** is implemented (full light + dark). The theme selector hides itself when only one theme is available, and shows itself again when there are two or more.
+- **Later:** Digital Garden and other themes. The Digital Garden palette is documented in section 2.2 but is **not yet** in the code.
 
-## 2. Bảng màu theme
+## 2. Theme palettes
 
-### 2.1 Minimalist Editorial — đang triển khai
+### 2.1 Minimalist Editorial — implemented
 
-**Mood:** ấm, bình tĩnh, mang cảm giác nhật ký kỹ thuật cá nhân.
+**Mood:** warm, calm, like a personal technical journal.
 
 | Token           | Dark      | Light     |
 | --------------- | --------- | --------- |
@@ -42,9 +42,9 @@ Cách mở rộng: thêm theme mới = thêm bảng màu vào file này (`docs/d
 | Borders         | `#3A3630` | `#E3DDD1` |
 | Scrollbar thumb | `#565046` | `#C9C1B1` |
 
-### 2.2 Digital Garden — chưa triển khai
+### 2.2 Digital Garden — not implemented
 
-**Mood:** yên tĩnh, tự nhiên, như một khu vườn tri thức.
+**Mood:** quiet, natural, like a garden of knowledge.
 
 | Token          | Dark      | Light     |
 | -------------- | --------- | --------- |
@@ -58,14 +58,12 @@ Cách mở rộng: thêm theme mới = thêm bảng màu vào file này (`docs/d
 
 ## 3. CSS variables
 
-Tên token dùng chung cho mọi theme và mọi mode; chỉ giá trị thay đổi theo cặp `data-theme` + `data-mode`.
-Giá trị thật nằm ở `portal/src/styles/tokens.css` và **phải khớp bảng ở mục 2** (bảng là bản quyết định,
-file CSS là bản cài đặt; đổi màu thì sửa bảng trước). Không chép lại cả khối CSS vào đây để khỏi lệch.
+Token names are shared by every theme and every mode; only the values change per `data-theme` + `data-mode` pair. The real values live in `portal/src/styles/tokens.css` and **must match the table in section 2** (the table decides, the CSS file implements; to change a color, edit the table first). The full CSS block is not copied here to avoid drift.
 
-- Token màu: `--color-bg`, `--color-surface`, `--color-text`, `--color-text-muted`, `--color-accent`,
+- Color tokens: `--color-bg`, `--color-surface`, `--color-text`, `--color-text-muted`, `--color-accent`,
   `--color-link`, `--color-border`, `--color-scrollbar-thumb`.
-- Selector dạng `:root[data-theme='<id>'][data-mode='dark' | 'light']`. `:root` mang giá trị dark của
-  Minimalist Editorial làm mặc định, để trang vẫn đọc được khi JavaScript chưa chạy.
-- Thêm theme mới thì thêm hai block cùng dạng với selector `[data-theme='<id>']`, giá trị lấy từ bảng ở mục 2.
-- Khi mode là "Hệ thống", JavaScript đọc `prefers-color-scheme` và gán `data-mode` tương ứng.
-- Không hard-code màu trong component.
+- Selector form `:root[data-theme='<id>'][data-mode='dark' | 'light']`. `:root` carries the dark values of
+  Minimalist Editorial as the default, so the page stays readable before JavaScript runs.
+- To add a theme, add two blocks of the same shape with the selector `[data-theme='<id>']`, values taken from the table in section 2.
+- When the mode is "Hệ thống", JavaScript reads `prefers-color-scheme` and sets `data-mode` accordingly.
+- Do not hard-code colors in components.

@@ -1,110 +1,124 @@
 # AGENTS.md
 
-Hướng dẫn cho AI agent (Claude Code, OpenCode, Cursor, Copilot, v.v.) làm việc trong repo Dev Lab.
+Instructions for AI agents (Claude Code, OpenCode, Cursor, Copilot, etc.) working in the Dev Lab repo.
 
-Dev Lab là portal Astro (static) cộng các lab độc lập trong `labs/`, quản lý bằng pnpm workspace. Trang chủ là portfolio cá nhân; bài viết là Markdown/MDX trong content collection. Giai đoạn hiện tại: xem đầu `docs/ROADMAP.md`.
+Dev Lab is a static Astro portal plus independent labs under `labs/`, managed as a pnpm workspace. The home page is a personal portfolio; posts are Markdown/MDX in the Astro content collection. **Current phase: Phase 1 — Foundation and the first React lab**; see the top of `docs/ROADMAP.md` for the live status and open items.
 
-## Lệnh
+## Language policy
 
-| Việc                 | Lệnh                                                             |
-| -------------------- | ---------------------------------------------------------------- |
-| Dev portal           | `pnpm dev` (http://localhost:4321)                               |
-| Dev một lab          | `pnpm --filter react-lab dev`                                    |
-| Kiểm tra (giống CI)  | `pnpm lint && pnpm format:check && pnpm typecheck && pnpm build` |
-| Tự sửa lint / format | `pnpm lint:fix` / `pnpm format`                                  |
+This repo separates product language from project language.
 
-## Bản đồ repo
+- **English is required** for: documentation, ADRs, changelog entries, comments in code, commit messages, branch names, file and directory names, code identifiers, test names, and configuration comments.
+- **Vietnamese is allowed only for**: article content (`portal/src/content/posts/`), UI copy shown to readers, data strings rendered in the UI (for example `profile.ts` values and lab status labels), and route slugs that are already public (`/bai-viet`, `/lien-he`).
+- Do not translate technical terms that readers know in English (`useMemo`, `reconciliation`, `event loop`, `commit phase`).
+- Do not mix languages in a new comment or document. If you touch a file with legacy Vietnamese comments, you may translate the comments in that file as part of the same focused change.
+- Existing Vietnamese commit messages and branch names are history and are **not** rewritten.
 
-- `portal/src/pages/`: route (`/`, `/labs`, `/bai-viet`, `/bai-viet/[...slug]`, `/lien-he`) và `search-index.json.ts` sinh search index lúc build
-- `portal/src/components/`: component `.astro`, mỗi component một file PascalCase (header, card, cover, icon, search…)
-- `portal/src/data/`: nguồn dữ liệu duy nhất. `profile.ts` (thông tin cá nhân), `labs.ts`, `themes.ts`, `content.ts` (`postTypes`), `covers.ts`, `icons.ts`
-- `portal/src/lib/`: logic thuần dùng chung (`search.ts`, `reading.ts`), không phụ thuộc DOM
-- `portal/src/content/posts/`: bài viết, tên file = slug
-- `portal/src/content.config.ts`: schema frontmatter (nguồn sự thật cho các trường bắt buộc)
-- `portal/src/styles/tokens.css`: giá trị token (màu, cỡ chữ, khoảng cách, motion)
-- `packages/tags/`: registry tag dùng chung `@dev-lab/tags`; nguồn duy nhất cho ID/label/nhóm tag
-- `docs/design/`: spec giao diện theo chủ đề; `docs/adr/`: quyết định và lý do; `docs/TAGS.md`: quy ước tag; `docs/CHANGELOG.md`: lịch sử chỉnh thiết kế
-- `labs/<tên>/`: mỗi lab là một app độc lập
-- `design-reference/`: chỉ để tham khảo, không build, không sửa
+## Commands
 
-## Đọc gì trước khi làm
+| Task                   | Command                                                          |
+| ---------------------- | ---------------------------------------------------------------- |
+| Run the portal         | `pnpm dev` (http://localhost:4321)                               |
+| Run one lab            | `pnpm --filter react-lab dev`                                    |
+| Check (same as CI)     | `pnpm lint && pnpm format:check && pnpm typecheck && pnpm build` |
+| Auto-fix lint / format | `pnpm lint:fix` / `pnpm format`                                  |
 
-Không đọc hết `docs/`. Chọn theo việc:
+## Repository map
 
-| Việc                                                  | Đọc                                                                          |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Màu, theme, token màu                                 | `docs/design/theme.md`                                                       |
-| Font, thang cỡ chữ                                    | `docs/design/typography.md`                                                  |
-| Bố cục trang, header, footer, breakpoint              | `docs/design/layout.md`                                                      |
-| Component: card, tag, link, nút, bảng facts, bộ chọn  | `docs/design/components.md`                                                  |
-| Trang chi tiết bài viết (mục lục, tiến độ đọc, nút #) | `docs/design/post-page.md`                                                   |
-| Animation, hover, View Transitions                    | `docs/design/motion.md`                                                      |
-| Viết hoặc sửa bài                                     | `portal/src/content.config.ts`, `portal/src/data/content.ts`, `docs/TAGS.md` |
-| Đề xuất tính năng hoặc lab mới                        | `docs/PROJECT_OVERVIEW.md`, phần đầu `docs/ROADMAP.md`                       |
-| Vì sao đang làm như vậy                               | `docs/adr/`                                                                  |
+- `portal/src/pages/`: routes (`/`, `/labs`, `/bai-viet`, `/bai-viet/[...slug]`, `/lien-he`) and `search-index.json.ts`, which generates the search index at build time
+- `portal/src/components/`: `.astro` components, one PascalCase file per component (header, cards, cover, icon, search, and so on)
+- `portal/src/data/`: the single source of data. `profile.ts` (personal information), `labs.ts`, `themes.ts`, `content.ts` (`postTypes`), `covers.ts`, `icons.ts`
+- `portal/src/lib/`: pure shared logic (`search.ts`, `reading.ts`) with no DOM dependency
+- `portal/src/content/posts/`: posts; the file name is the slug
+- `portal/src/content.config.ts`: frontmatter schema (source of truth for required fields)
+- `portal/src/styles/tokens.css`: token values (colour, type size, spacing, motion)
+- `packages/tags/`: shared `@dev-lab/tags` registry; the only source for tag IDs, labels and groups
+- `docs/design/`: per-topic UI specs; `docs/adr/`: decisions and rationale; `docs/TAGS.md`: tag conventions; `docs/CHANGELOG.md`: design change history
+- `labs/<name>/`: each lab is an independent app
+- `design-reference/`: reference only; never build it, never edit it
 
-Comment trong code ghi "`docs/DESIGN_SYSTEM.md` mục N": bảng ở đầu file đó cho biết mục N nằm ở file nào.
+## What to read first
 
-Nếu yêu cầu mâu thuẫn với tài liệu, hỏi lại người dùng thay vì tự quyết.
+Do not read all of `docs/`. Pick by task:
 
-## Nguyên tắc chung
+| Task                                                       | Read                                                                         |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Colour, theme, colour tokens                               | `docs/design/theme.md`                                                       |
+| Fonts, type scale                                          | `docs/design/typography.md`                                                  |
+| Page layout, header, footer, breakpoints                   | `docs/design/layout.md`                                                      |
+| Components: cards, tag, link, button, facts table, selects | `docs/design/components.md`                                                  |
+| Post detail page (table of contents, progress, `#` button) | `docs/design/post-page.md`                                                   |
+| Animation, hover, View Transitions                         | `docs/design/motion.md`                                                      |
+| Writing or editing a post                                  | `portal/src/content.config.ts`, `portal/src/data/content.ts`, `docs/TAGS.md` |
+| Proposing a feature or a new lab                           | `docs/PROJECT_OVERVIEW.md`, top of `docs/ROADMAP.md`                         |
+| Why the project is built this way                          | `docs/adr/`                                                                  |
 
-- **Không tự chốt quyết định kiến trúc.** Mục "Những điều chưa quyết định" trong `docs/PROJECT_OVERVIEW.md` là chưa chốt: đề xuất phương án kèm đánh đổi, chờ người dùng xác nhận.
-- **Phạm vi nhỏ, thay đổi nhỏ.** Mỗi thay đổi giải quyết một việc. Không refactor hoặc đổi cấu trúc ngoài phạm vi được yêu cầu.
-- **Không thêm dependency mới** nếu chưa được đồng ý. Ghi rõ lý do khi đề xuất.
-- **Không tạo tính năng chỉ để dogfood.** Dùng công nghệ để xây website là tùy chọn, không bắt buộc cho mọi bài viết.
-- **Không thêm gradient, glow, hiệu ứng trang trí** nếu chưa có trong design system.
+Code comments say "`docs/DESIGN_SYSTEM.md` section N"; the table at the top of that file maps section N to the topic file.
 
-## Quy tắc code
+If a request contradicts the documentation, ask the user instead of deciding unilaterally.
+
+## General principles
+
+- **Do not settle architecture decisions on your own.** The "Undecided items" section in `docs/PROJECT_OVERVIEW.md` is not decided: propose options with trade-offs and wait for confirmation.
+- **Small scope, small changes.** One change solves one problem. Do not refactor or restructure beyond what was asked.
+- **Do not add dependencies** without agreement. State the reason when proposing one.
+- **Do not build a feature only to dogfood.** Using a technology to build the site is optional, not mandatory for every post.
+- **Do not add gradients, glows or decorative effects** unless the design system or an accepted ADR already allows them. The current exception is the home-page decoration from ADR 0012; do not extend it to other pages or components.
+- **Documentation decides, code implements.** If they disagree, report the disagreement; do not silently change the rule to match the code.
+
+## Code rules
 
 ### TypeScript
 
-- Bật `strict`. Không dùng `any` trừ khi có comment giải thích.
-- Ưu tiên `type` cho props và dữ liệu đơn giản, `interface` khi cần mở rộng.
-- Tên biến và hàm dùng tiếng Anh. Comment có thể dùng tiếng Việt.
+- `strict` is enabled. Do not use `any` unless a comment explains why.
+- Prefer `type` for props and simple data, `interface` when extension is needed.
+- Variable and function names are English. Comments are English.
+- Keep business logic out of JSX. Extract it into a hook or a pure function.
 
-### React (trong các lab React)
+### React (in React labs)
 
-- Function component, không dùng class component.
-- Mỗi component một file, tên file trùng tên component (PascalCase).
-- Không đặt logic nghiệp vụ trong JSX. Tách ra hook hoặc hàm thuần.
+- Function components only; no class components.
+- One component per file, file name matches the component name (PascalCase).
 
-### CSS và styling
+### CSS and styling
 
-- Màu, font, cỡ chữ, thời lượng, easing **phải** lấy từ token trong `tokens.css`. Không hard-code.
-- Cần token mới: cập nhật `docs/design/` trước, rồi `tokens.css`, trong cùng thay đổi.
-- Không dùng inline style cho màu hoặc font.
-- Mọi animation tôn trọng `prefers-reduced-motion`. Khối muốn hiện dần thì thêm `data-animate`, không tự viết animation riêng.
+- Colour, font, type size, duration and easing **must** come from tokens in `tokens.css`. Never hard-code them.
+- Need a new token: update `docs/design/` first, then `tokens.css`, in the same change.
+- Do not use inline styles for colour or font.
+- Every animation must respect `prefers-reduced-motion`. For blocks that should fade in, add `data-animate`; do not write a one-off animation.
+- The only accepted hard-coded values are the ones already documented as known deviations in `docs/DESIGN_SYSTEM.md`; do not add more.
 
-### Nội dung bài viết
+### Post content
 
-- Viết bằng tiếng Việt, thuật ngữ kỹ thuật giữ nguyên tiếng Anh (`useMemo`, `reconciliation`, `event loop`).
-- Frontmatter đầy đủ: `title`, `date`, `type`, `lab`, `tags`, `summary`; thêm `cover` + `coverAlt` khi bài có ảnh bìa. `type` là một trong `concept`, `experiment`, `case-study`, `demo`, `tutorial`, `note`. `tags` dùng ID trong `@dev-lab/tags`, 1–4 tag, không trùng. Build thất bại nếu thiếu hoặc sai.
-- Giải thích cơ chế hoạt động trước, rồi mới đưa ví dụ code.
+- Write in Vietnamese. Keep technical terms in English (`useMemo`, `reconciliation`, `event loop`).
+- Frontmatter must include `title`, `date`, `type`, `lab`, `tags`, `summary`; add `cover` + `coverAlt` when the post has a cover. `type` is one of `concept`, `experiment`, `case-study`, `demo`, `tutorial`, `note`. `tags` uses IDs from `@dev-lab/tags`, 1–4 tags, no duplicates. The build fails when a required field is missing or wrong.
+- Explain the mechanism first, then show code examples.
 
 ## Gotchas
 
-- `portal/tsconfig.json` **không** dùng `extends` dạng mảng: Rolldown (Vite trong Astro) resolve sai và build hỏng.
-- Header có `transition:persist`: DOM giữ qua các lần chuyển trang, nên `aria-current` phải cập nhật bằng JS.
-- View Transitions thay toàn bộ attribute của `<html>`: `data-theme` / `data-mode` phải được chép sang document mới trong `astro:before-swap`.
-- `[data-animate]` chỉ chạy ở lần tải trang đầu. `view-transition-name` phải là custom-ident hợp lệ và không trùng trong cùng một trang (tiêu đề bài dùng `vt-post-<id>`).
-- Phần tử do JS chèn vào (nút `#` ở tiêu đề bài) không có `data-astro-cid`: style phải để ở `global.css`, không đặt trong `<style>` scoped.
-- Mục "Về mình" và "Dự án khác" ẩn hẳn khi `profile.ts` trống: không render khối rỗng hay chữ "sẽ bổ sung".
-- `profile.ts` chỉ chứa thứ đã được phép công khai. Đến 2026-10-19: tên, vai trò, vị trí, email, GitHub đã cho phép; LinkedIn, CV, ảnh đại diện chưa.
+- `portal/tsconfig.json` **must not** use an array-form `extends`: Rolldown (Vite inside Astro) resolves it incorrectly and the build breaks.
+- The header uses `transition:persist`: its DOM survives navigations, so `aria-current` must be updated by JavaScript.
+- View Transitions replace every attribute on `<html>`: copy `data-theme` / `data-mode` to the new document in `astro:before-swap`.
+- `[data-animate]` runs only on the first page load. `view-transition-name` must be a valid custom-ident and must not repeat within one page (post titles use `vt-post-<id>`).
+- Elements inserted by JavaScript (the `#` button on post headings) have no `data-astro-cid`: keep their styles in `global.css`, not in a scoped `<style>` block.
+- The "About me" and "Other projects" sections are hidden entirely when `profile.ts` has no data: do not render an empty block or a placeholder sentence.
+- `profile.ts` contains only information approved for public display. As of 2026-10-19: name, role, location, email and GitHub are approved; LinkedIn, CV and avatar are not.
+- The home page currently has known documentation/code deviations (hard-coded colours, a missing slogan line, section order, decoration counts). Read the "Known deviations" section in `docs/DESIGN_SYSTEM.md` before changing the home page.
 
-## Định nghĩa "xong"
+## Definition of "done"
 
-1. Lệnh "Kiểm tra (giống CI)" ở trên pass. Lệnh nào lỗi thì không báo hoàn thành: mô tả lỗi và đề xuất cách sửa.
-2. Thay đổi giao diện: kiểm tra light và dark (hiện chỉ có Minimalist Editorial) và viewport mobile.
-3. Cập nhật tài liệu trong cùng thay đổi, chỉ khi liên quan:
-   - Xong một mục roadmap: đánh `[x]` trong `docs/ROADMAP.md`.
-   - Đổi cấu trúc thư mục: sửa "Bản đồ repo" ở file này và cây thư mục trong `README.md`.
-   - Đổi token màu, font hoặc quy tắc giao diện: sửa `docs/design/` trước, rồi mới sửa code.
-   - Chốt một quyết định đáng nhớ: thêm ADR trong `docs/adr/`.
-4. Không ghi nhật ký từng vòng chỉnh vào docs. Lịch sử nằm ở commit message.
+1. The "Check (same as CI)" command above passes. If any command fails, do not report completion: describe the failure and propose a fix.
+2. UI changes: check light and dark (currently only Minimalist Editorial) and a mobile viewport.
+3. Update documentation in the same change only when relevant:
+   - Finished a roadmap item: tick `[x]` in `docs/ROADMAP.md`.
+   - Changed directory structure: update "Repository map" here and the tree in `README.md`.
+   - Changed a colour token, font or UI rule: update `docs/design/` first, then the code.
+   - Settled a memorable decision: add an ADR in `docs/adr/`.
+   - Fixed a known deviation: remove it from the "Known deviations" list in `docs/DESIGN_SYSTEM.md`.
+4. Do not log every revision round in docs. History lives in commit messages.
 
 ## Git
 
-- Commit theo Conventional Commits: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `chore:`.
-- Một branch cho một việc: `feat/<mô-tả-ngắn>`, `docs/<mô-tả-ngắn>`.
-- Không commit trực tiếp lên `main`.
+- Use Conventional Commits: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `chore:`. Write the message in English.
+- One branch per task, named in English: `feat/<short-description>`, `docs/<short-description>`.
+- Do not commit directly to `main`.

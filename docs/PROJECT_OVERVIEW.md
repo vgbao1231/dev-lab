@@ -1,113 +1,113 @@
-# Tổng quan dự án: Dev Lab
+# Project overview: Dev Lab
 
-## 1. Dev Lab là gì
+## 1. What Dev Lab is
 
-Dev Lab là một hệ sinh thái các blog và lab kỹ thuật. Thay vì một blog duy nhất, dự án gồm một **cổng chính** giới thiệu, phân loại và liên kết nhiều **lab** chuyên biệt. Mỗi lab tập trung vào một công nghệ hoặc một lĩnh vực — frontend, backend, DevOps hay chủ đề liên quan — và có thể có stack, giao diện và quy trình triển khai riêng.
+Dev Lab is an ecosystem of technical blogs and labs. Rather than a single blog, the project consists of a **main portal** that introduces, classifies and links to several specialised **labs**. Each lab focuses on one technology or one area — frontend, backend, DevOps or a related topic — and may have its own stack, interface and deployment process.
 
-## 2. Mục tiêu
+## 2. Goals
 
-1. **Chia sẻ kiến thức** kỹ thuật đã học hoặc đang tìm hiểu.
-2. **Củng cố kiến thức cũ** thông qua nghiên cứu, giải thích và thực hành.
-3. **Áp dụng công nghệ mới** vào các dự án thực tế nhỏ.
-4. **Xây dựng sản phẩm đưa được vào CV** nếu đủ chất lượng kỹ thuật.
-5. **Phát triển lâu dài**, theo hành trình nghề nghiệp của tác giả.
+1. **Share knowledge** that has been learned or is being explored.
+2. **Reinforce existing knowledge** through research, explanation and practice.
+3. **Apply new technology** to small real projects.
+4. **Build products worth putting on a CV** if the technical quality is high enough.
+5. **Evolve long term**, following the author's career journey.
 
-Dự án không nhằm tạo ra ý tưởng ứng dụng độc đáo. Trọng tâm là giá trị học tập, chất lượng kỹ thuật và khả năng duy trì.
+The project is not meant to produce a novel app idea. The focus is learning value, technical quality and maintainability.
 
-## 3. Đối tượng sử dụng
+## 3. Audience
 
-- **Chính tác giả**: nơi ghi chép, thử nghiệm và ôn tập.
-- **Frontend developer ở trình độ junior đến mid** muốn hiểu sâu cơ chế hoạt động của React, JavaScript, Next.js và các công cụ liên quan.
-- **Nhà tuyển dụng hoặc người xem CV** muốn đánh giá năng lực kỹ thuật qua sản phẩm thực tế.
+- **The author**: a place to take notes, experiment and review.
+- **Junior to mid-level frontend developers** who want to understand how React, JavaScript, Next.js and related tools work under the hood.
+- **Recruiters or CV reviewers** who want to assess technical ability through real products.
 
-## 4. Phạm vi
+## 4. Scope
 
-### Trong phạm vi
+### In scope
 
-- Cổng chính (portal) giới thiệu và liệt kê các lab.
-- Các lab nội dung: bài viết, demo tương tác, thử nghiệm có số đo.
-- Trang liên hệ, danh sách dự án khác, thông tin CV.
+- A main portal that introduces and lists the labs.
+- Content labs: articles, interactive demos, experiments with measurements.
+- A contact page, a list of other projects, CV information.
 
-### Ngoài phạm vi (ít nhất ở giai đoạn hiện tại)
+### Out of scope (at least for now)
 
-- Hệ thống đăng nhập, bình luận, tài khoản người dùng.
-- Backend riêng cho nội dung. Nội dung là file tĩnh.
-- Tính năng SaaS, dashboard, hay landing page bán hàng.
+- Login, comments, user accounts.
+- A dedicated backend for content. Content is static files.
+- SaaS features, dashboards, or sales landing pages.
 
-## 5. Các loại nội dung
+## 5. Content types
 
-| Loại             | Mục đích                                    | Ví dụ                             |
-| ---------------- | ------------------------------------------- | --------------------------------- |
-| Concept          | Giải thích kiến thức và cơ chế              | Reconciliation hoạt động thế nào  |
-| Experiment       | Thử nghiệm, đo lường, so sánh               | useMemo trên list 10.000 item     |
-| Case Study       | Phân tích vấn đề, debug, bài học            | Tìm nguyên nhân re-render thừa    |
-| Interactive Demo | Demo để người đọc tự thử                    | Mô phỏng event loop               |
-| Tutorial         | Hướng dẫn thực hiện một kỹ thuật            | Thiết lập Vitest với React        |
-| Technical Note   | Ghi chép học tập, migration, vấn đề thực tế | Dựng lab đầu tiên trên Cloudflare |
+| Type             | Purpose                                       | Example                              |
+| ---------------- | --------------------------------------------- | ------------------------------------ |
+| Concept          | Explain knowledge and mechanisms              | How reconciliation works             |
+| Experiment       | Experiment, measure, compare                  | useMemo on a list of 10,000 items    |
+| Case Study       | Analyse a problem, debug, lessons learned     | Find the cause of excess re-renders  |
+| Interactive Demo | A demo the reader can try                     | Simulate the event loop              |
+| Tutorial         | Walk through one technique                    | Setting up Vitest with React         |
+| Technical Note   | Learning notes, migrations, real-world issues | Building the first lab on Cloudflare |
 
-Không bắt buộc mọi lab phải có đủ các loại trên.
+Not every lab needs to cover all of these types.
 
-## 6. Ví dụ các lab tiềm năng
+## 6. Potential lab examples
 
-Đây là danh sách mở, chưa phải kế hoạch cố định.
+This is an open list, not a fixed plan.
 
-| Lab                 | Stack dự kiến               | Nội dung chính                            |
+| Lab                 | Planned stack               | Main content                              |
 | ------------------- | --------------------------- | ----------------------------------------- |
 | React Lab           | React, TypeScript, Vite     | Hooks, rendering, state, performance      |
 | Next.js Lab         | Next.js                     | SSR, SSG, Server Components, caching      |
-| JS Under the Hood   | Tuỳ chọn                    | Event loop, closure, prototype, Promise   |
-| Web Performance Lab | Tuỳ chọn                    | Core Web Vitals, waterfall, benchmark     |
+| JS Under the Hood   | Flexible                    | Event loop, closure, prototype, Promise   |
+| Web Performance Lab | Flexible                    | Core Web Vitals, waterfall, benchmark     |
 | Testing Lab         | Vitest, Playwright          | Unit, integration, E2E                    |
 | Backend Mechanics   | Node.js, Express            | HTTP, middleware, auth, API design        |
 | Database Lab        | SQL                         | Index, join, transaction, isolation level |
 | DevOps Playground   | Docker, GitHub Actions      | CI/CD, deployment                         |
 | Cloud Lab           | AWS, CloudFront, S3, Lambda | CDN caching, serverless                   |
-| Git Internals       | Tuỳ chọn                    | Commit graph, merge, rebase               |
+| Git Internals       | Flexible                    | Commit graph, merge, rebase               |
 
-## 7. Nguyên tắc
+## 7. Principles
 
-### Dogfooding là tùy chọn
+### Dogfooding is optional
 
-Việc dùng công nghệ để xây dựng chính website là cơ hội thực hành, không phải yêu cầu bắt buộc. Khi chỉ cần giải thích một kiến thức, viết bài là đủ.
+Using a technology to build the website itself is a chance to practise, not a requirement. When all that is needed is to explain a concept, writing the article is enough.
 
-### Phát triển theo giai đoạn
+### Phased development
 
-Không xây toàn bộ hệ sinh thái ngay từ đầu. Bắt đầu nhỏ, mở rộng khi có kiến thức, nhu cầu và thời gian phù hợp. Các lab mới có thể dùng công nghệ khác nhau.
+Do not build the whole ecosystem at once. Start small and expand when knowledge, needs and time line up. New labs may use different technologies.
 
-### Chất lượng hơn số lượng
+### Quality over quantity
 
-Một lab tốt với ít bài viết có giá trị hơn nhiều lab rỗng nội dung.
+One good lab with a few valuable articles is worth more than many labs with no content.
 
-## 8. Tiêu chí đánh giá ý tưởng
+## 8. Criteria for evaluating ideas
 
-Khi đề xuất hoặc đánh giá một lab, nội dung hay tính năng mới, kiểm tra:
+When proposing or evaluating a new lab, article or feature, check:
 
-1. Có đáp ứng mục tiêu chia sẻ kiến thức không?
-2. Có giúp củng cố kiến thức cũ hoặc học kiến thức mới không?
-3. Có áp dụng được vào thực tế không?
-4. Có giá trị đưa vào CV không?
-5. Có mở rộng được trong nhiều tháng hoặc năm không?
-6. Có nét riêng, không chỉ là một blog thông thường không?
-7. Chi phí hosting, domain và công sức duy trì có hợp lý không?
-8. Có thể bắt đầu nhỏ và phát triển dần không?
+1. Does it serve the goal of sharing knowledge?
+2. Does it help reinforce existing knowledge or learn something new?
+3. Can it be applied in practice?
+4. Is it worth putting on a CV?
+5. Can it expand over months or years?
+6. Does it have a distinctive character, rather than being just another blog?
+7. Are hosting, domain and maintenance costs reasonable?
+8. Can it start small and grow gradually?
 
-## 9. Kiến trúc (đã chốt)
+## 9. Architecture (decided)
 
-Lý do chi tiết ở [`adr/`](adr/README.md).
+Detailed rationale in [`adr/`](adr/README.md).
 
-- **Tên**: Dev Lab, repo `dev-lab` (chốt 2026-10-18).
-- **Portal**: `portal/`, Astro với output tĩnh, CSS thuần + design tokens ([ADR 0001](adr/0001-astro-tinh-va-pnpm-workspace.md)).
-- **Lab**: mỗi lab là một ứng dụng độc lập trong `labs/`, có thể có stack, repo và quy trình deploy riêng. Lab đầu tiên: `react-lab` (React, TypeScript, Vite).
-- **Nội dung**: Markdown/MDX trong content collection `posts`; schema frontmatter ở `portal/src/content.config.ts`.
-- **Design**: theme và mode là hai trục độc lập ([ADR 0002](adr/0002-theme-va-mode-hai-truc-doc-lap.md)); giai đoạn 1 chỉ triển khai theme Minimalist Editorial. Token và quy tắc ở `docs/DESIGN_SYSTEM.md`.
-- **Hosting (dự kiến, chưa kết nối)**: Cloudflare Pages.
-- **Cách đặt lab**: mỗi lab là một project Cloudflare Pages riêng, build từ cùng repo, portal liên kết sang bằng URL tuyệt đối ([ADR 0008](adr/0008-moi-lab-mot-project-pages.md)). Cấu hình ở README, mục "Deploy".
+- **Name**: Dev Lab, repo `dev-lab` (decided 2026-10-18).
+- **Portal**: `portal/`, Astro with static output, plain CSS + design tokens ([ADR 0001](adr/0001-astro-static-and-pnpm-workspace.md)).
+- **Labs**: each lab is an independent app in `labs/`, and may have its own stack, repo and deploy process. First lab: `react-lab` (React, TypeScript, Vite).
+- **Content**: Markdown/MDX in the `posts` content collection; frontmatter schema in `portal/src/content.config.ts`.
+- **Design**: theme and mode are two independent axes ([ADR 0002](adr/0002-theme-mode-independent-axes.md)); phase 1 implements only the Minimalist Editorial theme. Tokens and rules in `docs/DESIGN_SYSTEM.md`.
+- **Hosting (planned, not connected)**: Cloudflare Pages.
+- **Lab placement**: each lab is its own Cloudflare Pages project, built from the same repo, and the portal links to it with absolute URLs ([ADR 0008](adr/0008-one-pages-project-per-lab.md)). Configuration in README, section "Deploy".
 
-## 10. Những điều chưa quyết định
+## 10. Undecided items
 
-Các mục dưới đây **chưa được chốt**. Không nên coi là đã quyết định khi viết code hoặc nội dung.
+The items below are **not settled yet**. Do not treat them as decided when writing code or content.
 
-- Các lab dùng chung design tokens với portal hay có bản sắc riêng (`react-lab` hiện chỉ có style bố cục).
-- Mức độ tương tác: chỉ bài viết, có demo, hay có playground chạy trực tiếp (giai đoạn 2).
-- Lab thứ hai (dự kiến JS Under the Hood hoặc Next.js Lab).
-- Quy trình xuất bản, và có cần công cụ quản lý nội dung ngoài file Markdown hay không.
+- Whether labs share design tokens with the portal or have their own identity (`react-lab` currently only has layout styles).
+- Level of interactivity: articles only, with demos, or with a live playground (phase 2).
+- The second lab (planned: JS Under the Hood or Next.js Lab).
+- The publishing workflow, and whether a content management tool beyond Markdown files is needed.
