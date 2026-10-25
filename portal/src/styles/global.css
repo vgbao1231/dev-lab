@@ -281,16 +281,23 @@ h3:hover > .heading-anchor,
 
 .section--hero {
   padding-top: 56px;
+  /*
+   * overflow:hidden cắt blob/gradient không tràn ra ngoài chiều rộng viewport ở hero.
+   * position:relative cho phép .home-deco (fixed) vẫn hiển thị đúng layer z-index.
+   */
+  position: relative;
 }
 
 /*
  * Lưới card: tự chia cột theo bề rộng khả dụng — 1 cột khi hẹp, 2–3 cột khi rộng
- * (docs/DESIGN_SYSTEM.md mục 5). `min(340px, 100%)` để không tràn trên màn hình hẹp.
+ * (docs/DESIGN_SYSTEM.md mục 5). `min(200px, 100%)` để không tràn trên màn hình hẹp.
+ * `flex: 3 1 480px` để lưới chiếm phần lớn không gian khi nằm trong labs-layout 2 cột.
  */
 .lab-grid {
   display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+  flex: 3 1 480px;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
 }
 
 /*
@@ -375,6 +382,65 @@ h3:hover > .heading-anchor,
   }
 }
 
+/* Icon dùng chung — xem `components/Icon.astro`. */
+.icon {
+  display: inline-block;
+  flex: none;
+  vertical-align: -0.125em;
+}
+
+/*
+ * Icon của bộ chọn mode: chỉ hiện biểu tượng khớp với preference đang lưu trên
+ * <html data-mode-preference>. ThemeToggle không phải tự đổi icon bằng JS.
+ */
+[data-mode-icon] {
+  display: none;
+}
+
+html[data-mode-preference='system'] [data-mode-icon='system'],
+html[data-mode-preference='light'] [data-mode-icon='light'],
+html[data-mode-preference='dark'] [data-mode-icon='dark'] {
+  display: inline-flex;
+}
+
+/* Cover của card bài viết: SVG được nhúng inline nên tự ăn token màu của theme. */
+.post-cover {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.post-cover svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.post-cover--fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  background-color: color-mix(in oklab, var(--color-accent) 5%, var(--color-bg));
+  color: var(--color-accent);
+}
+
+.post-cover__initials {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 7vw, 4rem);
+  line-height: 1;
+  opacity: 0.7;
+}
+
+.post-cover__type {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
 /*
  * Tag — docs/DESIGN_SYSTEM.md mục 6. Trước đây khai báo lặp ở `PostList` và trang chi tiết
  * bài viết; gom về đây vì còn dùng cho danh sách kỹ năng ở mục "Về mình".
@@ -387,6 +453,208 @@ h3:hover > .heading-anchor,
 
 .stack > * + * {
   margin-top: 1rem;
+}
+
+/*
+ * Search dialog — native <dialog> để có top layer, focus trap và phím Esc sẵn.
+ * Chỉ animate opacity/transform; backdrop dùng màu token.
+ */
+.search-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 12vh 1rem 1rem;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+}
+
+.search-dialog[open] {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.search-dialog::backdrop {
+  background-color: color-mix(in oklab, var(--color-bg) 62%, transparent);
+  backdrop-filter: blur(4px);
+}
+
+.search-dialog__panel {
+  display: flex;
+  flex-direction: column;
+  width: min(640px, 100%);
+  max-height: min(70vh, 640px);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  box-shadow: 0 24px 80px color-mix(in oklab, var(--color-text) 18%, transparent);
+}
+
+.search-dialog__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.search-dialog__bar:focus-within {
+  border-bottom-color: var(--color-accent);
+}
+
+.search-dialog__input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  outline: none;
+}
+
+.search-dialog__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Bỏ nút clear mặc định của input[type=search] để không chồng lên nút đóng. */
+.search-dialog__input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search-dialog__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.search-dialog__close:hover {
+  background-color: color-mix(in oklab, var(--color-accent) 12%, transparent);
+  color: var(--color-accent);
+}
+
+.search-dialog__results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0.35rem;
+}
+
+.search-result {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 0.65rem;
+  row-gap: 0.1rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  background-image: none;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.search-result[data-active='true'] {
+  background-color: color-mix(in oklab, var(--color-accent) 12%, transparent);
+}
+
+.search-result__type {
+  grid-row: 1 / span 2;
+  align-self: start;
+  padding: 0.05rem 0.35rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.search-result__title {
+  overflow: hidden;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result__meta {
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-dialog__empty {
+  margin: 0;
+  padding: 1.25rem 1rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.search-dialog__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  padding: 0.55rem 0.8rem;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+}
+
+.search-dialog__footer kbd {
+  display: inline-block;
+  min-width: 1.25rem;
+  margin-right: 0.15rem;
+  padding: 0 0.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg);
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .search-dialog {
+    padding: 6vh 0.75rem 0.75rem;
+  }
+
+  .search-dialog__panel {
+    max-height: 80vh;
+  }
+
+  .search-dialog__footer {
+    display: none;
+  }
 }
 
 /*

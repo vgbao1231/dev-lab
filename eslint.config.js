@@ -8,7 +8,7 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
   {
     name: 'dev-lab/ignores',
-    ignores: ['**/node_modules/**', '**/dist/**', '**/.astro/**'],
+    ignores: ['**/node_modules/**', '**/dist/**', '**/.astro/**', 'design-reference/**'],
   },
   {
     name: 'dev-lab/language-options',

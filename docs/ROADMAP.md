@@ -4,8 +4,8 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
 
 **Giai đoạn hiện tại: Giai đoạn 1 — Nền tảng và lab React đầu tiên** 🟡 đang thực hiện
 
-**Còn mở ở giai đoạn 1:** 1.3 menu mobile + tìm kiếm cho header (chưa cần), mục "So sánh giữa các stack"
-(tạm bỏ) · 1.5 ba bài viết + trang so sánh · 1.6 toàn bộ phần Deploy.
+**Còn mở ở giai đoạn 1:** 1.3 menu mobile dạng sheet · mục "So sánh giữa các stack" (tạm bỏ) ·
+1.5 trang so sánh hiệu năng · 1.6 toàn bộ phần Deploy.
 
 ---
 
@@ -48,7 +48,13 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
 - [x] Bộ chọn theme/mode: hai `<select>` gốc trên hai trục độc lập; theme tự ẩn khi chỉ có một theme
 - [x] Nút "lên đầu trang" hiện khi cuộn quá 600px, tôn trọng `prefers-reduced-motion`
 - [x] Header theo kiểu `ngockhoi96.dev`: sticky, capsule mờ thu hẹp khi cuộn, nav pill accent, ẩn/hiện theo hướng cuộn, `transition:persist`
-- [ ] Header: còn thiếu menu mobile dạng sheet và nút tìm kiếm (chưa cần ở giai đoạn này)
+- [x] Header: nút tìm kiếm mở command palette; `Ctrl/Cmd+K` hoặc `/`, tìm bài viết/lab/trang,
+      không dấu vẫn khớp, điều hướng bằng bàn phím; index sinh lúc build, không thêm dependency
+- [x] Bộ icon dùng chung (nét 1.5px, `currentColor`): brand, search, mode, tiêu đề trang, metadata
+      bài viết, footer; thay các ký tự/emoji rời rạc
+- [x] `/bai-viet`: lưới card 1/2/3 cột, cover 16:9, tag, thời gian đọc; trang chủ giữ nguyên
+      danh sách dòng
+- [ ] Header: menu mobile dạng sheet (chưa cần ở giai đoạn này)
 - [x] Trang chi tiết bài viết: mục lục (TOC) sinh từ heading, tự đánh dấu mục đang đọc theo vị trí cuộn
       — từ 1200px là cột riêng dính dưới header nên luôn nhìn thấy; dưới 1200px là khối ở đầu bài
 - [x] Trang chi tiết bài viết: nút `#` ở mỗi tiêu đề, hiện khi hover/focus, bấm để sao chép liên kết tới anchor
@@ -64,24 +70,32 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
 
 ### 1.4 Hệ thống nội dung
 
-- [x] Định nghĩa frontmatter chuẩn: `title`, `date`, `type`, `lab`, `tags`, `summary`
+- [x] Định nghĩa frontmatter chuẩn: `title`, `date`, `type`, `lab`, `tags`, `summary`, `cover`,
+      `coverAlt`
 - [x] Cấu hình collection cho bài viết (`portal/src/content.config.ts`: loader glob + schema zod)
 - [x] Hiển thị tag và metadata bằng JetBrains Mono
-      — bài mẫu `portal/src/content/posts/bai-viet-mau.md` để kiểm chứng pipeline, cần thay bằng bài thật ở mục 1.5
+      — bài mẫu `bai-viet-mau.md` đã được thay bằng ba bài thật ở mục 1.5
+- [x] Hệ thống tag dùng chung: package `@dev-lab/tags` (23 tag, 3 nhóm Technology/Domain/Approach);
+      frontmatter lưu id, schema kiểm tra 1–4 tag và đổi sang label chuẩn; quy ước ở `docs/TAGS.md`
+- [x] Cover bài viết: `cover` + `coverAlt` trong frontmatter, SVG inline theo token theme, fallback
+      monogram khi thiếu cover
 
 ### 1.5 React Lab
 
 - [x] Khởi tạo project React + TypeScript + Vite trong `labs/react-lab/`
-- [ ] Bài viết 1 (Concept): Reconciliation hoạt động thế nào khi render list
-- [ ] Bài viết 2 (Experiment): useMemo trên list lớn, có số đo và repo tái lập
-- [ ] Bài viết 3 (Note): Dựng lab đầu tiên trên Cloudflare
+- [x] Bài viết 1 (Concept): React Fiber & Reconciliation — element tree, Fiber tree, render phase
+      và commit phase; vì sao `key` quyết định việc giữ hay mất state
+- [x] Bài viết 2 (Concept): React Concurrent Rendering — lanes, scheduler, render interruptible
+      và giới hạn của commit phase
+- [x] Bài viết 3 (Concept): Tearing & `useSyncExternalStore` — snapshot, subscription và cách
+      tránh hai component đọc hai phiên bản dữ liệu
 - [ ] Trang so sánh bundle size, JS, LCP, build time giữa các lab (dữ liệu được cập nhật khi lab hoàn thành)
 
 ### 1.6 Deploy
 
-- [ ] Kết nối repo với Cloudflare Pages (cần tài khoản Cloudflare — ghi cấu hình dự kiến trong README, mục "Deploy")
+- [ ] Kết nối repo với Cloudflare Pages (cần tài khoản Cloudflare — cấu hình từng bước ở README, mục "Deploy")
 - [ ] Cấu hình build cho portal
-- [ ] Cấu hình subdomain hoặc đường dẫn cho React Lab
+- [ ] Dựng project Pages riêng cho React Lab — chốt 2026-10-20 bằng ADR 0008, không dùng đường dẫn con
 - [ ] Kiểm tra preview branch hoạt động
 
 ### Tiêu chí hoàn thành giai đoạn 1
@@ -101,7 +115,7 @@ Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có 
 - [ ] Chốt cách xây dựng demo tương tác (island component, iframe, hay playground)
 - [ ] Thêm demo tương tác vào React Lab
 - [ ] Chọn lab thứ hai (dự kiến: JS Under the Hood hoặc Next.js Lab)
-- [ ] Thêm tìm kiếm hoặc lọc theo tag
+- [ ] Thêm lọc bài viết theo tag (tìm kiếm đã có ở giai đoạn 1)
 - [ ] Thêm RSS feed
 - [ ] Thêm theme thứ hai (Digital Garden) — bộ chọn theme sẽ tự hiện khi có từ hai theme
 

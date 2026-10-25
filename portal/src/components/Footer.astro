@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 import { labs } from '../data/labs';
 import { profile, profileLinks, sourceRepo } from '../data/profile';
 
@@ -16,7 +17,10 @@ const contentLinks = [
 <footer class="site-footer">
   <div class="container site-footer__top">
     <div class="site-footer__brand">
-      <p class="site-footer__name">Dev Lab</p>
+      <p class="site-footer__name">
+        <Icon name="leaf" size={18} />
+        Dev Lab
+      </p>
       <p class="site-footer__desc">
         Blog, lab và portfolio của {profile.name} — ghi chép, thử nghiệm có số đo và giải thích cơ
         chế.
@@ -74,7 +78,11 @@ const contentLinks = [
       © {year} {profile.name} · Dev Lab
     </p>
     <p class="meta">
-      <a href={sourceRepo}>Mã nguồn</a> · Deploy trên Cloudflare
+      <a class="site-footer__source" href={sourceRepo}>
+        <Icon name="github" size={14} />
+        Mã nguồn
+      </a>
+      · Deploy trên Cloudflare
     </p>
   </div>
 </footer>
@@ -104,9 +112,22 @@ const contentLinks = [
   }
 
   .site-footer__name {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
     margin: 0 0 0.5rem;
     font-family: var(--font-display);
     font-size: var(--text-lg);
+  }
+
+  .site-footer__name .icon {
+    color: var(--color-accent);
+  }
+
+  .site-footer__source {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
   }
 
   .site-footer__desc {

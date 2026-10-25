@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+  <rect width="1200" height="675" fill="var(--color-surface)" />
+  <text x="70" y="86" fill="var(--color-text-muted)" font-family="JetBrains Mono, monospace" font-size="24">
+    tearing · snapshot
+  </text>
+  <rect x="70" y="140" width="430" height="380" rx="12" fill="var(--color-bg)" stroke="var(--color-border)" stroke-width="2" />
+  <text x="100" y="190" fill="var(--color-text-muted)" font-family="JetBrains Mono, monospace" font-size="20">
+    render snapshot
+  </text>
+  <text x="100" y="260" fill="var(--color-text)" font-family="Inter, sans-serif" font-size="26">
+    v1
+  </text>
+  <rect x="100" y="290" width="300" height="18" rx="9" fill="var(--color-accent)" opacity="0.85" />
+  <rect x="100" y="322" width="230" height="18" rx="9" fill="var(--color-accent)" opacity="0.55" />
+  <rect x="100" y="354" width="270" height="18" rx="9" fill="var(--color-accent)" opacity="0.35" />
+  <text x="100" y="450" fill="var(--color-text-muted)" font-family="JetBrains Mono, monospace" font-size="19">
+    getSnapshot()
+  </text>
+
+  <path d="M600 330h-70M600 330l-22-14M600 330l-22 14" stroke="var(--color-link)" stroke-width="3" fill="none" />
+  <rect x="640" y="140" width="430" height="380" rx="12" fill="var(--color-bg)" stroke="var(--color-border)" stroke-width="2" />
+  <text x="670" y="190" fill="var(--color-text-muted)" font-family="JetBrains Mono, monospace" font-size="20">
+    external store
+  </text>
+  <text x="670" y="260" fill="var(--color-link)" font-family="Inter, sans-serif" font-size="26">
+    v2
+  </text>
+  <rect x="670" y="290" width="190" height="18" rx="9" fill="var(--color-link)" opacity="0.85" />
+  <rect x="670" y="322" width="300" height="18" rx="9" fill="var(--color-link)" opacity="0.55" />
+  <rect x="670" y="354" width="240" height="18" rx="9" fill="var(--color-link)" opacity="0.35" />
+  <text x="670" y="450" fill="var(--color-text-muted)" font-family="JetBrains Mono, monospace" font-size="19">
+    subscribe()
+  </text>
+
+  <path d="M600 120v450" stroke="var(--color-accent)" stroke-width="2" stroke-dasharray="10 10" />
+  <text x="600" y="610" text-anchor="middle" fill="var(--color-accent)" font-family="JetBrains Mono, monospace" font-size="20">
+    tear
+  </text>
+</svg>

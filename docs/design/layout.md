@@ -19,7 +19,9 @@
   media): 560px (một cột), 640px (header một hàng, nav căn giữa), 768px (section 48px),
   1024px (padding ngang 32px).
 - **Header:** dính (`position: sticky`); brand `DevLab.` font display (`--text-brand`) bên trái, nav
-  căn giữa, bộ chọn theme/mode (hai `<select>`) bên phải; đường kẻ dưới header.
+  căn giữa, bộ chọn theme/mode (hai `<select>`) và nút tìm kiếm bên phải; đường kẻ dưới header.
+  - Nút tìm kiếm là pill từ 768px (icon + `Tìm kiếm…` + `kbd`), thu thành nút icon vuông dưới
+    768px. Hành vi dialog ở `components.md`, mục "Tìm kiếm".
   - Brand cỡ `--text-brand` (28px) ghim `line-height: 1`, nên chiều cao header do nav quyết định (khoảng
     60px) chứ không phụ thuộc cỡ brand. Đổi cỡ brand trong khoảng 28–32px không kéo theo thay đổi nào
     khác. Số đo và lý do: [ADR 0006](../adr/0006-header-capsule-dinh.md).
@@ -53,12 +55,33 @@
     chung của hàng link, nên đừng thêm cho link này mà bỏ ở link kia.
   - Slogan dùng chung cỡ với đoạn mô tả ở khối Dev Lab (`--text-base`) — câu giới thiệu không cần to
     hơn thân bài, chỉ cần khác màu để tách khỏi phần còn lại.
+  - **Bố cục 2 cột:** trái là text content (flex 1 1 420px), phải là cột visual minh họa (flex 1 1 280px).
+    - Cột trái: icon lá nhỏ + dòng chào 15px (`#cfcab8`) → tên `h1` font `Caveat` phóng khoáng (clamp 92px, `#f1ecd9`) → slogan 15px thoáng (`#aaa799`) → hàng link CTA điều hướng.
+    - Cột phải: SVG cây mầm decorative + ghi chú "Small steps / Big progress" font `Caveat` 22px,
+      rotate -10deg màu `#b4b09f`. Cả hai có hiệu ứng parallax nổi nhẹ (`.hero-fx`). Khi hẹp, cột phải co lại và xếp xuống dưới text.
+  - **Nền trang trí trang chủ & Parallax:** bọc toàn bộ trang trong `.home-wrapper` mang màu nền `#0b0d09` kết hợp `radial-gradient` xanh rêu đậm từ trên đỉnh.
+    - Chứa 4 blob lớn và các hạt bụi mờ lơ lửng (`.home-deco`, `.home-dot`) chuyển động parallax phản hồi theo con trỏ chuột (`mousemove`) và cuộn trang (`scroll`) thông qua `requestAnimationFrame` và CSS transition mượt mà (2.4s - 2.8s), kết hợp keyframe animation bập bềnh, thở phát sáng tự nhiên.
+    - Tự động tắt khi người dùng bật `prefers-reduced-motion: reduce`. Light mode tự ẩn các blob/dot và chuyển sang gradient sáng hài hoà.
 - **Khối Dev Lab** (section ngay dưới hero): kicker mono `~/devlab · <vai trò>` → `h2` font display
   `Dev Lab` → đoạn mô tả hệ sinh thái → một dòng ghi chú kiểu comment (`// …`) màu `--color-accent`
   font mono → đoạn phụ màu `--color-text-muted` (`--text-sm`, không dùng `.lead` — `.lead` đã dành
   cho slogan ở hero).
-- **Lưới lab:** tự chia cột theo bề rộng khả dụng
-  (`repeat(auto-fit, minmax(min(340px, 100%), 1fr))`, gap 12px) — 1 cột khi hẹp, 2–3 cột khi rộng.
+- **Lưới lab:** bố cục 2 phần trong `.section--labs`:
+  - **Sidebar trái** (flex 1 1 260px, max-width 330px): icon beaker màu `#9dbb90` → `h2` font `Lora` 28px "Các lab" (`#efe9d6`) → đoạn
+    mô tả nhỏ (13px, `#a29f92`) → link "Xem tất cả các lab →" 13px hover đổi sang `#b9d3aa`.
+  - **Lưới card phải** (flex 3 1 480px): `repeat(auto-fit, minmax(min(200px, 100%), 1fr))`, gap 20px.
+    Khi hẹp sidebar xếp thành một cột trên lưới card.
+  - **Lab card** bo góc 12px, padding 10px, gap 10px, nền surface mờ:
+    - Ảnh cover 72px với bo góc 8px (màu từ `coverBg` trong `labs.ts`)
+    - Chip danh mục nhỏ gọn (font 11px, nền `rgba(125,154,114,.16)`, chữ `#bcd1ad`)
+    - Tiêu đề lab font `Lora` 16px, weight 500, màu `#efe9d6`
+    - Tóm tắt 12.5px màu `#9a978a`, weight 300
+    - Dòng meta ngày/trạng thái 12px với icon calendar
+    - Hover nhấc card 3px (`translateY(-3px)`) và đổi viền sang `rgba(157,187,144,.42)`
+      font display + summary muted + meta line với calendar icon + nhãn trạng thái mono.
+- **Lưới bài viết ở `/bai-viet`:** 1 cột mặc định, 2 cột từ 768px, 3 cột từ 1024px; gap 16px
+  (20px từ 1024px). Mỗi bài là card có cover 16:9; trang chủ vẫn dùng danh sách dạng dòng, không
+  đổi theo lưới này.
 - **Trang chi tiết bài viết:** bố cục do `.post-layout` quyết định, `justify-content: center` để
   cả nhóm cột căn giữa khung.
   - Dưới 1200px: **một cột** — cột đọc (`.prose-col`, `--width-content` 800px), mục lục là khối ở

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Gura Lab — Trang chủ</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500&amp;family=Caveat:wght@400;500&amp;family=Lora:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#0b0d09}
+a{color:inherit}
+a:focus-visible,button:focus-visible{outline:2px solid #9dbb90;outline-offset:3px;border-radius:6px}
+.nav a{color:#a9a698;text-decoration:none;font-size:14px;padding:22px 0;border-bottom:1px solid transparent;transition:color .2s}
+.nav a:hover{color:#efe9d6}
+.nav a.on{color:#efe9d6;border-bottom-color:#7f9c74}
+.card{display:flex;flex-direction:column;gap:10px;padding:10px;border:1px solid rgba(233,229,211,.1);border-radius:12px;background:rgba(255,255,255,.025);text-decoration:none;color:inherit;transition:transform .35s cubic-bezier(.22,.8,.3,1),border-color .3s,background .3s}
+.card:hover{transform:translateY(-3px);border-color:rgba(157,187,144,.42);background:rgba(255,255,255,.05)}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 22px;border-radius:999px;background:#7f9c74;color:#0b0f08;font-size:14px;font-weight:500;text-decoration:none;transition:background .2s,transform .2s}
+.btn:hover{background:#93b087;transform:translateY(-1px)}
+.link{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:#efe9d6;font-size:14px;text-decoration:none}
+.link:hover{color:#b9d3aa}
+.ico{display:grid;place-items:center;width:44px;height:44px;background:none;border:0;color:#cfcab8;cursor:pointer;border-radius:10px}
+.ico:hover{color:#efe9d6;background:rgba(255,255,255,.05)}
+.blob{position:absolute;pointer-events:none;will-change:transform;transition:transform 2.4s cubic-bezier(.25,.55,.3,1)}
+.dot{position:absolute;border-radius:50%;pointer-events:none;will-change:transform;filter:blur(4px);transition:transform 2.8s cubic-bezier(.25,.55,.3,1);background:radial-gradient(closest-side,rgba(205,225,185,.5),rgba(205,225,185,.16) 50%,rgba(205,225,185,0))}
+.fx{transition:transform 1s cubic-bezier(.22,.8,.3,1)}
+@media (prefers-reduced-motion:reduce){.blob,.dot,.fx,.card,.btn{transition:none}}
+</style>
+</helmet>
+<div onMouseMove="{{ onMove }}" style="position:relative;overflow:hidden;color:#e9e5d3;font-family:'Be Vietnam Pro',system-ui,sans-serif;background:radial-gradient(ellipse 90% 38% at 50% 0%,rgba(38,50,28,.55),rgba(11,13,9,0) 70%),#0b0d09">
+
+<div aria-hidden="true" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0">
+<div class="blob" style="left:52%;top:-200px;width:780px;height:560px;background:radial-gradient(closest-side,rgba(98,130,72,.34),rgba(98,130,72,0));transform:{{ blobA }}"></div>
+<div class="blob" style="left:-260px;top:300px;width:620px;height:620px;background:radial-gradient(closest-side,rgba(84,112,60,.26),rgba(84,112,60,0));transform:{{ blobB }}"></div>
+<div class="blob" style="right:-280px;top:340px;width:640px;height:640px;background:radial-gradient(closest-side,rgba(70,100,70,.24),rgba(70,100,70,0));transform:{{ blobC }}"></div>
+<div class="blob" style="left:28%;top:860px;width:720px;height:420px;background:radial-gradient(closest-side,rgba(92,120,66,.2),rgba(92,120,66,0));transform:{{ blobD }}"></div>
+<sc-for list="{{ dots }}" as="d" hint-placeholder-count="16">
+<div class="dot" style="left:{{ d.x }};top:{{ d.y }}px;width:{{ d.s }}px;height:{{ d.s }}px;opacity:{{ d.o }};transform:{{ d.t }}"></div>
+</sc-for>
+</div>
+
+<div style="position:relative;z-index:1;max-width:1112px;margin:0 auto;padding:0 24px">
+
+<header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 32px;border-bottom:1px solid rgba(233,229,211,.07)">
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:0 60px">
+<a href="#top" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#efe9d6;font-family:Lora,serif;font-size:21px;padding:14px 0">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9dbb90" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4C10 4 5 9 5 15c0 2 .6 3.5 1.5 4.5M20 4c0 8-4 13-11 13M6.5 19.5C8 14 12 10 16 8"></path></svg>Gura Lab</a>
+<nav class="nav" aria-label="Chính" style="display:flex;gap:32px">
+<a class="on" href="#top">Home</a><a href="#labs">Labs</a><a href="#posts">Bài viết</a><a href="#about">Giới thiệu</a>
+</nav>
+</div>
+<div style="display:flex;gap:4px">
+<button class="ico" aria-label="Đổi giao diện sáng/tối"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></button>
+<button class="ico" aria-label="Tìm kiếm"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg></button>
+</div>
+</header>
+
+<section id="top" style="display:flex;flex-wrap:wrap;align-items:center;gap:24px 40px;padding:56px clamp(0px,4.6vw,52px) 72px">
+<div style="flex:1 1 420px;display:flex;flex-direction:column;align-items:flex-start">
+<div style="display:flex;align-items:center;gap:10px;color:#cfcab8;font-size:15px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9dbb90" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4C10 4 5 9 5 15c0 2 .6 3.5 1.5 4.5M20 4c0 8-4 13-11 13M6.5 19.5C8 14 12 10 16 8"></path></svg>Xin chào, tui là</div>
+<h1 style="margin:2px 0 6px;font-family:Caveat,cursive;font-weight:400;font-size:92px;line-height:1.05;color:#f1ecd9;letter-spacing:.01em">Gura</h1>
+<p style="margin:0 0 28px;max-width:360px;font-size:15px;line-height:1.75;color:#aaa799;font-weight:300">Tui ghi lại những gì mình đang học, đang làm và những thứ thú vị xung quanh thế giới công nghệ. Làm chậm thôi, nhưng đều đặn.</p>
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 28px">
+<a class="btn" href="#labs">→ Khám phá các lab</a>
+<a class="link" href="#about">Về tui <span aria-hidden="true">→</span></a>
+</div>
+</div>
+<div style="flex:1 1 320px;position:relative;min-height:260px;display:flex;align-items:flex-end;justify-content:center">
+<div class="fx" style="transform:{{ sprout }}">
+<svg aria-hidden="true" width="340" height="230" viewBox="0 0 340 230" fill="none">
+<defs><radialGradient id="g1" cx="50%" cy="60%" r="50%"><stop offset="0" stop-color="#7f9c74" stop-opacity=".28"></stop><stop offset="1" stop-color="#7f9c74" stop-opacity="0"></stop></radialGradient><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c3123"></stop><stop offset="1" stop-color="#12150e"></stop></linearGradient></defs>
+<ellipse cx="170" cy="90" rx="130" ry="90" fill="url(#g1)"></ellipse>
+<path d="M10 225C50 168 110 148 170 156C230 148 292 172 330 225Z" fill="url(#g2)"></path>
+<path d="M170 158C166 128 172 100 166 66" stroke="#7f9c74" stroke-width="3" stroke-linecap="round"></path>
+<path d="M166 70C140 58 130 38 136 18C162 24 174 46 166 70Z" fill="#5d7854"></path>
+<path d="M168 96C190 88 204 70 202 52C180 56 166 74 168 96Z" fill="#7f9c74" fill-opacity=".85"></path>
+</svg>
+</div>
+<div class="fx" style="position:absolute;right:6%;top:18%;transform:{{ note }};font-family:Caveat,cursive;font-size:22px;line-height:1.15;color:#b4b09f;transform-origin:left;rotate:-10deg">Small steps<br>Big progress</div>
+</div>
+</section>
+
+<section id="labs" style="display:flex;flex-wrap:wrap;gap:28px 40px;padding:44px 0 48px;border-top:1px solid rgba(233,229,211,.07)">
+<div style="flex:1 1 260px;max-width:330px">
+<div style="display:flex;align-items:center;gap:14px;color:#efe9d6">
+<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9dbb90" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L5 19a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 19l-5-10V3"></path></svg>
+<h2 style="margin:0;font-family:Lora,serif;font-weight:400;font-size:28px">Các lab</h2></div>
+<p style="margin:16px 0 24px;font-size:13px;line-height:1.7;color:#a29f92;font-weight:300">Mỗi lab là một chủ đề công nghệ, được xây dựng thành dự án nhỏ với bài viết, ghi chú và phần thử nghiệm thực tế.</p>
+<a class="link" href="#labs" style="font-size:13px">Xem tất cả các lab <span aria-hidden="true">→</span></a>
+</div>
+<div style="flex:3 1 560px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px">
+<sc-for list="{{ labs }}" as="lab" hint-placeholder-count="3">
+<a class="card" href="#labs">
+<div style="height:72px;border-radius:8px;background:{{ lab.bg }}"></div>
+<div style="padding:0 6px 6px;display:flex;flex-direction:column;gap:8px">
+<span style="align-self:flex-start;font-size:11px;padding:3px 8px;border-radius:5px;background:rgba(125,154,114,.16);color:#bcd1ad">{{ lab.tag }}</span>
+<h3 style="margin:0;font-family:Lora,serif;font-weight:500;font-size:16px;color:#efe9d6">{{ lab.title }}</h3>
+<p style="margin:0;font-size:12.5px;line-height:1.6;color:#9a978a;font-weight:300">{{ lab.desc }}</p>
+<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#9a978a;margin-top:2px">
+<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16M9 3v4M15 3v4"></path></svg>{{ lab.meta }}</div>
+</div>
+</a>
+</sc-for>
+</div>
+</section>
+
+<section id="posts" style="padding:44px 0 48px;border-top:1px solid rgba(233,229,211,.07)">
+<div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px">
+<div>
+<div style="display:flex;align-items:center;gap:14px;color:#efe9d6">
+<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9dbb90" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"></rect><path d="M8 9h8M8 13h8M8 17h5"></path></svg>
+<h2 style="margin:0;font-family:Lora,serif;font-weight:400;font-size:26px">Bài viết mới</h2></div>
+<p style="margin:10px 0 26px;font-size:13px;color:#a29f92;font-weight:300">Những ghi chú, trải nghiệm và suy nghĩ gần đây của mình.</p>
+</div>
+<a class="link" href="#posts" style="font-size:12.5px;color:#cfcab8">Xem tất cả bài viết</a>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px">
+<sc-for list="{{ posts }}" as="p" hint-placeholder-count="4">
+<a class="card" href="#posts" style="padding:0;gap:0;overflow:hidden">
+<div style="height:68px;background:{{ p.bg }}"></div>
+<div style="padding:12px 16px 16px;display:flex;flex-direction:column;gap:10px">
+<span style="align-self:flex-start;font-size:11px;padding:3px 8px;border-radius:5px;background:rgba(125,154,114,.16);color:#bcd1ad">{{ p.tag }}</span>
+<h3 style="margin:0;min-height:44px;font-family:Lora,serif;font-weight:500;font-size:15px;line-height:1.45;color:#efe9d6">{{ p.title }}</h3>
+<div style="display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#9a978a;margin-top:6px">
+<span style="display:flex;align-items:center;gap:7px"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16M9 3v4M15 3v4"></path></svg>{{ p.date }}</span>
+<span style="display:flex;align-items:center;gap:7px"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>{{ p.read }}</span>
+</div>
+</div>
+</a>
+</sc-for>
+</div>
+</section>
+
+<footer id="about" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 32px;padding:28px 0 40px;border-top:1px solid rgba(233,229,211,.07)">
+<div style="display:flex;align-items:center;gap:12px">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9dbb90" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4C10 4 5 9 5 15c0 2 .6 3.5 1.5 4.5M20 4c0 8-4 13-11 13M6.5 19.5C8 14 12 10 16 8"></path></svg>
+<div><div style="font-family:Lora,serif;font-size:15px;color:#efe9d6">Gura Lab</div><div style="font-size:12px;color:#9a978a">Better thoughts. Better code.</div></div>
+</div>
+<div class="nav" style="display:flex;flex-wrap:wrap;align-items:center;gap:0 24px">
+<a href="#top" style="font-size:12px;padding:12px 0">Home</a><a href="#labs" style="font-size:12px;padding:12px 0">Labs</a><a href="#posts" style="font-size:12px;padding:12px 0">Bài viết</a><a href="#about" style="font-size:12px;padding:12px 0">Giới thiệu</a><a href="#about" style="font-size:12px;padding:12px 0">Liên hệ</a>
+<a class="ico" href="#about" aria-label="GitHub" style="padding:0"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a>
+<a class="ico" href="#about" aria-label="RSS" style="padding:0"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+</div>
+</footer>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"motion":{"editor":"range","min":0,"max":2,"step":0.1,"default":1,"unit":"x"},"$preview":{"width":1440,"height":1200}}'>
+class Component extends DCLogic {
+  state = { nx: 0, ny: 0, cx: 960, cy: 220, sy: 0 };
+  componentDidMount() {
+    this._reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    this._onScroll = () => { if (!this._reduce) this.setState({ sy: window.scrollY || 0 }); };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._onScroll);
+  }
+  renderVals() {
+    const s = this.state || {};
+    const k = this.props.motion ?? 1;
+    const nx = (s.nx || 0) * k, ny = (s.ny || 0) * k, sy = (s.sy || 0) * k;
+    const t = (x, y) => 'translate3d(' + x.toFixed(1) + 'px, ' + y.toFixed(1) + 'px, 0)';
+    const m = Math.hypot(nx, ny);
+    const tb = (x, y, r, sc) => t(x, y) + ' rotate(' + r.toFixed(1) + 'deg) scale(' + sc.toFixed(3) + ')';
+    const seeds = [[8,120,6,.5,1.2],[16,300,4,.35,-.8],[27,90,8,.4,.6],[35,430,5,.5,-1.4],[44,210,7,.3,.9],[52,350,4,.55,-.5],[61,150,9,.28,1.5],[70,500,5,.45,-1.1],[78,280,6,.4,.7],[86,70,4,.55,-.9],[93,410,7,.3,1.3],[12,640,5,.45,-.6],[48,720,8,.28,.8],[66,780,4,.5,-1.3],[22,920,6,.4,1],[82,860,5,.45,-.7]];
+    const dots = seeds.map((q) => ({ x: q[0] + '%', y: q[1], s: q[2] * 4, o: q[3] * 0.6, t: t(nx * q[4] * -40, ny * q[4] * -30 - sy * q[4] * 0.1) }));
+    return {
+      onMove: (e) => {
+        if (this._reduce) return;
+        const w = window.innerWidth || 1440, h = window.innerHeight || 800;
+        this.setState({ nx: e.clientX / w - 0.5, ny: e.clientY / h - 0.5, cx: e.clientX, cy: e.clientY });
+      },
+      blobA: tb(nx * -42, ny * -28 - sy * 0.08, nx * -3.5, 1 + m * 0.07),
+      blobB: tb(nx * 52, ny * 36 - sy * 0.14, ny * 4.5, 1 + m * 0.09),
+      blobC: tb(nx * -56, ny * 32 - sy * 0.05, nx * 4, 1 + m * 0.08),
+      blobD: tb(nx * 36, ny * -24 - sy * 0.12, nx * -4.5, 1 + m * 0.07),
+      dots,
+      sprout: t(nx * -18, ny * -12 - sy * 0.05),
+      note: t(nx * 14, ny * 10),
+      labs: [
+        { tag: 'Frontend', title: 'Astro Fundamentals', desc: 'Làm quen với Astro, xây dựng blog và các trang tĩnh hiện đại.', meta: '3 bài viết · 2 demos', bg: 'radial-gradient(ellipse 60% 70% at 25% 115%,#12160f 55%,transparent 56%),radial-gradient(ellipse 70% 80% at 75% 120%,#171c13 55%,transparent 56%),linear-gradient(180deg,#4a554d,#2a312b)' },
+        { tag: 'Backend', title: 'NestJS + Prisma', desc: 'Xây dựng API với NestJS và quản lý dữ liệu bằng Prisma.', meta: '2 bài viết · 1 demo', bg: 'radial-gradient(circle at 82% 30%,rgba(120,150,96,.5),transparent 35%),linear-gradient(180deg,#171b13,#10130d)' },
+        { tag: 'Tools', title: 'Linux & Hyprland', desc: 'Tùy biến môi trường làm việc, tối ưu năng suất với Linux.', meta: '4 bài viết · 3 demos', bg: 'radial-gradient(ellipse 80% 60% at 40% 125%,#0d100b 60%,transparent 61%),linear-gradient(180deg,#232c3a,#161b21)' }
+      ],
+      posts: [
+        { tag: 'Linux', title: 'Cài đặt và tinh chỉnh Hyprland trên Arch Linux', date: '20 Thg 10, 2025', read: '8 phút đọc', bg: 'radial-gradient(circle at 78% 62%,rgba(226,172,92,.5),transparent 24%),linear-gradient(180deg,#2a2d22,#15170f)' },
+        { tag: 'Frontend', title: 'Tạo một trang blog với Astro và Tailwind CSS', date: '16 Thg 10, 2025', read: '6 phút đọc', bg: 'radial-gradient(ellipse 60% 70% at 30% 115%,#12160f 55%,transparent 56%),linear-gradient(180deg,#4d574f,#2b322c)' },
+        { tag: 'Dev Tools', title: 'Dùng Opencode làm coding agent trong công việc', date: '10 Thg 10, 2025', read: '5 phút đọc', bg: 'radial-gradient(circle at 70% 55%,rgba(200,200,190,.28),transparent 30%),linear-gradient(180deg,#2b2a24,#15150f)' },
+        { tag: 'Productivity', title: 'Quản lý thời gian và duy trì thói quen học tập', date: '5 Thg 10, 2025', read: '4 phút đọc', bg: 'radial-gradient(circle at 80% 40%,rgba(120,150,96,.4),transparent 32%),linear-gradient(180deg,#2a281f,#14130d)' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

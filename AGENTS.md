@@ -15,13 +15,15 @@ Dev Lab là portal Astro (static) cộng các lab độc lập trong `labs/`, qu
 
 ## Bản đồ repo
 
-- `portal/src/pages/`: route (`/`, `/labs`, `/bai-viet`, `/bai-viet/[...slug]`, `/lien-he`)
-- `portal/src/components/`: component `.astro`, mỗi component một file PascalCase
-- `portal/src/data/`: nguồn dữ liệu duy nhất. `profile.ts` (thông tin cá nhân), `labs.ts`, `themes.ts`, `content.ts` (`postTypes`)
+- `portal/src/pages/`: route (`/`, `/labs`, `/bai-viet`, `/bai-viet/[...slug]`, `/lien-he`) và `search-index.json.ts` sinh search index lúc build
+- `portal/src/components/`: component `.astro`, mỗi component một file PascalCase (header, card, cover, icon, search…)
+- `portal/src/data/`: nguồn dữ liệu duy nhất. `profile.ts` (thông tin cá nhân), `labs.ts`, `themes.ts`, `content.ts` (`postTypes`), `covers.ts`, `icons.ts`
+- `portal/src/lib/`: logic thuần dùng chung (`search.ts`, `reading.ts`), không phụ thuộc DOM
 - `portal/src/content/posts/`: bài viết, tên file = slug
 - `portal/src/content.config.ts`: schema frontmatter (nguồn sự thật cho các trường bắt buộc)
 - `portal/src/styles/tokens.css`: giá trị token (màu, cỡ chữ, khoảng cách, motion)
-- `docs/design/`: spec giao diện theo chủ đề; `docs/adr/`: quyết định và lý do; `docs/CHANGELOG.md`: lịch sử chỉnh thiết kế
+- `packages/tags/`: registry tag dùng chung `@dev-lab/tags`; nguồn duy nhất cho ID/label/nhóm tag
+- `docs/design/`: spec giao diện theo chủ đề; `docs/adr/`: quyết định và lý do; `docs/TAGS.md`: quy ước tag; `docs/CHANGELOG.md`: lịch sử chỉnh thiết kế
 - `labs/<tên>/`: mỗi lab là một app độc lập
 - `design-reference/`: chỉ để tham khảo, không build, không sửa
 
@@ -29,17 +31,17 @@ Dev Lab là portal Astro (static) cộng các lab độc lập trong `labs/`, qu
 
 Không đọc hết `docs/`. Chọn theo việc:
 
-| Việc                                                  | Đọc                                                          |
-| ----------------------------------------------------- | ------------------------------------------------------------ |
-| Màu, theme, token màu                                 | `docs/design/theme.md`                                       |
-| Font, thang cỡ chữ                                    | `docs/design/typography.md`                                  |
-| Bố cục trang, header, footer, breakpoint              | `docs/design/layout.md`                                      |
-| Component: card, tag, link, nút, bảng facts, bộ chọn  | `docs/design/components.md`                                  |
-| Trang chi tiết bài viết (mục lục, tiến độ đọc, nút #) | `docs/design/post-page.md`                                   |
-| Animation, hover, View Transitions                    | `docs/design/motion.md`                                      |
-| Viết hoặc sửa bài                                     | `portal/src/content.config.ts`, `portal/src/data/content.ts` |
-| Đề xuất tính năng hoặc lab mới                        | `docs/PROJECT_OVERVIEW.md`, phần đầu `docs/ROADMAP.md`       |
-| Vì sao đang làm như vậy                               | `docs/adr/`                                                  |
+| Việc                                                  | Đọc                                                                          |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Màu, theme, token màu                                 | `docs/design/theme.md`                                                       |
+| Font, thang cỡ chữ                                    | `docs/design/typography.md`                                                  |
+| Bố cục trang, header, footer, breakpoint              | `docs/design/layout.md`                                                      |
+| Component: card, tag, link, nút, bảng facts, bộ chọn  | `docs/design/components.md`                                                  |
+| Trang chi tiết bài viết (mục lục, tiến độ đọc, nút #) | `docs/design/post-page.md`                                                   |
+| Animation, hover, View Transitions                    | `docs/design/motion.md`                                                      |
+| Viết hoặc sửa bài                                     | `portal/src/content.config.ts`, `portal/src/data/content.ts`, `docs/TAGS.md` |
+| Đề xuất tính năng hoặc lab mới                        | `docs/PROJECT_OVERVIEW.md`, phần đầu `docs/ROADMAP.md`                       |
+| Vì sao đang làm như vậy                               | `docs/adr/`                                                                  |
 
 Comment trong code ghi "`docs/DESIGN_SYSTEM.md` mục N": bảng ở đầu file đó cho biết mục N nằm ở file nào.
 
@@ -77,7 +79,7 @@ Nếu yêu cầu mâu thuẫn với tài liệu, hỏi lại người dùng thay
 ### Nội dung bài viết
 
 - Viết bằng tiếng Việt, thuật ngữ kỹ thuật giữ nguyên tiếng Anh (`useMemo`, `reconciliation`, `event loop`).
-- Frontmatter đầy đủ: `title`, `date`, `type`, `lab`, `tags`, `summary`. `type` là một trong `concept`, `experiment`, `case-study`, `demo`, `tutorial`, `note`. Build thất bại nếu thiếu hoặc sai.
+- Frontmatter đầy đủ: `title`, `date`, `type`, `lab`, `tags`, `summary`; thêm `cover` + `coverAlt` khi bài có ảnh bìa. `type` là một trong `concept`, `experiment`, `case-study`, `demo`, `tutorial`, `note`. `tags` dùng ID trong `@dev-lab/tags`, 1–4 tag, không trùng. Build thất bại nếu thiếu hoặc sai.
 - Giải thích cơ chế hoạt động trước, rồi mới đưa ví dụ code.
 
 ## Gotchas
@@ -89,7 +91,6 @@ Nếu yêu cầu mâu thuẫn với tài liệu, hỏi lại người dùng thay
 - Phần tử do JS chèn vào (nút `#` ở tiêu đề bài) không có `data-astro-cid`: style phải để ở `global.css`, không đặt trong `<style>` scoped.
 - Mục "Về mình" và "Dự án khác" ẩn hẳn khi `profile.ts` trống: không render khối rỗng hay chữ "sẽ bổ sung".
 - `profile.ts` chỉ chứa thứ đã được phép công khai. Đến 2026-10-19: tên, vai trò, vị trí, email, GitHub đã cho phép; LinkedIn, CV, ảnh đại diện chưa.
-- `portal/src/content/posts/bai-viet-mau.md` là bài mẫu kiểm chứng pipeline, không phải nội dung thật.
 
 ## Định nghĩa "xong"
 

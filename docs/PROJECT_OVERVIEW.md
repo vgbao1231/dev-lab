@@ -101,12 +101,12 @@ Lý do chi tiết ở [`adr/`](adr/README.md).
 - **Nội dung**: Markdown/MDX trong content collection `posts`; schema frontmatter ở `portal/src/content.config.ts`.
 - **Design**: theme và mode là hai trục độc lập ([ADR 0002](adr/0002-theme-va-mode-hai-truc-doc-lap.md)); giai đoạn 1 chỉ triển khai theme Minimalist Editorial. Token và quy tắc ở `docs/DESIGN_SYSTEM.md`.
 - **Hosting (dự kiến, chưa kết nối)**: Cloudflare Pages.
+- **Cách đặt lab**: mỗi lab là một project Cloudflare Pages riêng, build từ cùng repo, portal liên kết sang bằng URL tuyệt đối ([ADR 0008](adr/0008-moi-lab-mot-project-pages.md)). Cấu hình ở README, mục "Deploy".
 
 ## 10. Những điều chưa quyết định
 
 Các mục dưới đây **chưa được chốt**. Không nên coi là đã quyết định khi viết code hoặc nội dung.
 
-- Mỗi lab là subdomain, đường dẫn con hay site riêng (liên quan mục 1.6 trong `ROADMAP.md`).
 - Các lab dùng chung design tokens với portal hay có bản sắc riêng (`react-lab` hiện chỉ có style bố cục).
 - Mức độ tương tác: chỉ bài viết, có demo, hay có playground chạy trực tiếp (giai đoạn 2).
 - Lab thứ hai (dự kiến JS Under the Hood hoặc Next.js Lab).

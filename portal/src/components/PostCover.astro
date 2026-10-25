@@ -1,0 +1,46 @@
+---
+import type { CoverId } from '../data/covers';
+import { isCoverId } from '../data/covers';
+
+export type Props = {
+  cover?: string;
+  coverAlt?: string;
+  title: string;
+  typeLabel: string;
+};
+
+/*
+ * SVG được nhúng inline thay vì dùng <img> để bên trong dùng được token màu của
+ * theme. Nhờ vậy cover tự đổi theo light/dark mà không cần hai bộ file.
+ */
+const covers = import.meta.glob('../assets/covers/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
+
+const { cover, coverAlt, title, typeLabel } = Astro.props;
+
+const coverId: CoverId | undefined = cover && isCoverId(cover) ? cover : undefined;
+const svg = coverId ? covers[`../assets/covers/${coverId}.svg`] : undefined;
+
+const initials =
+  title
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word.charAt(0))
+    .join('')
+    .toUpperCase() || 'DL';
+---
+
+{svg ? (
+  <div class="post-cover" role="img" aria-label={coverAlt}>
+    <Fragment set:html={svg} />
+  </div>
+) : (
+  <div class="post-cover post-cover--fallback" aria-hidden="true">
+    <span class="post-cover__initials">{initials}</span>
+    <span class="post-cover__type">{typeLabel}</span>
+  </div>
+)}
