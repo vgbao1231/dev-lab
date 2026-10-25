@@ -582,13 +582,13 @@ const dustParticles = [
   }
 
   /*
-   * Greeting line "Xin chào, tui là": icon lá + text 15px #cfcab8.
+   * Greeting line "Xin chào, tui là": leaf icon + 0.9375rem (15px) text, #cfcab8.
    */
   .hero-greeting {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 15px;
+    font-size: 0.9375rem;
     color: #cfcab8;
     margin-bottom: 2px;
   }
@@ -599,12 +599,12 @@ const dustParticles = [
   }
 
   /*
-   * Tên hero: Caveat, cursive, 92px (clamp cho mobile), #f1ecd9 theo reference.
+   * Hero name: Caveat, cursive, up to 5.75rem (92px) via clamp for mobile, #f1ecd9 per the reference.
    */
   .hero-name {
     font-family: var(--font-caveat), cursive;
     font-weight: 400;
-    font-size: clamp(3.5rem, 8vw, 92px);
+    font-size: clamp(3.5rem, 8vw, 5.75rem);
     line-height: 1.05;
     color: #f1ecd9;
     letter-spacing: 0.01em;
@@ -612,11 +612,11 @@ const dustParticles = [
   }
 
   /*
-   * Tagline dưới tên: 15px, line-height 1.75, max-width 360px, #aaa799, weight 300.
+   * Tagline under the name: 0.9375rem (15px), line-height 1.75, max-width 360px, #aaa799, weight 300.
    */
   .hero-tagline {
     max-width: 360px;
-    font-size: 15px;
+    font-size: 0.9375rem;
     line-height: 1.75;
     color: #aaa799;
     font-weight: 300;
@@ -640,14 +640,14 @@ const dustParticles = [
   }
 
   /*
-   * Ghi chú "Small steps / Big progress": Caveat, 22px, line-height 1.15, #b4b09f, rotate -10deg.
+   * Note "Small steps / Big progress": Caveat, 1.375rem (22px), line-height 1.15, #b4b09f, rotate -10deg.
    */
   .hero-note {
     position: absolute;
     right: 6%;
     top: 18%;
     font-family: var(--font-caveat), cursive;
-    font-size: 22px;
+    font-size: 1.375rem;
     line-height: 1.15;
     color: #b4b09f;
     rotate: -10deg;
@@ -680,12 +680,12 @@ const dustParticles = [
     margin: 0;
     font-family: var(--font-serif), serif;
     font-weight: 400;
-    font-size: 28px;
+    font-size: 1.75rem;
     color: #efe9d6;
   }
 
   .labs-sidebar__desc {
-    font-size: 13px;
+    font-size: 0.8125rem;
     line-height: 1.7;
     color: #a29f92;
     font-weight: 300;
@@ -696,7 +696,7 @@ const dustParticles = [
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-size: 13px;
+    font-size: 0.8125rem;
     color: #efe9d6;
     text-decoration: none;
     transition: color 0.2s;

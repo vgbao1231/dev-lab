@@ -1,103 +1,103 @@
-# Hệ thống tag
+# Tag system
 
-Tag là metadata dùng chung cho portal và mọi lab. Mục tiêu là để một bài viết có thể được tìm
-theo cùng một từ vựng, dù bài đó thuộc lab nào, loại nội dung nào hay category nào.
+Tags are shared metadata for the portal and every lab. The goal is that an article can be found
+using the same vocabulary regardless of which lab, content type or category it belongs to.
 
-Registry nằm ở **`packages/tags/src/index.ts`** và được publish nội bộ dưới tên
-**`@dev-lab/tags`**. Portal và các lab import cùng một nguồn; không chép danh sách tag sang chỗ khác.
+The registry lives in **`packages/tags/src/index.ts`** and is published internally as
+**`@dev-lab/tags`**. The portal and the labs import from the same source; do not copy the tag list anywhere else.
 
-## Quy tắc chọn tag
+## Rules for choosing tags
 
-- Mỗi bài dùng **1–4 tag**, khuyến nghị **2–3**. Một tag chỉ nên có mặt khi nó thực sự giúp phân
-  loại hoặc tìm kiếm bài.
-- Tag **độc lập** với `lab`, `type` và category. Không dùng tag để thay tên lab, loại bài hay
-  chuyên mục.
-- Dùng **tên tiếng Anh chính thức** của công nghệ/khái niệm: `Next.js`, `Node.js`, `State
-Management`, không viết `Nextjs`, `Node`, `state`.
-- Ưu tiên tag **tổng quát, tái sử dụng được**. Không tạo tag cho một bài, một thư viện nhỏ hoặc
-  một biến thể chỉ xuất hiện một lần.
-- **Kiểm tra danh sách trước khi thêm.** Nếu đã có tag cùng nghĩa, dùng tag đó. Ví dụ: không thêm
-  `hooks` khi đã có `React`; không thêm `async` khi đã có `Concurrency`.
-- Không dùng tag thay cho từ khoá trong tiêu đề. Từ khoá cụ thể (tên API, tên lỗi) thuộc về nội
-  dung bài và search index, không thuộc registry.
-- Thứ tự hiển thị do registry quyết định: **Technology → Domain → Approach**, cùng nhóm thì theo
-  label. Frontmatter không cần sắp xếp.
+- Each article uses **1–4 tags**, **2–3** recommended. A tag should only be present when it genuinely helps
+  classify or find the article.
+- Tags are **independent** of `lab`, `type` and category. Do not use tags as a substitute for the lab name, article type or
+  section.
+- Use the **official English name** of the technology/concept: `Next.js`, `Node.js`, `State
+Management`, not `Nextjs`, `Node`, `state`.
+- Prefer **general, reusable** tags. Do not create a tag for a single article, a small library or
+  a variant that appears only once.
+- **Check the list before adding.** If a tag with the same meaning already exists, use it. For example: do not add
+  `hooks` when `React` exists; do not add `async` when `Concurrency` exists.
+- Do not use tags in place of keywords in the title. Specific keywords (API names, error names) belong to the
+  article body and the search index, not the registry.
+- Display order is decided by the registry: **Technology → Domain → Approach**, and within a group by
+  label. Frontmatter does not need to be sorted.
 
-## Danh sách hiện tại (23 tag)
+## Current list (23 tags)
 
-### Technology — công cụ, ngôn ngữ, nền tảng
+### Technology — tools, languages, platforms
 
-| ID           | Label      | Dùng khi                                          |
-| ------------ | ---------- | ------------------------------------------------- |
-| `react`      | React      | React, hooks, rendering và hệ sinh thái liên quan |
-| `typescript` | TypeScript | Type system, generic, strict mode và tooling      |
-| `javascript` | JavaScript | Ngôn ngữ JavaScript, runtime và cơ chế của nó     |
-| `astro`      | Astro      | Astro, islands, content collection và build tĩnh  |
-| `nextjs`     | Next.js    | Next.js, SSR/SSG, Server Components và caching    |
-| `nodejs`     | Node.js    | Runtime Node.js, HTTP, middleware và API          |
-| `docker`     | Docker     | Container, image, compose và môi trường chạy      |
-| `sql`        | SQL        | Truy vấn, index, join và transaction              |
-| `git`        | Git        | Commit graph, merge, rebase và quy trình làm việc |
+| ID           | Label      | Use when                                              |
+| ------------ | ---------- | ----------------------------------------------------- |
+| `react`      | React      | React, hooks, rendering and the related ecosystem     |
+| `typescript` | TypeScript | Type system, generics, strict mode and tooling        |
+| `javascript` | JavaScript | The JavaScript language, its runtime and mechanics    |
+| `astro`      | Astro      | Astro, islands, content collections and static builds |
+| `nextjs`     | Next.js    | Next.js, SSR/SSG, Server Components and caching       |
+| `nodejs`     | Node.js    | Node.js runtime, HTTP, middleware and APIs            |
+| `docker`     | Docker     | Containers, images, compose and runtime environments  |
+| `sql`        | SQL        | Queries, indexes, joins and transactions              |
+| `git`        | Git        | Commit graph, merge, rebase and workflow              |
 
-### Domain — lĩnh vực hoặc khái niệm kỹ thuật
+### Domain — technical areas or concepts
 
-| ID                 | Label            | Dùng khi                                                 |
-| ------------------ | ---------------- | -------------------------------------------------------- |
-| `frontend`         | Frontend         | Xây dựng giao diện và trải nghiệm phía client            |
-| `backend`          | Backend          | API, service và xử lý phía server                        |
-| `performance`      | Performance      | Tốc độ tải, chi phí runtime và các chỉ số hiệu năng      |
-| `rendering`        | Rendering        | Cơ chế tạo/cập nhật UI: render, reconciliation, commit   |
-| `state-management` | State Management | Quản lý, chia sẻ và đồng bộ state                        |
-| `concurrency`      | Concurrency      | Scheduling, interrupt, xử lý song song và tính nhất quán |
-| `testing`          | Testing          | Unit, integration, E2E và chiến lược kiểm thử            |
-| `database`         | Database         | Mô hình dữ liệu, truy vấn, transaction và isolation      |
-| `devops`           | DevOps           | Build, deploy, CI/CD và vận hành hệ thống                |
-| `cloud`            | Cloud            | CDN, serverless và hạ tầng cloud                         |
+| ID                 | Label            | Use when                                                      |
+| ------------------ | ---------------- | ------------------------------------------------------------- |
+| `frontend`         | Frontend         | Building client-side interfaces and experiences               |
+| `backend`          | Backend          | APIs, services and server-side processing                     |
+| `performance`      | Performance      | Load speed, runtime cost and performance metrics              |
+| `rendering`        | Rendering        | How the UI is created/updated: render, reconciliation, commit |
+| `state-management` | State Management | Managing, sharing and syncing state                           |
+| `concurrency`      | Concurrency      | Scheduling, interrupts, parallel work and consistency         |
+| `testing`          | Testing          | Unit, integration, E2E and testing strategy                   |
+| `database`         | Database         | Data models, queries, transactions and isolation              |
+| `devops`           | DevOps           | Builds, deploys, CI/CD and running systems                    |
+| `cloud`            | Cloud            | CDNs, serverless and cloud infrastructure                     |
 
-### Approach — góc tiếp cận của bài viết
+### Approach — the article's angle
 
-| ID             | Label        | Dùng khi                                          |
-| -------------- | ------------ | ------------------------------------------------- |
-| `internals`    | Internals    | Đi vào cơ chế bên trong runtime hoặc framework    |
-| `architecture` | Architecture | Cấu trúc hệ thống, ranh giới và đánh đổi thiết kế |
-| `debugging`    | Debugging    | Tìm nguyên nhân lỗi và cách quan sát hệ thống     |
-| `benchmarking` | Benchmarking | Đo lường, so sánh có kiểm soát và có thể tái lập  |
+| ID             | Label        | Use when                                            |
+| -------------- | ------------ | --------------------------------------------------- |
+| `internals`    | Internals    | Going into the internals of a runtime or framework  |
+| `architecture` | Architecture | System structure, boundaries and design trade-offs  |
+| `debugging`    | Debugging    | Finding the cause of bugs and observing systems     |
+| `benchmarking` | Benchmarking | Controlled, reproducible measurement and comparison |
 
-## Cách dùng trong bài viết
+## Using tags in articles
 
-Frontmatter ghi **ID**, không ghi label:
+Frontmatter stores the **ID**, not the label:
 
 ```yaml
 tags: ['react', 'internals', 'rendering']
 ```
 
-Schema ở `portal/src/content.config.ts` sẽ:
+The schema in `portal/src/content.config.ts` will:
 
-1. Kiểm tra từng ID có trong registry.
-2. Từ chối tag trùng, ít hơn 1 hoặc nhiều hơn 4.
-3. Sắp xếp theo nhóm rồi đổi ID thành label chuẩn.
+1. Check that each ID exists in the registry.
+2. Reject duplicate tags, fewer than 1 or more than 4.
+3. Sort by group and then map IDs to canonical labels.
 
-Component chỉ nhận label (`React`, `Internals`, `Rendering`), nên UI không cần biết registry và
-không thể vô tình hiển thị ID thô. Tag trong frontmatter sai sẽ làm **build thất bại**, không bị
-bỏ qua im lặng.
+Components only receive labels (`React`, `Internals`, `Rendering`), so the UI does not need to know the registry and
+cannot accidentally display raw IDs. A wrong tag in frontmatter makes the **build fail** rather than being
+silently ignored.
 
-Ví dụ:
+Example:
 
-| Bài                              | Tag                                        |
+| Article                          | Tags                                       |
 | -------------------------------- | ------------------------------------------ |
 | React Fiber & Reconciliation     | `react`, `internals`, `rendering`          |
 | React Concurrent Rendering       | `react`, `concurrency`, `performance`      |
 | Tearing & `useSyncExternalStore` | `react`, `state-management`, `concurrency` |
 
-## Khi cần thêm tag
+## When a new tag is needed
 
-Chỉ thêm khi thật sự cần, và làm trong cùng một thay đổi:
+Only add one when truly necessary, and do it in the same change:
 
-1. Kiểm tra bảng trên và các tag đã có; loại khả năng trùng nghĩa.
-2. Đề xuất ID, label, nhóm và một câu mô tả phạm vi.
-3. Cập nhật `packages/tags/src/index.ts` và tài liệu này.
-4. Chạy `pnpm typecheck`; schema của portal sẽ tự nhận danh sách mới.
-5. Không đổi ID cũ nếu đã có bài dùng; đổi ID là thay đổi dữ liệu, cần migration riêng.
+1. Check the tables above and the existing tags; rule out any with the same meaning.
+2. Propose the ID, label, group and a one-sentence description of the scope.
+3. Update `packages/tags/src/index.ts` and this document.
+4. Run `pnpm typecheck`; the portal schema picks up the new list automatically.
+5. Do not change an existing ID that articles already use; changing an ID is a data change and needs its own migration.
 
-Tag không phải nơi ghi công nghệ phụ, tên thư viện nhỏ hay sở thích cá nhân. Nếu một tag chỉ dùng
-cho một bài và không giúp tìm kiếm bài khác, hãy để từ đó trong nội dung bài.
+Tags are not a place to record secondary technologies, small library names or personal preferences. If a tag is used
+only by one article and does not help find other articles, leave that word in the article body.

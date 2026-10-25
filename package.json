@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Dev Lab - hệ sinh thái blog và lab kỹ thuật",
+  "description": "Dev Lab — technical blog and lab ecosystem",
   "engines": {
     "node": ">=22.22.0"
   },

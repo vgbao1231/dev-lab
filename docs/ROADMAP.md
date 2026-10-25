@@ -1,149 +1,153 @@
 # Roadmap: Dev Lab
 
-Tài liệu này chia dự án thành các giai đoạn. Mỗi giai đoạn có checklist công việc và tiêu chí hoàn thành.
+**Current status (2026-10-25):** Phase 1 is still in progress. The portal, design tokens, content system, search, tag registry, covers and the three React articles are implemented. Still open: the deploy work in 1.6, the mobile header sheet, the performance comparison page, and the optional stack-comparison section.
 
-**Giai đoạn hiện tại: Giai đoạn 1 — Nền tảng và lab React đầu tiên** 🟡 đang thực hiện
+This document splits the project into phases. Each phase has a work checklist and completion criteria.
 
-**Còn mở ở giai đoạn 1:** 1.3 menu mobile dạng sheet · mục "So sánh giữa các stack" (tạm bỏ) ·
-1.5 trang so sánh hiệu năng · 1.6 toàn bộ phần Deploy.
+**Current phase: Phase 1 — Foundation and the first React lab** 🟡 in progress
+
+**Open in phase 1:** 1.3 mobile sheet menu · "Stack comparison" section (paused) ·
+1.5 performance comparison page · 1.6 all deploy work.
 
 ---
 
-## Giai đoạn 1: Nền tảng và lab React đầu tiên 🟡 đang thực hiện
+## Phase 1: Foundation and the first React lab 🟡 in progress
 
-**Mục tiêu:** Có một cổng chính tối giản chạy được trên production, cùng một lab React với ít nhất 3 bài viết chất lượng.
+**Goal:** A minimal main portal running in production, plus a React lab with at least 3 quality articles.
 
-### 1.1 Thiết lập repo
+### 1.1 Repo setup
 
-- [x] Tạo repo `dev-lab`
-- [x] Viết `README.md`, `AGENTS.md`, `docs/`
-- [x] Thiết lập pnpm workspace
-- [x] Cấu hình ESLint, Prettier, TypeScript (strict)
-- [x] Thiết lập CI cơ bản trên GitHub Actions (lint, typecheck, build)
+- [x] Create the `dev-lab` repo
+- [x] Write `README.md`, `AGENTS.md`, `docs/`
+- [x] Set up the pnpm workspace
+- [x] Configure ESLint, Prettier, TypeScript (strict)
+- [x] Set up basic CI on GitHub Actions (lint, typecheck, build)
 
 ### 1.2 Design tokens
 
-- [x] Tạo file CSS variables cho theme đầu tiên (Minimalist Editorial), đủ light + dark
-- [x] Tích hợp font: Patrick Hand, Inter, JetBrains Mono (có fallback và kiểm tra tiếng Việt)
-      — thay Balsamiq Sans bằng Patrick Hand vì Balsamiq Sans không có subset tiếng Việt
-- [x] Cài đặt chuyển chế độ: tối / sáng / hệ thống
-      — theme và mode là hai trục độc lập; bộ chọn theme tự ẩn khi chỉ có một theme khả dụng
-- [x] Kiểm tra contrast cho text và link ở Minimalist Editorial light và dark
-      — mọi cặp token đạt WCAG AA; secondary text trên surface ở light là 4.87:1, sát ngưỡng nên không được giảm thêm
-- [x] Thêm motion tokens (thời lượng, easing) và quy tắc chuyển động — xem `docs/DESIGN_SYSTEM.md` mục 7
+- [x] Create CSS variables for the first theme (Minimalist Editorial), light + dark
+- [x] Integrate fonts: Patrick Hand, Inter, JetBrains Mono (with fallbacks and Vietnamese checks)
+      — replaced Balsamiq Sans with Patrick Hand because Balsamiq Sans has no Vietnamese subset
+- [x] Implement mode switching: dark / light / system
+      — theme and mode are two independent axes; the theme picker hides itself when only one theme is available
+- [x] Check contrast for text and links in Minimalist Editorial light and dark
+      — every token pair meets WCAG AA; secondary text on surface in light is 4.87:1, close to the threshold, so it must not be lowered further
+- [x] Add motion tokens (duration, easing) and motion rules — see `docs/DESIGN_SYSTEM.md` section 7
 
-### 1.3 Cổng chính (portal)
+### 1.3 Portal
 
-- [x] Khởi tạo project Astro trong thư mục `portal/`
-- [x] Layout chung: header dính, footer, container hai tầng bề rộng (page 1120px + khối chữ 800px)
-- [x] Trang chủ: hero, danh sách lab, bài viết mới, dự án khác, liên hệ
-- [x] Component thẻ lab (trạng thái: đang chạy, sắp tới, dự kiến)
-- [x] Trang danh sách bài viết (`/bai-viet`) và trang chi tiết bài viết (`/bai-viet/<slug>`)
-- [x] Trang "Labs" liệt kê các lab
-- [x] Trang liên hệ
-- [x] Chuyển trang bằng View Transitions (`<ClientRouter />`) + entrance animation cho khối nội dung (`motion/mini`, `data-animate`)
-- [x] Áp bố cục và thành phần theo `design-reference/`: section có đường kẻ, lab card là link + hover, nhãn eyebrow
-- [x] Chuẩn hóa trạng thái hover (mục 7.4 `DESIGN_SYSTEM.md`): gạch chân mọc dần cho link, nav pill accent, tiêu đề bài viết, hàng bảng
-- [x] Dựng nền responsive: breakpoint 560 / 640 / 768 / 1024, padding ngang theo breakpoint, lưới lab tự chia cột
-- [x] Bộ chọn theme/mode: hai `<select>` gốc trên hai trục độc lập; theme tự ẩn khi chỉ có một theme
-- [x] Nút "lên đầu trang" hiện khi cuộn quá 600px, tôn trọng `prefers-reduced-motion`
-- [x] Header theo kiểu `ngockhoi96.dev`: sticky, capsule mờ thu hẹp khi cuộn, nav pill accent, ẩn/hiện theo hướng cuộn, `transition:persist`
-- [x] Header: nút tìm kiếm mở command palette; `Ctrl/Cmd+K` hoặc `/`, tìm bài viết/lab/trang,
-      không dấu vẫn khớp, điều hướng bằng bàn phím; index sinh lúc build, không thêm dependency
-- [x] Bộ icon dùng chung (nét 1.5px, `currentColor`): brand, search, mode, tiêu đề trang, metadata
-      bài viết, footer; thay các ký tự/emoji rời rạc
-- [x] `/bai-viet`: lưới card 1/2/3 cột, cover 16:9, tag, thời gian đọc; trang chủ giữ nguyên
-      danh sách dòng
-- [ ] Header: menu mobile dạng sheet (chưa cần ở giai đoạn này)
-- [x] Trang chi tiết bài viết: mục lục (TOC) sinh từ heading, tự đánh dấu mục đang đọc theo vị trí cuộn
-      — từ 1200px là cột riêng dính dưới header nên luôn nhìn thấy; dưới 1200px là khối ở đầu bài
-- [x] Trang chi tiết bài viết: nút `#` ở mỗi tiêu đề, hiện khi hover/focus, bấm để sao chép liên kết tới anchor
-- [x] Trang chi tiết bài viết: thanh tiến độ đọc ở mép trên viewport (không hiện số phần trăm)
-      — trình duyệt hỗ trợ thì chạy bằng `animation-timeline: scroll()` trên compositor, không JS mỗi frame
-- [x] Sticky footer: nội dung ngắn hơn viewport thì footer vẫn nằm ở đáy viewport
-- [x] Footer bốn cột (brand · Nội dung · Lab · Liên hệ) + hàng đáy `© · Mã nguồn · Deploy`
-- [x] Trang chủ thành portfolio: hero có vai trò + ba CTA, thêm mục "Về mình" (bảng facts, kỹ năng), "Dự án khác" lấy từ dữ liệu thật
-- [x] `src/data/profile.ts` làm nguồn duy nhất cho thông tin cá nhân; trường trống thì UI tự bỏ qua
-- [ ] Mục "So sánh giữa các stack" trên trang chủ — tạm bỏ 2026-10-18, làm cùng mục 1.5 khi có số đo thật
-- [x] Kiểm tra responsive trên mobile (breakpoint nền đã có sẵn)
-      — xác minh 360/390/414px ở cả light và dark: nav một hàng, lưới lab 1 cột, TOC ở đầu bài, chip facts không tràn; không có tràn ngang ở cấp trang
+- [x] Initialise the Astro project in `portal/`
+- [x] Shared layout: sticky header, footer, two-level width container (1120px page + 800px text block)
+- [x] Home page: hero, lab list, latest articles, other projects, contact
+- [x] Lab card component (states: `Đang chạy`, `Sắp tới`, `Dự kiến`)
+- [x] Article list page (`/bai-viet`) and article detail page (`/bai-viet/<slug>`)
+- [x] "Labs" page listing the labs
+- [x] Contact page
+- [x] Page transitions with View Transitions (`<ClientRouter />`) + entrance animation for content blocks (`motion/mini`, `data-animate`)
+- [x] Apply layout and components from `design-reference/`: sections divided by rules, lab card as link + hover, eyebrow labels
+- [x] Standardise hover states (section 7.4 of `DESIGN_SYSTEM.md`): growing underline for links, accent nav pill, article titles, table rows
+- [x] Build the responsive foundation: breakpoints 560 / 640 / 768 / 1024, horizontal padding per breakpoint, self-filling lab grid
+- [x] Theme/mode picker: two native `<select>` elements on two independent axes; theme hides itself when only one theme exists
+- [x] "Back to top" button appears after scrolling 600px, respects `prefers-reduced-motion`
+- [x] Header in the style of `ngockhoi96.dev`: sticky, blurred capsule that shrinks on scroll, accent nav pill, hide/show on scroll direction, `transition:persist`
+- [x] Header: search button opens a command palette; `Ctrl/Cmd+K` or `/`, searches articles/labs/pages,
+      matches without diacritics, keyboard navigation; index generated at build time, no new dependency
+- [x] Shared icon set (1.5px stroke, `currentColor`): brand, search, mode, page titles, article
+      metadata, footer; replaces scattered characters/emoji
+- [x] `/bai-viet`: 1/2/3-column card grid, 16:9 cover, tags, reading time; the home page keeps its
+      line-based list
+- [ ] Header: mobile sheet menu (not needed in this phase)
+- [x] Article detail page: table of contents (TOC) generated from headings, marks the section being read based on scroll position
+      — from 1200px it is a separate column stuck below the header so it stays visible; below 1200px it is a block at the top of the article
+- [x] Article detail page: `#` button on each heading, shown on hover/focus, click copies a link to the anchor
+- [x] Article detail page: reading progress bar at the top edge of the viewport (no percentage shown)
+      — where supported it runs on the compositor via `animation-timeline: scroll()`, with no per-frame JS
+- [x] Sticky footer: when content is shorter than the viewport the footer still sits at the bottom of the viewport
+- [x] Four-column footer (brand · Content · Lab · Contact) + bottom row `© · Mã nguồn · Deploy`
+- [x] Home page becomes a portfolio: hero with role + three CTAs, plus an "About me" section (facts table, skills) and "Other projects" from real data
+- [x] Home page visual refresh (2026-10-24, [ADR 0012](adr/0012-home-layout-and-parallax.md)): two-column hero, home background/parallax decoration, two-part Labs section, redesigned lab cards
+      — current literal values and the missing slogan line are tracked as known deviations in `DESIGN_SYSTEM.md`
+- [x] `src/data/profile.ts` as the single source for personal information; empty fields are skipped by the UI
+- [ ] "Stack comparison" section on the home page — paused 2026-10-18, to be done together with 1.5 when real measurements exist
+- [x] Responsive check on mobile (the breakpoint foundation is already in place)
+      — verified 360/390/414px in light and dark: single-row nav, single-column lab grid, TOC at the top of the article, facts chips do not overflow; no horizontal overflow at page level
 
-### 1.4 Hệ thống nội dung
+### 1.4 Content system
 
-- [x] Định nghĩa frontmatter chuẩn: `title`, `date`, `type`, `lab`, `tags`, `summary`, `cover`,
+- [x] Define the standard frontmatter: `title`, `date`, `type`, `lab`, `tags`, `summary`, `cover`,
       `coverAlt`
-- [x] Cấu hình collection cho bài viết (`portal/src/content.config.ts`: loader glob + schema zod)
-- [x] Hiển thị tag và metadata bằng JetBrains Mono
-      — bài mẫu `bai-viet-mau.md` đã được thay bằng ba bài thật ở mục 1.5
-- [x] Hệ thống tag dùng chung: package `@dev-lab/tags` (23 tag, 3 nhóm Technology/Domain/Approach);
-      frontmatter lưu id, schema kiểm tra 1–4 tag và đổi sang label chuẩn; quy ước ở `docs/TAGS.md`
-- [x] Cover bài viết: `cover` + `coverAlt` trong frontmatter, SVG inline theo token theme, fallback
-      monogram khi thiếu cover
+- [x] Collection configuration for articles (`portal/src/content.config.ts`: glob loader + zod schema)
+- [x] Render tags and metadata in JetBrains Mono
+      — the sample `bai-viet-mau.md` was replaced by three real articles in section 1.5
+- [x] Shared tag system: `@dev-lab/tags` package (23 tags, 3 groups Technology/Domain/Approach);
+      frontmatter stores ids, the schema validates 1–4 tags and maps them to canonical labels; conventions in `docs/TAGS.md`
+- [x] Article covers: `cover` + `coverAlt` in frontmatter, inline SVG using theme tokens, monogram
+      fallback when the cover is missing
 
 ### 1.5 React Lab
 
-- [x] Khởi tạo project React + TypeScript + Vite trong `labs/react-lab/`
-- [x] Bài viết 1 (Concept): React Fiber & Reconciliation — element tree, Fiber tree, render phase
-      và commit phase; vì sao `key` quyết định việc giữ hay mất state
-- [x] Bài viết 2 (Concept): React Concurrent Rendering — lanes, scheduler, render interruptible
-      và giới hạn của commit phase
-- [x] Bài viết 3 (Concept): Tearing & `useSyncExternalStore` — snapshot, subscription và cách
-      tránh hai component đọc hai phiên bản dữ liệu
-- [ ] Trang so sánh bundle size, JS, LCP, build time giữa các lab (dữ liệu được cập nhật khi lab hoàn thành)
+- [x] Initialise the React + TypeScript + Vite project in `labs/react-lab/`
+- [x] Article 1 (Concept): React Fiber & Reconciliation — element tree, Fiber tree, render phase
+      and commit phase; why `key` decides whether state is kept or lost
+- [x] Article 2 (Concept): React Concurrent Rendering — lanes, scheduler, interruptible render
+      and the limits of the commit phase
+- [x] Article 3 (Concept): Tearing & `useSyncExternalStore` — snapshot, subscription and how to
+      avoid two components reading two versions of the data
+- [ ] Comparison page for bundle size, JS, LCP and build time across labs (data updated as labs are finished)
 
 ### 1.6 Deploy
 
-- [ ] Kết nối repo với Cloudflare Pages (cần tài khoản Cloudflare — cấu hình từng bước ở README, mục "Deploy")
-- [ ] Cấu hình build cho portal
-- [ ] Dựng project Pages riêng cho React Lab — chốt 2026-10-20 bằng ADR 0008, không dùng đường dẫn con
-- [ ] Kiểm tra preview branch hoạt động
+- [ ] Connect the repo to Cloudflare Pages (requires a Cloudflare account — step-by-step configuration in README, section "Deploy")
+- [ ] Configure the build for the portal
+- [ ] Set up a separate Pages project for React Lab — decided 2026-10-20 with ADR 0008, no subpath
+- [ ] Verify branch previews work
 
-### Tiêu chí hoàn thành giai đoạn 1
+### Phase 1 completion criteria
 
-- Portal truy cập được trên production, hiển thị đúng theme Minimalist Editorial ở cả light và dark.
-- React Lab có ít nhất 3 bài viết, mỗi bài có frontmatter đầy đủ.
-- Lighthouse Performance trên trang chủ đạt từ 90 trở lên (mobile).
-- Không có lỗi contrast WCAG AA ở text chính.
-- README mô tả đúng cách chạy local và cấu trúc repo.
-
----
-
-## Giai đoạn 2: Mở rộng nội dung và tương tác
-
-**Mục tiêu:** Bổ sung demo tương tác và lab thứ hai.
-
-- [ ] Chốt cách xây dựng demo tương tác (island component, iframe, hay playground)
-- [ ] Thêm demo tương tác vào React Lab
-- [ ] Chọn lab thứ hai (dự kiến: JS Under the Hood hoặc Next.js Lab)
-- [ ] Thêm lọc bài viết theo tag (tìm kiếm đã có ở giai đoạn 1)
-- [ ] Thêm RSS feed
-- [ ] Thêm theme thứ hai (Digital Garden) — bộ chọn theme sẽ tự hiện khi có từ hai theme
-
-**Tiêu chí hoàn thành:** Có ít nhất 2 lab, một demo tương tác chạy được, người đọc tìm được bài theo tag.
+- The portal is reachable in production and renders the Minimalist Editorial theme correctly in both light and dark.
+- React Lab has at least 3 articles, each with complete frontmatter.
+- Lighthouse Performance on the home page is 90 or above (mobile).
+- No WCAG AA contrast failures in main text.
+- The README accurately describes how to run locally and the repo structure.
 
 ---
 
-## Giai đoạn 3: Hệ sinh thái
+## Phase 2: Expand content and interactivity
 
-**Mục tiêu:** Các lab hoạt động độc lập, có quy trình riêng, và portal tổng hợp được tất cả.
+**Goal:** Add interactive demos and a second lab.
 
-- [ ] Chuẩn hóa quy trình thêm lab mới (template repo hoặc hướng dẫn)
-- [ ] Thêm lab thứ ba theo định hướng đã chọn
-- [ ] Đánh giá lại tên hệ sinh thái và cấu trúc domain
-- [ ] Tự động cập nhật trang so sánh hiệu năng từ CI
+- [ ] Decide how to build interactive demos (island component, iframe, or playground)
+- [ ] Add interactive demos to React Lab
+- [ ] Pick the second lab (planned: JS Under the Hood or Next.js Lab)
+- [ ] Add article filtering by tag (search already exists from phase 1)
+- [ ] Add an RSS feed
+- [ ] Add a second theme (Digital Garden) — the theme picker will appear on its own once there are two themes
 
-**Tiêu chí hoàn thành:** Thêm một lab mới mất không quá một buổi cuối tuần, portal tự cập nhật danh sách lab.
+**Completion criteria:** At least 2 labs, one working interactive demo, and readers can find articles by tag.
 
 ---
 
-## Việc tạm hoãn
+## Phase 3: Ecosystem
 
-Các ý tưởng sau được ghi nhận nhưng chưa đưa vào lộ trình:
+**Goal:** Labs run independently with their own processes, and the portal aggregates all of them.
 
-- Bình luận hoặc tương tác người dùng
-- Đa ngôn ngữ (Anh, Việt)
-- Hệ thống đăng ký nhận bản tin
+- [ ] Standardise the process for adding a new lab (repo template or guide)
+- [ ] Add a third lab following the chosen direction
+- [ ] Revisit the ecosystem name and domain structure
+- [ ] Update the performance comparison page automatically from CI
 
-## Nhật ký thay đổi
+**Completion criteria:** Adding a new lab takes no more than a weekend, and the portal updates the lab list on its own.
 
-Xem [`CHANGELOG.md`](CHANGELOG.md). Quyết định đáng nhớ: [`adr/`](adr/README.md).
+---
+
+## Deferred work
+
+The following ideas are recorded but not on the roadmap:
+
+- Comments or user interaction
+- Multi-language (English, Vietnamese)
+- Newsletter subscription system
+
+## Change log
+
+See [`CHANGELOG.md`](CHANGELOG.md). Notable decisions: [`adr/`](adr/README.md).

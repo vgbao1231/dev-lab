@@ -1,84 +1,84 @@
-# Design: Trang chi tiết bài viết
+# Design: Post detail page
 
-> Một phần của design system; chỉ mục và bảng định tuyến ở [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
-> Số mục giữ nguyên bản gốc vì comment trong code trỏ tới "mục N".
+> Part of the design system; index and routing table in [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
+> Section numbers stay as in the original because comments in the code point to "mục N".
 
-Mục 6 (phần dành riêng cho trang bài viết). Bố cục hai cột (`.post-layout`) nằm ở `layout.md` mục 5.
+Section 6 (the part specific to the post page). The two-column layout (`.post-layout`) is in `layout.md` section 5.
 
-### Mục lục bài viết (TOC)
+### Post table of contents (TOC)
 
-- Chỉ có ở trang chi tiết bài viết. Sinh từ `headings` của `render()` (Astro), **chỉ lấy `h2`**;
-  ít hơn 2 mục thì không hiển thị — mục lục một dòng chỉ thêm nhiễu. Một cấp thôi vì thêm `h3` làm
-  danh sách dài, khó quét, trong khi `h2` đã đủ để định vị.
-- **Vị trí (2 chế độ, do `.post-layout` quyết định — xem mục 5, `layout.md`):**
-  - Dưới 1200px: khối ở **đầu bài**, đứng trước cột đọc nhờ `order: -1`; khung viền
-    `1px --color-border`, bo `--radius-md`, padding dọc 12px. Khoảng cách trên/dưới do `gap` của
-    grid lo.
-  - Từ 1200px: cột riêng bên phải, rộng `--width-toc` (220px), **dính** dưới header
-    (`position: sticky`, `top: var(--offset-header)`) nên **luôn nhìn thấy trong lúc đọc**.
-    `align-self: start` là bắt buộc: nếu để ô lưới cao bằng cột đọc thì phần tử hết chỗ để dính.
-    Bỏ khung và bo góc (đây là cột phụ, không phải hộp nổi).
-- **Không có padding ngang ở `nav`:** mục đang đọc cần trải hết bề ngang. Link tự mang
-  `padding: 5px 12px`, còn tiêu đề `padding-inline: 12px` để thẳng hàng.
-- Tiêu đề "Nội dung": mono, `--text-sm`, `uppercase`, `letter-spacing: 0.08em`, muted — cùng kiểu
-  với nhãn section (eyebrow). Dùng `<p>`, không dùng heading, để không phá cấu trúc bài.
-- Link: `--text-sm`, `--color-text-muted`, không gạch chân, giữ sẵn `border-left: 2px solid
-transparent` để mục active không làm nhảy chữ. Hover: chữ sang `--color-text`.
-- **Mục đang đọc** đánh dấu bằng `aria-current="true"` (không dùng class rời) và dùng **ba tín hiệu
-  cùng lúc**: nền `--color-surface`, vạch trái `--color-accent` 2px, chữ `--color-text`. Chỉ đổi
-  màu chữ là không đủ rõ giữa một danh sách dài.
-- **Có thể có nhiều mục active cùng lúc.** Luật: mọi tiêu đề đang giao với vùng nhìn thấy (dưới
-  `--offset-header`, trên đáy viewport) đều được đánh dấu. Nếu không tiêu đề nào trong tầm nhìn —
-  đang ở giữa một mục dài, tiêu đề đã cuộn qua — thì giữ mục gần nhất đã đi qua, để không bao giờ
-  mất chỉ báo "đang ở đâu". Trạng thái này cập nhật theo vị trí cuộn, xem mục 7.3, `motion.md`.
-- **Thanh cuộn của mục lục (chỉ ở chế độ cột):** mảnh, lấy màu từ token nên tự đúng ở cả light và
+- Only on the post detail page. Generated from `headings` of `render()` (Astro), **taking `h2` only**;
+  with fewer than 2 items it is not shown — a one-line TOC only adds noise. One level only, because adding `h3` makes
+  the list long and hard to scan, while `h2` is already enough to locate things.
+- **Position (2 modes, decided by `.post-layout` — see section 5, `layout.md`):**
+  - Below 1200px: a block at the **top of the post**, placed before the reading column via `order: -1`; frame border
+    `1px --color-border`, radius `--radius-md`, 12px vertical padding. Spacing above/below comes from the grid
+    `gap`.
+  - From 1200px: a separate column on the right, `--width-toc` (220px) wide, **sticky** below the header
+    (`position: sticky`, `top: var(--offset-header)`), so it is **always visible while reading**.
+    `align-self: start` is required: if the grid cell is as tall as the reading column, the element runs out of room to stick.
+    The frame and radius are dropped (this is a side column, not a floating box).
+- **No horizontal padding on the `nav`:** the highlighted item needs the full width. Links carry their own
+  `padding: 5px 12px`, while the heading uses `padding-inline: 12px` to line up.
+- The "Nội dung" heading: mono, `--text-sm`, `uppercase`, `letter-spacing: 0.08em`, muted — the same style
+  as a section label (eyebrow). Uses `<p>`, not a heading, so it does not break the post structure.
+- Links: `--text-sm`, `--color-text-muted`, no underline, with `border-left: 2px solid
+transparent` reserved so the active item does not shift the text. Hover: text changes to `--color-text`.
+- **Current item** marked with `aria-current="true"` (no detached class) and using **three signals
+  at once**: `--color-surface` background, 2px `--color-accent` left bar, `--color-text` text. Changing
+  only the text color is not clear enough in a long list.
+- **Several items can be active at the same time.** Rule: every heading intersecting the visible area (below
+  `--offset-header`, above the viewport bottom) is marked. If no heading is in view —
+  you are in the middle of a long section and its heading has scrolled past — keep the nearest heading already passed, so the
+  "where am I" indicator is never lost. This state updates with scroll position, see section 7.3, `motion.md`.
+- **TOC scrollbar (column mode only):** thin, colors taken from tokens so it is automatically correct in both light and
   dark: `scrollbar-width: thin` + `scrollbar-color: var(--color-scrollbar-thumb) transparent`
-  (Firefox, Chrome 121+), và `::-webkit-scrollbar` rộng 6px + `::-webkit-scrollbar-thumb` bo tròn
-  cho Safari. `padding-right: 8px` để thanh cuộn không đè lên chữ.
-- **Lớp mờ báo còn nội dung:** `::after` cao 80px ở mép dưới mục lục,
-  `linear-gradient(to bottom, transparent, var(--color-bg))`, `pointer-events: none`, mặc định
-  `opacity: 0`. Cao 80px để mờ dần qua khoảng ba mục chứ không cắt ngang một mục. JS ghi
-  `data-overflow="bottom"` lên `<nav>` khi mục lục thật sự còn phần chưa cuộn tới, lúc đó mới
-  hiện. Nhờ vậy không bao giờ hiện nhầm lúc danh sách đã hết.
-- Ngưỡng xác định "đang đọc" đọc từ token `--offset-header`, không hard-code, để không lệch với
-  `scroll-margin-top` của heading.
-- Điều hướng bằng `href="#<slug>"`. Heading trong thân bài đã có `id` sẵn do pipeline markdown
-  sinh (github-slugger), nên **không cần thêm rehype plugin hay dependency**.
+  (Firefox, Chrome 121+), and a 6px-wide `::-webkit-scrollbar` + rounded `::-webkit-scrollbar-thumb`
+  for Safari. `padding-right: 8px` so the scrollbar does not overlap the text.
+- **Fade layer signalling more content:** an 80px-tall `::after` at the bottom edge of the TOC,
+  `linear-gradient(to bottom, transparent, var(--color-bg))`, `pointer-events: none`, `opacity: 0` by default.
+  80px tall so it fades across about three items instead of cutting through one. JS sets
+  `data-overflow="bottom"` on the `<nav>` when the TOC actually has unscrolled content left, and only then does it
+  appear. That way it never wrongly appears once the list has ended.
+- The "currently reading" threshold is read from the `--offset-header` token, not hard-coded, so it does not drift from
+  the heading `scroll-margin-top`.
+- Navigation uses `href="#<slug>"`. In-post headings already have an `id` generated by the markdown pipeline
+  (github-slugger), so **no rehype plugin or dependency is needed**.
 
-### Nút sao chép liên kết ở tiêu đề bài viết
+### Copy-link button on post headings
 
-- Mỗi `h2`/`h3` có `id` trong thân bài được gắn thêm một nút `#` nhỏ (mono, `0.7em`).
-- **Ẩn mặc định**, chỉ hiện khi hover tiêu đề, khi nút được focus bàn phím, hoặc khi vừa sao chép.
-  Vì vậy nút không chiếm chỗ thị giác nhưng vẫn dùng được bằng bàn phím.
-- Bấm nút: sao chép `${origin}${pathname}#<id>` vào clipboard, đổi biểu tượng thành `✓` và màu
-  `--color-accent` trong 1.6s, đồng thời cập nhật thanh địa chỉ bằng `history.replaceState` (không
-  nhảy trang).
-- Có vùng `role="status"` ẩn (`.visually-hidden`) đọc kết quả cho screen reader. Nếu trình duyệt
-  chặn clipboard, thông báo nói rõ liên kết đã có trên thanh địa chỉ.
-- Nút do JavaScript chèn vào: `render()` chỉ trả HTML của markdown nên không chèn được ở phía
-  server, và thao tác sao chép vốn đã cần JavaScript. Vì vậy style nằm ở `global.css`
-  (`.heading-anchor`), không đặt trong `<style>` scoped của page — phần tử do JS tạo không có
+- Every `h2`/`h3` with an `id` in the post body gets a small `#` button (mono, `0.7em`).
+- **Hidden by default**, appearing only on heading hover, when the button has keyboard focus, or right after copying.
+  So the button takes no visual space but is still usable from the keyboard.
+- Clicking the button copies `${origin}${pathname}#<id>` to the clipboard, changes the icon to `✓` and the color to
+  `--color-accent` for 1.6s, and updates the address bar with `history.replaceState` (no
+  page jump).
+- A hidden `role="status"` region (`.visually-hidden`) reads the result to screen readers. If the browser
+  blocks the clipboard, the message states that the link is already in the address bar.
+- The button is inserted by JavaScript: `render()` only returns the markdown HTML, so it cannot be inserted on
+  the server side, and copying inherently needs JavaScript. Therefore the style lives in `global.css`
+  (`.heading-anchor`), not in the page's scoped `<style>` — elements created by JS have no
   `data-astro-cid`.
 
-### Thanh tiến độ đọc
+### Reading progress bar
 
-- Chỉ có ở trang chi tiết bài viết. Một đường mảnh cao 2px, màu `--color-accent`, ghim sát mép
-  trên viewport: `position: fixed`, `inset-block-start: 0`, `inset-inline: 0`, `z-index: 40`,
+- Only on the post detail page. A thin 2px line, `--color-accent`, pinned to the top
+  edge of the viewport: `position: fixed`, `inset-block-start: 0`, `inset-inline: 0`, `z-index: 40`,
   `pointer-events: none`.
-- Độ dài = **phần trăm bài viết đã cuộn qua**:
-  `(scrollY - đỉnh bài viết) / (chiều cao bài viết - chiều cao viewport)`, kẹp trong `[0, 1]`, vẽ
-  bằng `transform: scaleX()` với `transform-origin: left`.
-- **Hai đường chạy, chọn theo khả năng trình duyệt:**
-  1. Có `animation-timeline: scroll()` → để trình duyệt chạy animation theo tiến độ cuộn **trên
-     compositor**. JS chỉ đo và ghi `--reading-start` / `--reading-end` (px trong không gian cuộn)
-     cho `animation-range`, **không làm gì mỗi frame**. Đây là đường chính vì mượt nhất.
-  2. Không có → JS ghi `--reading-progress` theo từng frame cuộn như trước.
-- JS **kiểm tra lại bằng `getComputedStyle(bar).animationName`** chứ không chỉ tin vào
-  `CSS.supports`: nếu chỉ tin `CSS.supports` mà cú pháp bị loại ở đâu đó thì JS đã ngừng ghi và
-  thanh đứng yên ở 0.
-- **Không** dùng `transition`: giá trị đã bám theo từng frame cuộn (hoặc do trình duyệt chạy), thêm
-  transition chỉ tạo độ trễ giả.
-- Không bật đường 1 khi `prefers-reduced-motion: reduce`: ngoài chuyện tôn trọng thiết lập, quy tắc
-  `animation-duration: 0.01ms !important` toàn cục ở `global.css` sẽ làm animation theo tiến độ
-  cuộn nhảy thẳng tới 100%. Khi đó JS đảm nhiệm và thanh vẫn chạy.
-- Không hiển thị số phần trăm: chỉ một đường, đúng như yêu cầu.
+- Length = **percentage of the post scrolled through**:
+  `(scrollY - post top) / (post height - viewport height)`, clamped to `[0, 1]`, drawn
+  with `transform: scaleX()` and `transform-origin: left`.
+- **Two paths, chosen by browser capability:**
+  1. With `animation-timeline: scroll()` → let the browser run the animation off scroll progress **on
+     the compositor**. JS only measures and writes `--reading-start` / `--reading-end` (px in scroll space)
+     for `animation-range`, and **does nothing per frame**. This is the primary path because it is the smoothest.
+  2. Without it → JS writes `--reading-progress` on every scroll frame as before.
+- JS **re-checks via `getComputedStyle(bar).animationName`** rather than trusting
+  `CSS.supports` alone: if it only trusted `CSS.supports` and the syntax were dropped somewhere, JS would already have stopped writing and the
+  bar would sit still at 0.
+- Do **not** use `transition`: the value already tracks every scroll frame (or is driven by the browser), and adding
+  transition only creates fake latency.
+- Path 1 is not enabled when `prefers-reduced-motion: reduce`: besides respecting the setting, the global
+  `animation-duration: 0.01ms !important` rule in `global.css` would make the scroll-progress animation jump straight to 100%.
+  In that case JS takes over and the bar still runs.
+- No percentage number is shown: just one line, exactly as requested.

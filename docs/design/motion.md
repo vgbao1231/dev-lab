@@ -1,102 +1,106 @@
-# Design: Chuyển động
+# Design: Motion
 
-> Một phần của design system; chỉ mục và bảng định tuyến ở [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
-> Số mục giữ nguyên bản gốc vì comment trong code trỏ tới "mục N".
+> Part of the design system; index and routing table in [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
+> Section numbers stay as in the original because comments in the code point to "mục N".
 
-## 7. Chuyển động (animation)
+## 7. Motion (animation)
 
-Phong cách tối giản thì chuyển động cũng tối giản: mục tiêu là làm rõ thay đổi trạng thái và
-thứ bậc, không phải trang trí. Mục này bổ sung cho phần "Nguyên tắc" (mục 8, `../DESIGN_SYSTEM.md`).
+A minimal style means minimal motion too: the goal is to clarify state changes and hierarchy, not to decorate.
+This section supplements the "Principles" part (section 8, `../DESIGN_SYSTEM.md`).
 
-### 7.1 Token
+### 7.1 Tokens
 
-| Token               | Giá trị                         | Dùng cho                                                |
-| ------------------- | ------------------------------- | ------------------------------------------------------- |
-| `--duration-fast`   | 120ms                           | hover, focus, viền, màu chữ                             |
-| `--duration-base`   | 200ms                           | entrance, ẩn/hiện header, thay đổi nhỏ                  |
-| `--duration-slow`   | 320ms                           | chuyển trang (View Transition)                          |
-| `--duration-chrome` | 340ms                           | chrome của header khi cuộn (nền, viền, độ rộng capsule) |
-| `--ease-standard`   | `cubic-bezier(0.2, 0, 0, 1)`    | mặc định                                                |
-| `--ease-entrance`   | `cubic-bezier(0.16, 1, 0.3, 1)` | phần tử xuất hiện                                       |
-| `--reveal-distance` | 8px                             | độ dịch lên khi phần tử xuất hiện                       |
-| `--reveal-stagger`  | 60ms                            | độ trễ giữa các phần tử trong cùng một đợt              |
+| Token               | Value                           | Used for                                                    |
+| ------------------- | ------------------------------- | ----------------------------------------------------------- |
+| `--duration-fast`   | 120ms                           | hover, focus, border, text color                            |
+| `--duration-base`   | 200ms                           | entrance, header hide/show, small changes                   |
+| `--duration-slow`   | 320ms                           | page transition (View Transition)                           |
+| `--duration-chrome` | 340ms                           | header chrome on scroll (background, border, capsule width) |
+| `--ease-standard`   | `cubic-bezier(0.2, 0, 0, 1)`    | default                                                     |
+| `--ease-entrance`   | `cubic-bezier(0.16, 1, 0.3, 1)` | element appearing                                           |
+| `--reveal-distance` | 8px                             | upward offset when an element appears                       |
+| `--reveal-stagger`  | 60ms                            | delay between elements in the same batch                    |
 
-### 7.2 Quy tắc
+### 7.2 Rules
 
-1. Chỉ animate `opacity` và `transform` cho chuyển động làm thay đổi vị trí hoặc kích thước.
-   Không animate `width`, `height`, `margin`, `top`/`left` — gây reflow và ảnh hưởng chỉ số
-   hiệu năng. Các thuộc tính chỉ tốn paint như `color`, `background-color`, `border-color`,
-   `background-size`, `text-decoration-color` được phép với `--duration-fast` (xem mục 7.4).
-   **Ngoại lệ:** chrome của header khi cuộn đổi `max-width`/`padding-inline` (chỉ theo chiều
-   ngang, không làm đổi chiều cao trang) và `background-color`/`border-color`/`border-radius`/
-   `box-shadow`. Lý do: đây là hiệu ứng nhận diện của header, chỉ chạy khi vượt ngưỡng cuộn, và
-   chỉ tác động lên một phần tử nhỏ. Không được nới ngoại lệ này cho phần tử khác.
-2. Thời lượng tối đa 340ms (`--duration-chrome`). Không animation lặp vô hạn, không
-   bounce/spring quá đà.
-3. Không thêm gradient, glow hay hiệu ứng trang trí nhờ animation.
-4. Mọi chuyển động **phải** tắt khi `prefers-reduced-motion: reduce`. Đây là yêu cầu bắt
-   buộc, không phải tùy chọn.
-5. Chỉ giữ animation giải thích được thay đổi trạng thái hoặc thứ bậc; nếu không giải thích
-   được điều gì thì bỏ.
+1. Only animate `opacity` and `transform` for motion that changes position or size.
+   Do not animate `width`, `height`, `margin`, `top`/`left` — it causes reflow and affects performance
+   metrics. Paint-only properties such as `color`, `background-color`, `border-color`,
+   `background-size`, `text-decoration-color` are allowed with `--duration-fast` (see section 7.4).
+   **Exception:** the header chrome on scroll changes `max-width`/`padding-inline` (horizontal only,
+   so page height does not change) and `background-color`/`border-color`/`border-radius`/
+   `box-shadow`. Why: this is the header's signature effect, it only runs past a scroll threshold, and
+   it only affects one small element. The exception must not be extended to other elements.
+2. Maximum duration 340ms (`--duration-chrome`). No infinite looping animation, no
+   overshooting bounce/spring. **Accepted exception:** the home-page blobs and dust particles from
+   [ADR 0012](../adr/0012-home-layout-and-parallax.md) use 2.4–2.8s transitions and infinite keyframes.
+   They are decorative, `aria-hidden`, and fully disabled under `prefers-reduced-motion: reduce`.
+   Do not extend this exception to other pages or components.
+3. Do not add gradients, glows or decorative effects through animation. The home-page decoration in
+   ADR 0012 is the only accepted exception.
+4. Every motion **must** be disabled when `prefers-reduced-motion: reduce`. This is a
+   requirement, not an option.
+5. Keep only animation that explains a state change or hierarchy; if it explains
+   nothing, drop it.
 
-### 7.3 Danh mục chuyển động
+### 7.3 Motion catalogue
 
-| Nhóm               | Cách triển khai                                                                                                                                   |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Chuyển trang       | `<ClientRouter />`; gốc không animate, chỉ `main` cross-fade                                                                                      |
-| Header dính        | Cuộn xuống: `translateY(-100%)`; cuộn lên: hiện lại. Capsule đổi nền, viền, bo góc, độ rộng                                                       |
-| Phần tử dùng chung | `view-transition-name` trùng tên ở hai trang, phần tử biến hình thay vì cross-fade                                                                |
-| Đổi theme / mode   | `document.startViewTransition()` bọc lúc gán `data-theme` / `data-mode`                                                                           |
-| Vào trang lần đầu  | Phần tử `[data-animate]` hiện dần bằng `motion/mini`, stagger theo token                                                                          |
-| Nút lên đầu trang  | Hiện dần khi cuộn quá 600px; bấm thì cuộn mượt (hoặc nhảy thẳng) lên đầu                                                                          |
-| Mục lục bài viết   | Mọi mục đang trong tầm nhìn được đánh dấu theo vị trí cuộn (có thể nhiều mục cùng lúc)                                                            |
-| Tiến độ đọc        | Đường 2px ở mép trên, dài theo phần trăm bài viết đã cuộn; trình duyệt hỗ trợ thì chạy bằng `animation-timeline: scroll()`                        |
-| Parallax trang chủ | Blobs, hạt bụi mờ (`dustParticles`) và visual hero trôi nhẹ theo `mousemove` + `scroll` qua TS + CSS transition 2.4s–2.8s; tắt khi reduced motion |
-| Micro-interaction  | Hover link, nav, lab card, post card, hàng bảng — xem mục 7.4                                                                                     |
+| Group                  | How it is implemented                                                                                                                                                         |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Page transition        | `<ClientRouter />`; the root does not animate, only `main` cross-fades                                                                                                        |
+| Sticky header          | Scroll down: `translateY(-100%)`; scroll up: show again. The capsule changes background, border, radius, width                                                                |
+| Shared elements        | matching `view-transition-name` on both pages, the element morphs instead of cross-fading                                                                                     |
+| Theme / mode change    | `document.startViewTransition()` wrapping the `data-theme` / `data-mode` assignment                                                                                           |
+| First page load        | `[data-animate]` elements fade in with `motion/mini`, stagger by token                                                                                                        |
+| Back-to-top button     | Fades in past 600px of scroll; clicking smooth-scrolls (or jumps) to the top                                                                                                  |
+| Post table of contents | Every item in view is marked per scroll position (multiple items can be active)                                                                                               |
+| Reading progress       | 2px line at the top edge, length by percentage of the post scrolled; on supported browsers driven by `animation-timeline: scroll()`                                           |
+| Home parallax          | Blobs, blurry dust particles (`dustParticles`) and the hero visual drift slightly with `mousemove` + `scroll` via TS + 2.4s–2.8s CSS transition; disabled with reduced motion |
+| Micro-interaction      | Link, nav, lab card, post card, table row hover — see section 7.4                                                                                                             |
 
-Hiện đã nối shared element cho **tiêu đề bài viết**: `PostList` gắn
-`view-transition-name: vt-post-<id>` lên tiêu đề trong danh sách, trang chi tiết gắn đúng tên đó
-lên `h1`. Tên phải là custom-ident hợp lệ (id bài bắt đầu bằng số nên có tiền tố `vt-post-`) và
-**không được trùng** trong cùng một trang.
+A shared element is currently wired for the **post title**: `PostList` sets
+`view-transition-name: vt-post-<id>` on the title in the list, and the detail page sets the same name
+on `h1`. The name must be a valid custom-ident (post ids start with a digit, hence the `vt-post-` prefix) and
+**must not repeat** within a page.
 
-Chi tiết triển khai (trong `portal/`):
+Implementation details (in `portal/`):
 
-- `[data-animate]` chỉ chạy ở **lần tải trang đầu tiên**. Các lần điều hướng trong site do
-  View Transition xử lý, không chạy lại entrance.
-- Cờ `.motion-ready` trên `<html>` được script inline chèn **trước khi vẽ**, và chỉ khi
-  người dùng không yêu cầu giảm chuyển động. Nhờ vậy không có nháy, và nội dung không bao
-  giờ bị ẩn khi JavaScript lỗi.
-- View Transitions thay toàn bộ attribute của `<html>`, nên `data-theme` / `data-mode` phải
-  được chép sang document mới trong `astro:before-swap`; nếu không theme sẽ bị reset sau khi
-  chuyển trang.
+- `[data-animate]` only runs on the **first page load**. In-site navigations are handled by
+  View Transitions and do not re-run the entrance.
+- The `.motion-ready` flag on `<html>` is inserted by an inline script **before paint**, and only when
+  the user has not requested reduced motion. That way there is no flash, and content is never
+  hidden when JavaScript fails.
+- View Transitions replace all attributes of `<html>`, so `data-theme` / `data-mode` must
+  be copied to the new document in `astro:before-swap`; otherwise the theme would be reset after
+  navigation.
 
-### 7.4 Hover và trạng thái tương tác
+### 7.4 Hover and interaction states
 
-Nguyên tắc: hover phải **nói được điều gì đó** (phần tử này bấm được, hoặc đang ở trạng thái
-gì). Dùng `--duration-fast` (120ms) và `--ease-standard`. Không phóng to, không đổ bóng, không
-dịch chuyển quá 1px (chỉ lab card nhấc lên 1px).
+Principle: hover must **say something** (this element is clickable, or what state it is in).
+Use `--duration-fast` (120ms) and `--ease-standard`. No enlarging, no shadows, no
+movement beyond 1px (only the lab card lifts 1px).
 
-| Phần tử                             | Mặc định                  | Hover                                                                            |
-| ----------------------------------- | ------------------------- | -------------------------------------------------------------------------------- |
-| Link trong nội dung                 | không gạch chân           | gạch chân hiện dần (link ngắn: mọc dần; link trong bài: `text-decoration-color`) |
-| Link CTA (`… →`)                    | không gạch chân           | gạch chân mọc dần + mũi tên dịch sang phải 2px                                   |
-| Link nav                            | `--color-text-muted`      | `--color-accent` + nền pill accent mờ nở ra                                      |
-| Brand trên header                   | `--color-text`            | `--color-accent`, không gạch chân                                                |
-| Tiêu đề bài viết                    | `--color-text`            | `--color-link`                                                                   |
-| Lab card (khi là link)              | viền `--color-border`     | viền `--color-accent` + `translateY(-1px)`                                       |
-| Post card ở `/bai-viet`             | viền `--color-border`     | viền accent 55% + `translateY(-2px)`; tiêu đề sang `--color-link`                |
-| Hàng bảng                           | nền `--color-surface`     | nền `--color-bg`                                                                 |
-| Link mục lục                        | `--color-text-muted`      | `--color-text`; mục đang đọc thêm nền `--color-surface` + vạch `--color-accent`  |
-| Nút sao chép ở tiêu đề bài viết     | ẩn (`opacity: 0`)         | hiện + `--color-accent` (cũng hiện khi focus)                                    |
-| Nút `ghost` / `outlined` / `filled` | bảng nút, `components.md` | bảng nút, `components.md`                                                        |
+| Element                                | Default                       | Hover                                                                                      |
+| -------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------ |
+| Link in content                        | no underline                  | underline fades in (short links: grows; in-post links: `text-decoration-color`)            |
+| CTA link (`… →`)                       | no underline                  | growing underline + arrow shifts right 2px                                                 |
+| Nav link                               | `--color-text-muted`          | `--color-accent` + translucent accent pill expanding                                       |
+| Brand in header                        | `--color-text`                | `--color-accent`, no underline                                                             |
+| Post title                             | `--color-text`                | `--color-link`                                                                             |
+| Lab card (when it is a link)           | border `--color-border`       | border `--color-accent` + `translateY(-1px)`                                               |
+| Post card on `/bai-viet`               | border `--color-border`       | 55% accent border + `translateY(-2px)`; title to `--color-link`                            |
+| Table row                              | background `--color-surface`  | background `--color-bg`                                                                    |
+| TOC link                               | `--color-text-muted`          | `--color-text`; current item also gets `--color-surface` background + `--color-accent` bar |
+| Copy button on post headings           | hidden (`opacity: 0`)         | shown + `--color-accent` (also shown on focus)                                             |
+| `ghost` / `outlined` / `filled` button | button table, `components.md` | button table, `components.md`                                                              |
 
-**Gạch chân mọc dần** — kỹ thuật:
+**Growing underline** — technique:
 
-- Link ngắn và link CTA: `background-image: linear-gradient(currentColor, currentColor)`,
-  `background-repeat: no-repeat`, `background-position: 0 100%`, `background-size: 0 1px`; khi
-  hover đổi `background-size: 100% 1px`. Không tạo layout shift.
-- Link trong bài viết dài: dùng `text-decoration-color: transparent → currentColor` để an toàn
-  khi link xuống dòng (kỹ thuật `background-size` bị vỡ trên nhiều dòng).
-- Mũi tên `→` của link CTA đặt trong `<span aria-hidden="true">` để có thể dịch riêng mà không
-  lặp lại trong screen reader.
-- Khi `prefers-reduced-motion: reduce`: bỏ hiệu ứng mọc dần, hiện gạch chân ngay lập tức.
+- Short links and CTA links: `background-image: linear-gradient(currentColor, currentColor)`,
+  `background-repeat: no-repeat`, `background-position: 0 100%`, `background-size: 0 1px`; on
+  hover change `background-size: 100% 1px`. No layout shift.
+- Long in-post links: use `text-decoration-color: transparent → currentColor` to stay safe
+  when the link wraps (the `background-size` technique breaks across lines).
+- The `→` arrow of CTA links sits in `<span aria-hidden="true">` so it can move on its own without
+  being repeated in screen readers.
+- With `prefers-reduced-motion: reduce`: drop the growing effect and show the underline immediately.

@@ -1,175 +1,188 @@
 # Dev Lab
 
-Dev Lab là một hệ sinh thái các blog và lab kỹ thuật, do [Gura](https://github.com/vgbao1231) phát triển như một dự án cá nhân dài hạn. Nội dung trải trên nhiều lĩnh vực — frontend, backend, DevOps — tuỳ theo công việc và chủ đề đang tìm hiểu.
+Dev Lab is an ecosystem of technical blogs and labs, developed by [Gura](https://github.com/vgbao1231) as a long-term personal project. Content spans several areas — frontend, backend, DevOps — depending on the work and topics being explored.
 
-Mục tiêu: chia sẻ kiến thức, củng cố kiến thức cũ qua thực hành và xây dựng sản phẩm đủ chất lượng để đưa vào CV.
+Goal: share knowledge, reinforce existing knowledge through practice, and build products of high enough quality to put on a CV.
 
-> Trạng thái: **Giai đoạn 1 đang thực hiện** — xem [docs/ROADMAP.md](docs/ROADMAP.md).
+> Status: **Phase 1 in progress** — see [docs/ROADMAP.md](docs/ROADMAP.md).
 
-## Công nghệ
+## Tech stack
 
 - Workspace: pnpm workspace, Node `>=22.22.0`, pnpm `12`
-- Portal: Astro (static output), CSS thuần + design tokens
-- Chuyển động: View Transitions của Astro (`<ClientRouter />`) + `motion/mini` cho entrance
-- Nội dung: Markdown/MDX qua content collection của Astro
-- Lab đầu tiên: React, TypeScript, Vite
-- Chất lượng mã: TypeScript `strict`, ESLint (flat config), Prettier
-- Deploy: Cloudflare Pages _(chưa kết nối — xem mục Deploy bên dưới)_
+- Portal: Astro (static output), plain CSS + design tokens
+- Motion: Astro View Transitions (`<ClientRouter />`) + `motion/mini` for entrance animations
+- Content: Markdown/MDX through Astro content collections
+- First lab: React, TypeScript, Vite
+- Code quality: TypeScript `strict`, ESLint (flat config), Prettier
+- Deploy: Cloudflare Pages _(not connected yet — see the Deploy section below)_
 
-## Cấu trúc thư mục
+## Repository layout
 
 ```
 dev-lab/
 ├── .github/workflows/ci.yml  # CI: lint, format, typecheck, build
-├── AGENTS.md                 # Hướng dẫn cho AI agent (nguồn chính)
+├── AGENTS.md                 # Instructions for AI agents (primary source)
 ├── README.md
 ├── docs/
-│   ├── PROJECT_OVERVIEW.md   # Mục tiêu, đối tượng, phạm vi, kiến trúc đã chốt và chưa chốt
-│   ├── ROADMAP.md            # Các giai đoạn, checklist, tiêu chí hoàn thành
-│   ├── DESIGN_SYSTEM.md      # Chỉ mục design system, nguyên tắc, checklist
-│   ├── TAGS.md               # Registry tag dùng chung và quy tắc thêm tag
-│   ├── design/               # Spec theo chủ đề: theme, typography, layout, components, post-page, motion
-│   ├── adr/                  # Quyết định kiến trúc/thiết kế: vì sao, đánh đổi gì
-│   └── CHANGELOG.md          # Lịch sử các vòng chỉnh thiết kế
-├── design-reference/         # Tham khảo bố cục và màu (HTML + screenshot), không đưa vào build
-├── eslint.config.js          # ESLint flat config dùng chung cho cả workspace
+│   ├── PROJECT_OVERVIEW.md   # Goals, audience, scope, settled and unsettled architecture
+│   ├── ROADMAP.md            # Phases, checklists, completion criteria
+│   ├── DESIGN_SYSTEM.md      # Design system index, principles, checklist
+│   ├── TAGS.md               # Shared tag registry and rules for adding tags
+│   ├── design/               # Per-topic specs: theme, typography, layout, components, post-page, motion
+│   ├── adr/                  # Architecture/design decisions: why, and what was traded off
+│   └── CHANGELOG.md          # History of design iterations
+├── design-reference/         # Layout and colour references (HTML + screenshots), excluded from the build
+├── eslint.config.js          # ESLint flat config shared by the whole workspace
 ├── prettier.config.mjs
-├── tsconfig.base.json        # Cấu hình TypeScript strict dùng chung
+├── tsconfig.base.json        # Shared strict TypeScript configuration
 ├── pnpm-workspace.yaml
-├── portal/                   # Cổng chính (Astro)
+├── portal/                   # Main site (Astro)
 │   ├── public/
 │   └── src/
-│       ├── assets/covers/     # Cover SVG 16:9, nhúng inline để dùng token theme
+│       ├── assets/covers/     # 16:9 SVG covers, inlined to use theme tokens
 │       ├── components/        # Header, Footer, SearchDialog, Icon,
 │       │                      # PostCard, PostCover, LabCard, PostList, ...
-│       ├── content/posts/     # Bài viết Markdown (tên file = slug)
-│       ├── content.config.ts  # Collection bài viết + schema frontmatter
-│       ├── data/              # Dữ liệu tĩnh (lab, theme, profile, covers, icons, ...)
+│       ├── content/posts/     # Markdown posts (filename = slug)
+│       ├── content.config.ts  # Post collection + frontmatter schema
+│       ├── data/              # Static data (labs, themes, profile, covers, icons, ...)
 │       ├── layouts/
 │       ├── lib/               # reading.ts, search.ts
 │       ├── pages/             # /, /labs, /bai-viet, /bai-viet/<slug>, /lien-he, /search-index.json
 │       └── styles/            # tokens.css, global.css
 ├── packages/
-│   └── tags/                  # @dev-lab/tags — registry tag dùng chung cho portal + lab
+│   └── tags/                  # @dev-lab/tags — shared tag registry for the portal + labs
 └── labs/
-    └── react-lab/            # Lab React + TypeScript + Vite
+    └── react-lab/            # React + TypeScript + Vite lab
 ```
 
-Mỗi lab là một ứng dụng độc lập trong `labs/`, có thể có stack và giao diện riêng. Các package
-dùng chung (như `@dev-lab/tags`) nằm trong `packages/`.
+Each lab is a standalone app under `labs/` and may have its own stack and UI. Shared packages
+(such as `@dev-lab/tags`) live in `packages/`.
 
-## Yêu cầu môi trường
+## Requirements
 
 - Node.js `>=22.22.0`
-- pnpm `12` (đã khai báo trong `packageManager`)
+- pnpm `12` (declared in `packageManager`)
 
-## Chạy local
+## Running locally
 
 ```bash
-# Cài dependencies cho toàn workspace
+# Install dependencies for the whole workspace
 pnpm install
 
-# Chạy portal ở chế độ dev (http://localhost:4321)
+# Run the portal in dev mode (http://localhost:4321)
 pnpm dev
 
-# Chạy riêng một lab
+# Run a single lab
 pnpm --filter react-lab dev
 
-# Kiểm tra chất lượng mã
+# Check code quality
 pnpm lint
 pnpm format:check
 pnpm typecheck
 
-# Build toàn bộ workspace
+# Build the whole workspace
 pnpm build
 ```
 
-| Lệnh                                | Việc                                                       |
-| ----------------------------------- | ---------------------------------------------------------- |
-| `pnpm dev`                          | Chạy dev server của portal                                 |
-| `pnpm build`                        | Build tất cả package (`pnpm -r build`)                     |
-| `pnpm preview`                      | Xem thử bản build của portal                               |
-| `pnpm lint` / `pnpm lint:fix`       | Chạy / tự sửa lỗi ESLint                                   |
-| `pnpm format` / `pnpm format:check` | Định dạng / kiểm tra định dạng bằng Prettier               |
-| `pnpm typecheck`                    | `astro check` cho portal và `tsc --noEmit` cho lab/package |
+| Command                             | What it does                                                      |
+| ----------------------------------- | ----------------------------------------------------------------- |
+| `pnpm dev`                          | Start the portal dev server                                       |
+| `pnpm build`                        | Build every package (`pnpm -r build`)                             |
+| `pnpm preview`                      | Preview the portal's production build                             |
+| `pnpm lint` / `pnpm lint:fix`       | Run / auto-fix ESLint errors                                      |
+| `pnpm format` / `pnpm format:check` | Format / check formatting with Prettier                           |
+| `pnpm typecheck`                    | `astro check` for the portal and `tsc --noEmit` for labs/packages |
 
-## Nội dung bài viết
+## Writing posts
 
-Bài viết là file Markdown trong `portal/src/content/posts/`; tên file trở thành slug trên URL. Frontmatter bắt buộc:
+Posts are Markdown files in `portal/src/content/posts/`; the filename becomes the slug in the URL. Required frontmatter:
 
-| Trường     | Kiểu   | Ghi chú                                                           |
-| ---------- | ------ | ----------------------------------------------------------------- |
-| `title`    | string | Tiêu đề bài                                                       |
-| `date`     | date   | `YYYY-MM-DD`                                                      |
-| `type`     | enum   | `concept`, `experiment`, `case-study`, `demo`, `tutorial`, `note` |
-| `lab`      | string | Slug lab, ví dụ `react-lab`                                       |
-| `tags`     | array  | 1–4 tag ID từ `@dev-lab/tags`, khuyến nghị 2–3                    |
-| `summary`  | string | Tóm tắt một câu, hiển thị ở danh sách bài                         |
-| `cover`    | string | Khóa cover trong `portal/src/data/covers.ts` (tuỳ chọn)           |
-| `coverAlt` | string | Mô tả ảnh cho screen reader; bắt buộc khi có `cover`              |
+| Field      | Type   | Notes                                                              |
+| ---------- | ------ | ------------------------------------------------------------------ |
+| `title`    | string | Post title                                                         |
+| `date`     | date   | `YYYY-MM-DD`                                                       |
+| `type`     | enum   | `concept`, `experiment`, `case-study`, `demo`, `tutorial`, `note`  |
+| `lab`      | string | Lab slug, e.g. `react-lab`                                         |
+| `tags`     | array  | 1–4 tag IDs from `@dev-lab/tags`, 2–3 recommended                  |
+| `summary`  | string | One-sentence summary, shown in post lists                          |
+| `cover`    | string | Cover key in `portal/src/data/covers.ts` (optional)                |
+| `coverAlt` | string | Image description for screen readers; required when `cover` is set |
 
-`draft: true` (tuỳ chọn) để loại bài khỏi bản build. Schema được kiểm tra ngay lúc build: thiếu
-trường, `type` sai, tag không có trong registry hoặc quá 4 tag thì build thất bại. Quy ước tag:
-[`docs/TAGS.md`](docs/TAGS.md).
+`draft: true` (optional) excludes a post from the build. The schema is validated at build time: a
+missing field, a wrong `type`, a tag that is not in the registry, or more than four tags fails the
+build. Tag conventions: [`docs/TAGS.md`](docs/TAGS.md).
 
-> Ba bài React internals hiện tại là nội dung thật; bài mẫu `bai-viet-mau.md` đã được xoá.
+> The three current React internals posts are real content; the sample post `bai-viet-mau.md` has been removed.
 
-## Deploy (Cloudflare Pages)
+## Deploy (Cloudflare Pages) — planned runbook
 
-Portal và **mỗi lab là một project Pages riêng**, cùng build từ repo này. Lý do ở [ADR 0008](docs/adr/0008-moi-lab-mot-project-pages.md).
+**Status: not connected yet.** Phase 1.6 in [docs/ROADMAP.md](docs/ROADMAP.md) is still open, and
+Cloudflare Pages is the planned host, not a live setup (see
+[docs/PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md)). The table and steps below describe the
+intended configuration to follow when the Cloudflare account is available; nothing here is
+deployed today.
 
-| Thiết lập              | Portal (`dev-lab-gura`)                        | React Lab (`react-lab-gura`)             |
-| ---------------------- | ---------------------------------------------- | ---------------------------------------- |
-| Repository             | `vgbao1231/dev-lab`                            | `vgbao1231/dev-lab`                      |
-| Production branch      | `main`                                         | `main`                                   |
-| Framework preset       | Astro (rồi sửa lại build command)              | React (Vite) (rồi sửa lại build command) |
-| Root directory         | `/`                                            | `/`                                      |
-| Build command          | `pnpm --filter portal build`                   | `pnpm --filter react-lab build`          |
-| Build output directory | `portal/dist`                                  | `labs/react-lab/dist`                    |
-| Biến môi trường        | `NODE_VERSION=22.22.0`, `PNPM_VERSION=12.14.0` | giống portal                             |
+The portal and **each lab are a separate Pages project**, all built from this repo. Rationale in [ADR 0008](docs/adr/0008-one-pages-project-per-lab.md).
 
-Ba điểm dễ sai:
+| Setting                | Portal (`dev-lab-gura`)                        | React Lab (`react-lab-gura`)                   |
+| ---------------------- | ---------------------------------------------- | ---------------------------------------------- |
+| Repository             | `vgbao1231/dev-lab`                            | `vgbao1231/dev-lab`                            |
+| Production branch      | `main`                                         | `main`                                         |
+| Framework preset       | Astro (then override the build command)        | React (Vite) (then override the build command) |
+| Root directory         | `/`                                            | `/`                                            |
+| Build command          | `pnpm --filter portal build`                   | `pnpm --filter react-lab build`                |
+| Build output directory | `portal/dist`                                  | `labs/react-lab/dist`                          |
+| Environment variables  | `NODE_VERSION=22.22.0`, `PNPM_VERSION=12.14.0` | same as the portal                             |
 
-- **Tên project chính là `*.pages.dev` và không đổi được sau khi tạo.** Tên phải còn trống trên toàn Cloudflare (không chỉ tài khoản của bạn). Đặt sai thì chỉ có cách xoá project rồi tạo lại — mất lịch sử deployment và phải nhập lại biến môi trường. Tên trong bảng là ví dụ; kiểm tra lúc tạo project.
-- **Root directory phải là gốc repo.** `pnpm-lock.yaml` và `pnpm-workspace.yaml` nằm ở đó; để `portal/` hay `labs/react-lab/` thì bước cài dependencies không tìm thấy lockfile.
-- **Phải khai báo `NODE_VERSION` và `PNPM_VERSION`.** Build image v3 của Pages mặc định Node 22.16.0 và pnpm 10.11.1, thấp hơn mức repo yêu cầu (`engines.node >= 22.22.0`, `packageManager pnpm@12.14.0`); v3 không đọc `engines` hay `packageManager` trong `package.json`.
+Three things that are easy to get wrong:
 
-### Các bước
+- **The project name becomes the `*.pages.dev` address and cannot be changed after creation.** The name must be available across all of Cloudflare, not just your account. If you get it wrong, the only fix is to delete the project and create it again — which loses deployment history and means re-entering the environment variables. The names in the table are examples; check availability when you create the project.
+- **Root directory must be the repository root.** `pnpm-lock.yaml` and `pnpm-workspace.yaml` live there; pointing at `portal/` or `labs/react-lab/` means the dependency install step cannot find the lockfile.
+- **`NODE_VERSION` and `PNPM_VERSION` must be set.** The Pages v3 build image defaults to Node 22.16.0 and pnpm 10.11.1, below what this repo requires (`engines.node >= 22.22.0`, `packageManager pnpm@12.14.0`); v3 does not read `engines` or `packageManager` from `package.json`.
 
-1. Cấp quyền repo cho Cloudflare: GitHub → **Settings → Applications → Cloudflare Pages** → cho phép repo `vgbao1231/dev-lab` (chỉ cần một lần, dùng chung cho mọi project).
-2. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git** → chọn `vgbao1231/dev-lab`.
-3. Đặt tên project, chọn production branch và điền cấu hình theo bảng trên. Project name quyết định địa chỉ `*.pages.dev` (`dev-lab-gura` → `dev-lab-gura.pages.dev`).
-4. Mở **Environment variables (advanced)** → thêm `NODE_VERSION` và `PNPM_VERSION` cho **cả Production và Preview**.
-5. **Save and Deploy** → đọc build log → mở địa chỉ `*.pages.dev` để kiểm tra.
-6. Lặp lại từ bước 2 cho React Lab (project name `react-lab-gura` → `react-lab-gura.pages.dev`).
-7. Khi React Lab đã chạy: thêm `href` vào `portal/src/data/labs.ts`. `LabCard` tự biến thẻ thành link khi có `href`.
+### Steps
 
-### Preview
+1. Grant Cloudflare access to the repo: GitHub → **Settings → Applications → Cloudflare Pages** → allow the `vgbao1231/dev-lab` repo (one-time, shared by every project).
+2. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git** → select `vgbao1231/dev-lab`.
+3. Name the project, pick the production branch and fill in the configuration from the table above. The project name determines the `*.pages.dev` address (`dev-lab-gura` → `dev-lab-gura.pages.dev`).
+4. Open **Environment variables (advanced)** → add `NODE_VERSION` and `PNPM_VERSION` for **both Production and Preview**.
+5. **Save and Deploy** → read the build log → open the `*.pages.dev` address to verify.
+6. Repeat from step 2 for React Lab (project name `react-lab-gura` → `react-lab-gura.pages.dev`).
+7. Once React Lab is live: add `href` to `portal/src/data/labs.ts`. `LabCard` turns the card into a link automatically when `href` is present.
 
-Mỗi lần push lên branch khác `main` — kể cả trong pull request — Pages dựng một preview riêng:
+### Preview deployments
 
-- Địa chỉ dạng `https://<commit-hash>.<project>.pages.dev`, xem ở tab **Deployments** của project hoặc ở comment của bot trên pull request.
-- Kiểm tra nhanh: tạo một branch, push một thay đổi nhỏ, mở tab Deployments và xác nhận có build mới.
+Once a project is connected, every push to a branch other than `main` — including pushes in a pull
+request — makes Pages build a separate preview:
 
-Cách này dùng Git integration của Pages nên không cần secret hay workflow riêng; `.github/workflows/ci.yml` chỉ kiểm tra chất lượng mã. Muốn deploy từ GitHub Actions (ví dụ sau này đẩy số đo hiệu năng lên) thì mới cần `cloudflare/wrangler-action` và API token.
+- The address looks like `https://<commit-hash>.<project>.pages.dev`; find it in the project's **Deployments** tab or in the bot comment on the pull request.
+- Quick check: create a branch, push a small change, open the Deployments tab and confirm a new build appears.
 
-Preview đang bật. Muốn tắt để chỉ build ở `main`: **Settings → Builds & deployments → Configure Preview deployments → Preview branch controls → `None`**, giữ nguyên ô _Enable automatic production branch deployments_. Đánh đổi: không tắt thì mọi branch đều tốn một lượt build; tắt thì mọi thay đổi merge vào `main` lên production ngay, chỉ còn CI kiểm tra trước.
+This relies on the Pages Git integration, so no secrets or separate workflow are needed;
+`.github/workflows/ci.yml` only checks code quality. Deploying from GitHub Actions (for example, to
+publish performance measurements later) would require `cloudflare/wrangler-action` and an API token.
 
-## Quy ước
+Cloudflare Pages builds previews by default. To turn that off and build only on `main`:
+**Settings → Builds & deployments → Configure Preview deployments → Preview branch controls → `None`**,
+leaving _Enable automatic production branch deployments_ checked. Trade-off: leaving previews on
+costs one build per branch; turning them off means every change merged into `main` goes to production
+immediately, with only CI checking it beforehand.
 
-Quy tắc code, gotchas và định nghĩa "xong" nằm ở [AGENTS.md](AGENTS.md); quy tắc giao diện nằm ở [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md). Hai điểm cần biết khi tự phát triển:
+## Conventions
 
-- Không hard-code màu, font, thời lượng, easing: dùng token trong `portal/src/styles/tokens.css`.
-- Hoàn thành một mục trong `docs/ROADMAP.md` thì đánh dấu `[x]` trong cùng thay đổi.
+Code rules, gotchas and the definition of "done" live in [AGENTS.md](AGENTS.md); UI rules live in [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md). Two things to know when developing on your own:
 
-## Tài liệu
+- Never hard-code colours, fonts, durations or easing: use the tokens in `portal/src/styles/tokens.css`.
+- When you finish an item in `docs/ROADMAP.md`, tick it `[x]` in the same change.
 
-- [Tổng quan dự án](docs/PROJECT_OVERVIEW.md)
+## Documentation
+
+- [Project overview](docs/PROJECT_OVERVIEW.md)
 - [Roadmap](docs/ROADMAP.md)
-- [Design system](docs/DESIGN_SYSTEM.md) và các spec trong [docs/design/](docs/design/)
-- [Quyết định kiến trúc (ADR)](docs/adr/README.md)
-- [Hướng dẫn cho agent](AGENTS.md)
+- [Design system](docs/DESIGN_SYSTEM.md) and the specs in [docs/design/](docs/design/)
+- [Architecture decisions (ADR)](docs/adr/README.md)
+- [Agent instructions](AGENTS.md)
 
-## Giấy phép
+## License
 
-Nội dung bài viết và mã nguồn thuộc quyền tác giả của Gura, trừ khi có ghi chú khác.
+Post content and source code are copyright Gura unless noted otherwise.

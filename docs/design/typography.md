@@ -1,57 +1,62 @@
 # Design: Typography
 
-> Một phần của design system; chỉ mục và bảng định tuyến ở [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
-> Số mục giữ nguyên bản gốc vì comment trong code trỏ tới "mục N".
+> Part of the design system; index and routing table in [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
+> Section numbers stay as in the original because comments in the code point to "mục N".
 
 ## 4. Typography
 
-| Vai trò   | Font           | Dùng cho                                                                                |
-| --------- | -------------- | --------------------------------------------------------------------------------------- |
-| Display   | Patrick Hand   | Tiêu đề chính, chip ở bảng facts. Dùng tiết kiệm                                        |
-| Handwrite | Caveat         | Tên hero trên trang chủ (92px), ghi chú viết tay trang trí ("Small steps")              |
-| Serif     | Lora           | Tiêu đề mục "Các lab" và tiêu đề trên card lab                                          |
-| Body      | Inter / Sans   | Nội dung bài viết, đoạn văn, UI (trang chủ hỗ trợ `Be Vietnam Pro`)                     |
-| Mono      | JetBrains Mono | Metadata, ngày tháng, tag, code block, bảng số liệu riêng (chưa triển khai), nhãn facts |
+| Role      | Font           | Used for                                                                                        |
+| --------- | -------------- | ----------------------------------------------------------------------------------------------- |
+| Display   | Patrick Hand   | Main headings, chips in the facts table. Use sparingly                                          |
+| Handwrite | Caveat         | Hero name on the home page (up to 5.75rem / 92px), decorative handwritten notes ("Small steps") |
+| Serif     | Lora           | Heading of the "Các lab" section and headings on lab cards                                      |
+| Body      | Inter / Sans   | Post content, paragraphs, UI (the home page also supports `Be Vietnam Pro`)                     |
+| Mono      | JetBrains Mono | Metadata, dates, tags, code blocks, standalone data tables (not yet implemented), facts labels  |
 
-### Quy tắc
+> **Home-page exception (ADR 0012):** the hero name and note use Caveat (`clamp(3.5rem, 8vw, 5.75rem)` /
+> `1.375rem`), the Labs sidebar heading uses Lora `1.75rem`, and the lab card title uses Lora
+> `--text-sm`. The non-token sizes are literals expressed in `rem`, not `px`; they are listed as known
+> deviations in [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md). Do not add more literal sizes.
 
-- Không dùng Patrick Hand cho đoạn văn dài hoặc nội dung đọc lâu. Một ngoại lệ có chủ ý: **chip ở
-  bảng facts** (`Frontend Engineer`, `Cà phê`) — mỗi chip chỉ một hai từ, và nét viết tay làm hàng
-  chip bớt khô như một bảng dữ liệu.
-- **Chữ mono không bao giờ dùng cùng cỡ với chữ Inter đứng cạnh.** JetBrains Mono có nét rộng và
-  x-height cao nên ở cùng cỡ nó trông nặng hơn Inter. Ba tầng mono:
-  - **Nhãn mono** (eyebrow, tiêu đề mục lục): `--text-sm` (16px) — nhãn là chữ uppercase có giãn,
-    cần đủ lớn để đọc ra là nhãn.
-  - **Chữ/link mono** (nav, link footer, kicker, hàng link, khối mã, dòng meta, nhãn bảng facts):
+### Rules
+
+- Do not use Patrick Hand for long paragraphs or long-form reading. One deliberate exception: **chips in the
+  facts table** (`Frontend Engineer`, `Cà phê`) — each chip is only a word or two, and the handwriting keeps the
+  chip row from looking as dry as a data table.
+- **Mono text never uses the same size as the Inter text next to it.** JetBrains Mono has wide strokes and a
+  high x-height, so at the same size it looks heavier than Inter. Three mono tiers:
+  - **Mono labels** (eyebrow, table-of-contents heading): `--text-sm` (16px) — labels are spaced uppercase text
+    and need to be large enough to read as labels.
+  - **Mono text/links** (nav, footer links, kicker, link row, code blocks, meta lines, facts table labels):
     `--text-xs` (14px).
-  - **Metadata mono** (tag, stack, nhãn bộ chọn theme, ghi chú nhỏ): `--text-2xs` (12px).
-  - **Nhãn bảng facts là ngoại lệ**: về `--text-xs` và để **chữ thường**. Ở đây
-    nhãn là chú thích cho giá trị, không phải nhãn khu vực, và năm dòng `uppercase` liền nhau đọc
-    như đang hét.
-- **Mọi link dạng chữ dùng mono** cho đồng bộ (xem `Hàng link` ở mục 6, `components.md`). Ba ngoại lệ có chủ ý:
-  link là **tiêu đề** (tiêu đề bài viết, tên lab, tên dự án) giữ font display; link **nằm trong
-  câu văn** (`.post-body`) giữ font nội dung — đổi font giữa dòng sẽ phá nhịp đọc; và **brand
-  `DevLab.`** trên header giữ font display (xem `layout.md`).
-- Patrick Hand chỉ có một weight (400), nên tiêu đề dùng weight normal; không giả lập bold.
-- Mọi font có fallback: `system-ui, sans-serif` cho Inter, `ui-monospace, monospace` cho JetBrains Mono.
-- Kiểm tra hiển thị đầy đủ dấu tiếng Việt (ă, â, đ, ơ, ư và các dấu thanh) trên mỗi font trước khi chốt.
-  Balsamiq Sans **không** có subset `vietnamese` (đã loại bỏ), Patrick Hand thì có.
+  - **Mono metadata** (tags, stack, theme selector labels, small notes): `--text-2xs` (12px).
+  - **Facts table labels are the exception**: drop to `--text-xs` and use **lowercase**. Here the
+    label annotates a value rather than naming an area, and five `uppercase` lines in a row read
+    like shouting.
+- **Every text link uses mono** for consistency (see `Link row` in section 6, `components.md`). Three deliberate exceptions:
+  links that are **headings** (post titles, lab names, project names) keep the display font; links **inside
+  sentences** (`.post-body`) keep the body font — switching fonts mid-line breaks the reading rhythm; and the
+  **`DevLab.` brand** in the header keeps the display font (see `layout.md`).
+- Patrick Hand has only one weight (400), so headings use normal weight; do not fake bold.
+- Every font has a fallback: `system-ui, sans-serif` for Inter, `ui-monospace, monospace` for JetBrains Mono.
+- Verify that full Vietnamese diacritics (ă, â, đ, ơ, ư and tone marks) render on each font before committing.
+  Balsamiq Sans has **no** `vietnamese` subset (it was dropped); Patrick Hand does.
 
-### Thang kích thước
+### Type scale
 
-| Token            | Kích thước       | Dùng cho                                                                                                                                                             |
-| ---------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--text-2xs`     | 0.75rem (12px)   | Chữ mono cỡ nhỏ: metadata bài viết, tag, stack, nhãn bộ chọn theme, ghi chú nhỏ                                                                                      |
-| `--text-xs`      | 0.875rem (14px)  | **Chữ/link mono**: nav, link footer, kicker, hàng link, khối mã, dòng meta, nhãn bảng facts                                                                          |
-| `--text-sm`      | 1rem (16px)      | Chữ Inter (mô tả card/dự án, tóm tắt bài viết, link mục lục, đoạn phụ ở khối Dev Lab, dòng mô tả footer, bảng trong bài) **và** nhãn mono (eyebrow, tiêu đề mục lục) |
-| `--text-base`    | 1.0625rem (17px) | Thân bài, đoạn phụ trong hero, câu slogan ở hero (`.lead`), chip ở bảng facts (font display)                                                                         |
-| `--text-lg`      | 1.3125rem (21px) | `h3` trong bài, tiêu đề bài trong danh sách, tên lab/dự án trên card, tên brand ở footer                                                                             |
-| `--text-xl`      | 1.625rem (26px)  | Tiêu đề section                                                                                                                                                      |
-| `--text-2xl`     | 2.375rem (38px)  | Hero và `h1`, gồm tiêu đề bài ở trang chi tiết                                                                                                                       |
-| `--text-display` | 3rem (48px)      | Dự phòng, hiện chưa dùng                                                                                                                                             |
-| `--text-brand`   | 1.75rem (28px)   | Brand `DevLab.` trên header — chữ display một mình nên cần lớn hơn cỡ chữ UI; đi kèm `line-height: 1` (mục 5, `layout.md`)                                           |
+| Token            | Size             | Used for                                                                                                                                                                                                      |
+| ---------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--text-2xs`     | 0.75rem (12px)   | Small mono text: post metadata, tags, stack, theme selector labels, small notes                                                                                                                               |
+| `--text-xs`      | 0.875rem (14px)  | **Mono text/links**: nav, footer links, kicker, link row, code blocks, meta lines, facts table labels                                                                                                         |
+| `--text-sm`      | 1rem (16px)      | Inter text (card/project descriptions, post summaries, TOC links, secondary paragraph in the Dev Lab block, footer description line, in-post tables) **and** mono labels (eyebrow, table-of-contents heading) |
+| `--text-base`    | 1.0625rem (17px) | Body copy, secondary paragraph in the hero, hero slogan line (`.lead`), chips in the facts table (display font)                                                                                               |
+| `--text-lg`      | 1.3125rem (21px) | `h3` in posts, post titles in lists, lab/project names on cards, brand name in the footer                                                                                                                     |
+| `--text-xl`      | 1.625rem (26px)  | Section headings                                                                                                                                                                                              |
+| `--text-2xl`     | 2.375rem (38px)  | Hero and `h1`, including the post title on the detail page                                                                                                                                                    |
+| `--text-display` | 3rem (48px)      | Reserved, currently unused                                                                                                                                                                                    |
+| `--text-brand`   | 1.75rem (28px)   | The `DevLab.` brand in the header — display text standing alone, so it needs to be larger than UI text; comes with `line-height: 1` (section 5, `layout.md`)                                                  |
 
-Lý do và lịch sử các lần chỉnh: [ADR 0005](../adr/0005-chu-mono-nho-hon-inter-2px.md) và
-[`CHANGELOG.md`](../CHANGELOG.md). Khi đổi thang, kiểm tra lại ba chỗ dễ vỡ: nav header có còn vừa một hàng ở 1024px, tiêu đề
-dài trong cột mục lục 220px có bị xuống dòng xấu không, và chiều cao header có bị đổi theo cỡ brand
-không.
+Reasoning and revision history: [ADR 0005](../adr/0005-mono-2px-smaller-than-inter.md) and
+[`CHANGELOG.md`](../CHANGELOG.md). When changing the scale, re-check three fragile spots: whether the header nav
+still fits on one row at 1024px, whether long titles in the 220px TOC column wrap badly, and whether the header
+height changes with the brand size.
