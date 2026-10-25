@@ -105,11 +105,11 @@ const isLink = Boolean(lab.href);
   }
 
   /*
-   * Chip danh mục: font 11px, nền rgba(125,154,114,.16), chữ #bcd1ad theo reference.
+   * Category chip: 0.6875rem (11px) font, rgba(125,154,114,.16) background, #bcd1ad text per the reference.
    */
   .lab-card__chip {
     align-self: flex-start;
-    font-size: 11px;
+    font-size: 0.6875rem;
     padding: 3px 8px;
     border-radius: 5px;
     background: rgba(125, 154, 114, 0.16);
@@ -117,11 +117,11 @@ const isLink = Boolean(lab.href);
   }
 
   /*
-   * Title: font-family Lora, serif, 16px, weight 500 theo reference.
+   * Title: Lora, serif, --text-sm (16px), weight 500 per the reference.
    */
   .lab-card__title {
     font-family: var(--font-serif);
-    font-size: 16px;
+    font-size: var(--text-sm);
     font-weight: 500;
     color: #efe9d6;
     margin: 0;
@@ -141,21 +141,21 @@ const isLink = Boolean(lab.href);
     border-radius: inherit;
   }
 
-  /* Summary: 12.5px, line-height 1.6, màu #9a978a, weight 300 theo reference. */
+  /* Summary: 0.78125rem (12.5px), line-height 1.6, #9a978a, weight 300 per the reference. */
   .lab-card__summary {
     margin: 0;
-    font-size: 12.5px;
+    font-size: 0.78125rem;
     line-height: 1.6;
     color: #9a978a;
     font-weight: 300;
   }
 
-  /* Meta line: icon calendar + nhãn trạng thái, font-size 12px theo reference. */
+  /* Meta line: calendar icon + status label, --text-2xs (12px) per the reference. */
   .lab-card__meta {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
+    font-size: var(--text-2xs);
     color: #9a978a;
     margin: 2px 0 0;
   }
