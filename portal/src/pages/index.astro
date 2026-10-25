@@ -442,6 +442,15 @@ const dustParticles = [
       var(--color-bg);
   }
 
+  /*
+   * The 12px strip above the scrolled capsule uses the page base colour. On home that is
+   * the dark base (#0b0d09), not the generic `--color-bg`, otherwise it shows as a
+   * lighter band above the capsule.
+   */
+  :global(html[data-mode='dark'] body:has(.home-wrapper)) {
+    --header-strip-bg: #0b0d09;
+  }
+
   .home-wrapper {
     position: relative;
     overflow: hidden;

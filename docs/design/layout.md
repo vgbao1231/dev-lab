@@ -44,7 +44,8 @@
     the screen edge. The push uses `position: relative; top` — a property that **only changes on paint**, not
     layout, so the header keeps its height. That gap exposes content drifting behind it, so an opaque strip
     covers it via `.site-header::before` (`position: absolute`, out of flow): in the initial state the capsule
-    covers this strip, so it is not visible.
+    covers this strip, so it is not visible. The strip colour is `--header-strip-bg` (default `--color-bg`);
+    the home page sets it to its own dark base so it does not read as a lighter band.
   - The header uses `transition:persist`, so the DOM is kept across navigations — therefore `aria-current` must
     be updated by JS. The nav only has `labs`, `bài viết`, `liên hệ`; the brand links home, so there is **no**
     separate "Trang chủ" item.

@@ -160,10 +160,11 @@ const isActive = (href: string) => currentPath.startsWith(href);
   }
 
   /*
-   * Khi đã cuộn, capsule được đẩy xuống một khoảng bằng `--header-inset`. Khoảng hở đó
-   * nằm trong luồng nên nội dung đang trôi phía sau sẽ lộ ra, cần một dải nền đục che
-   * lại. Đặt trên pseudo-element `position: absolute` nên không làm đổi chiều cao
-   * header — không reflow. Ở trạng thái đầu, capsule phủ lên dải này nên không thấy.
+   * Once scrolled, the capsule is pushed down by `--header-inset`. That gap is in flow,
+   * so content drifting behind would show through; an opaque strip covers it. The strip
+   * is an absolutely positioned pseudo-element, so it does not change the header height
+   * and causes no reflow. In the initial state the capsule covers it, so it is invisible.
+   * Pages with their own background (the home page) set `--header-strip-bg` to match.
    */
   .site-header::before {
     content: '';
@@ -171,7 +172,7 @@ const isActive = (href: string) => currentPath.startsWith(href);
     inset-inline: 0;
     top: 0;
     height: var(--header-inset);
-    background-color: var(--color-bg);
+    background-color: var(--header-strip-bg, var(--color-bg));
   }
 
   /*
