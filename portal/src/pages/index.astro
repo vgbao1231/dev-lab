@@ -107,12 +107,13 @@ const dustParticles = [
     Lời chào lấy tên từ `profile.ts`, câu slogan lấy từ `profile.tagline`.
   */}
 
-  <div class="home-wrapper">
-    {/*
-      Blobs + dots trang trí nền: 4 blob radial-gradient lớn + 16 dot nhỏ mờ.
-      JS trong <script> sẽ gán id "blob-a"…"blob-d" và ".home-dot" để animate theo
-      mouse/scroll. aria-hidden để screen reader bỏ qua hoàn toàn.
-    */}
+  {/*
+    Background decoration, rendered through the layout `background` slot so it sits
+    outside `<main>` and continues behind the header and the footer. Blobs + floating
+    dust particles; JS below moves them with the pointer and scroll. `aria-hidden`
+    keeps screen readers away from the whole layer.
+  */}
+  <Fragment slot="background">
     <div class="home-deco" aria-hidden="true">
       <div
         id="blob-a"
@@ -157,7 +158,9 @@ const dustParticles = [
         </div>
       ))}
     </div>
+  </Fragment>
 
+  <div class="home-wrapper">
     <section class="section section--hero container" data-animate>
       <div class="hero-inner">
         <div class="hero-content">
@@ -414,23 +417,22 @@ const dustParticles = [
     color: var(--color-text-muted);
   }
 
-  /* ─── Background & Blobs + dots nền trang trí theo reference ──────── */
+  /* ─── Background & blobs + dust particles ─────────────────────────── */
 
   /*
-   * Wrapper trang chủ: background radial-gradient và #0b0d09 chuẩn reference.
-   * Font Be Vietnam Pro; overflow: hidden giữ blobs không tràn ra ngoài.
+   * The home background belongs to the whole document, not to `.home-wrapper`: the
+   * header and the footer sit outside the wrapper, so painting it on `body` keeps one
+   * continuous canvas and lets the decoration layer (rendered through the layout
+   * `background` slot) show behind both.
    */
-  .home-wrapper {
+  :global(body:has(.home-wrapper)) {
     position: relative;
-    overflow: hidden;
-    color: #e9e5d3;
-    font-family: var(--font-sans);
     background:
       radial-gradient(ellipse 90% 38% at 50% 0%, rgba(38, 50, 28, 0.55), rgba(11, 13, 9, 0) 70%),
       #0b0d09;
   }
 
-  :global(html[data-mode='light']) .home-wrapper {
+  :global(html[data-mode='light'] body:has(.home-wrapper)) {
     background:
       radial-gradient(
         ellipse 90% 38% at 50% 0%,
@@ -438,7 +440,36 @@ const dustParticles = [
         transparent 70%
       ),
       var(--color-bg);
+  }
+
+  .home-wrapper {
+    position: relative;
+    overflow: hidden;
+    color: #e9e5d3;
+    font-family: var(--font-sans);
+  }
+
+  :global(html[data-mode='light']) .home-wrapper {
     color: var(--color-text);
+  }
+
+  /*
+   * Content paints above the decoration layer. The header already has z-index 20 and the
+   * skip link z-index 10; `main` and the footer need their own stacking context here.
+   */
+  :global(body:has(.home-wrapper) main),
+  :global(body:has(.home-wrapper) .site-footer) {
+    position: relative;
+    z-index: 1;
+  }
+
+  /*
+   * At the top of the page the header bar is transparent so the page background and the
+   * decoration behind it run through; once scrolled, the capsule keeps its own
+   * background and border from `Header.astro`.
+   */
+  :global(html:not([data-scrolled='true']) body:has(.home-wrapper) .site-header__bar) {
+    background-color: transparent;
   }
 
   .home-deco {

@@ -19,14 +19,16 @@
   conditions): 560px (one column), 640px (header on one row, nav centered), 768px (48px sections),
   1024px (32px horizontal padding).
 - **Header:** sticky (`position: sticky`); the `DevLab.` brand in the display font (`--text-brand`) on the left, nav
-  centered, the theme/mode selectors (two `<select>`s) and the search button on the right; a rule under the header.
+  centered, the theme/mode selectors (two `<select>`s) and the search button on the right. In the initial
+  state the bar blends into the page with **no rule**; the 1px border appears together with the scrolled capsule.
   - The search button is a pill from 768px (icon + `Tìm kiếm…` + `kbd`), collapsing into a square icon button below
     768px. Dialog behavior is in `components.md`, the "Search" section.
   - The brand is `--text-brand` (28px) with `line-height: 1` pinned, so header height is decided by the nav (about
     60px) rather than by the brand size. Changing the brand size within 28–32px pulls no other change.
     Measurements and reasoning: [ADR 0006](../adr/0006-sticky-capsule-header.md).
   - The header has **no** background of its own; the opaque background is on the bar. That way, when scrolled,
-    the area outside the capsule is transparent and no rectangle shows behind the four rounded corners.
+    the area outside the capsule is transparent and no rectangle shows behind the four rounded corners. On the
+    home page, while at the top, the bar is transparent so the page background shows through.
   - Past 4px of scroll: the background becomes semi-transparent, the bar shrinks into a **capsule** and gains a
     very light shadow. `backdrop-filter: blur(12px)` is **always on** (toggling it with scroll state would
     rebuild the compositing layer mid-scroll and cause jank); in the initial state the background is opaque, so
@@ -60,7 +62,10 @@
       rotated -10deg. Both have a subtle floating parallax effect (`.hero-fx`). When narrow, the right column shrinks and stacks below the text.
   - The greeting line, name, tagline and motto currently use literal colours and sizes; they are known
     deviations from the token rule. See "Known deviations" in [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
-  - **Home decorative background & parallax:** wrap the whole page in `.home-wrapper` carrying the `#0b0d09` background color combined with a dark moss-green `radial-gradient` from the top.
+  - **Home decorative background & parallax:** the background (base colour + dark moss-green `radial-gradient` from the top)
+    is painted on `<body>` while the home page is mounted, so the header and footer share the same canvas. The
+    decoration layer is rendered through the layout's `background` slot, outside `<main>`, so it continues behind
+    the header and the footer instead of stopping at the last section.
     - Contains 6 large blobs and 62 blurry floating dust particles (`.home-deco`, `.home-dot`) that move with pointer parallax (`mousemove`) and page scroll (`scroll`) via `requestAnimationFrame` and smooth CSS transitions (2.4s - 2.8s), combined with keyframe bobbing and a natural glowing breath.
     - Automatically disabled when the user enables `prefers-reduced-motion: reduce`. Light mode hides the blobs/dots by itself and switches to a harmonious light gradient.
 - **Dev Lab block** (the section right below the hero): mono kicker `~/devlab · <vai trò>` → `h2` in display font
