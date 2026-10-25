@@ -41,11 +41,14 @@ const { projects } = Astro.props;
 
   .project-list__item {
     padding-block: 1rem;
-    border-top: 1px solid var(--color-border);
   }
 
-  .project-list__item:last-child {
-    border-bottom: 1px solid var(--color-border);
+  /*
+   * Rules only *between* rows: the section rule closes the list, and a rule above the
+   * first row would sit directly under the "Dự án khác" eyebrow.
+   */
+  .project-list__item + .project-list__item {
+    border-top: 1px solid var(--color-border);
   }
 
   .project-list__head {

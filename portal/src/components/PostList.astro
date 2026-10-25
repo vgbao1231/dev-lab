@@ -41,12 +41,12 @@ const { posts } = Astro.props;
     padding: 0;
   }
 
-  .post-list__item {
+  /*
+   * Rules only *between* rows: the section already draws the closing rule, and a rule
+   * above the first row would read as an underline under the section heading.
+   */
+  .post-list__item + .post-list__item {
     border-top: 1px solid var(--color-border);
-  }
-
-  .post-list__item:last-child {
-    border-bottom: 1px solid var(--color-border);
   }
 
   /*

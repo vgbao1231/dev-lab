@@ -100,6 +100,7 @@ If a request contradicts the documentation, ask the user instead of deciding uni
 - The header uses `transition:persist`: its DOM survives navigations, so `aria-current` must be updated by JavaScript.
 - View Transitions replace every attribute on `<html>`: copy `data-theme` / `data-mode` to the new document in `astro:before-swap`.
 - `[data-animate]` runs only on the first page load. `view-transition-name` must be a valid custom-ident and must not repeat within one page (post titles use `vt-post-<id>`).
+- `BaseLayout` renders a `background` slot as the first child of `<body>`, outside `<main>`. Use it for page-wide decorative layers that must continue behind the header and footer; raise `main` and the footer above the layer with `z-index`.
 - Elements inserted by JavaScript (the `#` button on post headings) have no `data-astro-cid`: keep their styles in `global.css`, not in a scoped `<style>` block.
 - The "About me" and "Other projects" sections are hidden entirely when `profile.ts` has no data: do not render an empty block or a placeholder sentence.
 - `profile.ts` contains only information approved for public display. As of 2026-10-19: name, role, location, email and GitHub are approved; LinkedIn, CV and avatar are not.

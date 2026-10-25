@@ -65,8 +65,9 @@ Two kinds of section headings:
 
 ### Project list
 
-- Row structure like the `Post list`: each project is one row, separated by a `1px --color-border`
-  rule (the last row adds a bottom rule), 16px vertical padding.
+- Row structure like the `Post list`: each project is one row, 16px vertical padding. A `1px --color-border`
+  rule appears only **between consecutive rows** — there is no rule above the first row (it would read as an
+  underline under the section heading) and none below the last (the section rule closes the list).
 - Inside a row: project name (display font, `--text-lg`) and stack (mono `--text-2xs`, muted) at opposite ends
   of a baseline `flex` row; a one-sentence description (`--text-sm`, muted) on the line below.
 - The name **is only a link when there is an `href`**; without a public version, leave it as plain text and do not create a dead link.
@@ -112,7 +113,8 @@ ngọt và gura`). This is text for readers, not a place to paste raw notes back
 
 ### Post list (home page)
 
-- Each post is **a single block link** (`display: block`), 16px vertical padding, separated by a rule.
+- Each post is **a single block link** (`display: block`), 16px vertical padding, with a rule only between
+  consecutive rows; the section rule closes the list.
 - Order: metadata (mono `--text-2xs`, muted) → title (display font, `--text-lg`) → summary (muted,
   `--text-sm`).
 - **Hover:** the title changes to `--color-link`.
