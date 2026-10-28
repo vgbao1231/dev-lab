@@ -19,7 +19,8 @@
   conditions): 560px (one column), 640px (header on one row, nav centered), 768px (48px sections),
   1024px (32px horizontal padding).
 - **Header:** sticky (`position: sticky`); the `DevLab.` brand in the display font (`--text-brand`) on the left, nav
-  centered, the theme/mode selectors (two `<select>`s) and the search button on the right. In the initial
+  centered, the mode icon button (with dropdown), the theme selector (a `<select>` only when two or more themes
+  exist) and the search button on the right. In the initial
   state the bar blends into the page with **no rule**; the 1px border appears together with the scrolled capsule.
   - The search button is a pill from 768px (icon + `Tìm kiếm…` + `kbd`), collapsing into a square icon button below
     768px. Dialog behavior is in `components.md`, the "Search" section.
@@ -46,7 +47,7 @@
     covers it via `.site-header::before` (`position: absolute`, out of flow): in the initial state the capsule
     covers this strip, so it is not visible.
   - The header uses `transition:persist`, so the DOM is kept across navigations — therefore `aria-current` must
-    be updated by JS. The nav only has `labs`, `bài viết`, `liên hệ`; the brand links home, so there is **no**
+    be updated by JS. The nav only has `Labs`, `Bài viết`, `Liên hệ`; the brand links home, so there is **no**
     separate "Trang chủ" item.
 - **Hero (greeting):** greeting line `Xin chào, tui là` → `h1` with the name from `profile.ts` → tagline
   (`profile.tagline`; omit when empty) → **motto** as a `// …` note in accent color (`profile.slogan`;
@@ -57,35 +58,37 @@
   - All **three** CTA links have an `→` arrow; the arrow is not a marker for the primary CTA but the shared
     style of the link row, so do not add it to one link and drop it from another.
   - **2-column layout:** left is text content (flex 1 1 420px), right is a visual column for the illustration (flex 1 1 280px).
-    - Left column: small leaf icon + greeting line → `h1` name in the loose `Caveat` font (clamp up to `5.75rem`) → tagline → CTA link row.
-    - Right column: decorative sprout SVG + "Small steps / Big progress" note in `Caveat` `1.375rem`,
+    - Left column: small leaf icon + greeting line → `h1` name in the loose `Caveat` font (`--text-hero`, up to `5.75rem`) → tagline → motto → CTA link row.
+    - Right column: decorative sprout SVG + "Small steps / Big progress" note in `Caveat` `--text-note`,
       rotated -10deg. Both have a subtle floating parallax effect (`.hero-fx`). When narrow, the right column shrinks and stacks below the text.
-  - The greeting line, name, tagline and motto currently use literal colours and sizes; they are known
-    deviations from the token rule. See "Known deviations" in [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
-  - **Home decorative background & parallax:** the background (base colour + dark moss-green `radial-gradient` from the top)
-    is painted on `<body>` while the home page is mounted, so the header and footer share the same canvas. The
-    decoration layer is rendered through the layout's `background` slot, outside `<main>`, so it continues behind
-    the header and the footer instead of stopping at the last section.
+  - The greeting line, name, tagline and motto take their colours from `--color-text`, `--color-text-muted` and
+    `--color-accent`, and their type sizes from `--text-sm`, `--text-hero` and `--text-base`.
+  - **Home decorative background & parallax:** the background is a `--color-accent` gradient mixed into
+    `--color-bg` and painted on `<body>` while the home page is mounted, so the header and footer share the same
+    canvas and the gradient follows theme × mode. The decoration layer is rendered through the layout's
+    `background` slot, outside `<main>`, so it continues behind the header and the footer instead of stopping at
+    the last section.
     - Contains 6 large blobs and 62 blurry floating dust particles (`.home-deco`, `.home-dot`) that move with pointer parallax (`mousemove`) and page scroll (`scroll`) via `requestAnimationFrame` and smooth CSS transitions (2.4s - 2.8s), combined with keyframe bobbing and a natural glowing breath.
-    - Automatically disabled when the user enables `prefers-reduced-motion: reduce`. Light mode hides the blobs/dots by itself and switches to a harmonious light gradient.
+    - Automatically disabled when the user enables `prefers-reduced-motion: reduce`. Light mode hides the
+      decoration layer entirely (`.home-deco`) and keeps the token-based background gradient.
 - **Dev Lab block** (the section right below the hero): mono kicker `~/devlab · <vai trò>` → `h2` in display font
   `Dev Lab` → ecosystem description paragraph → one comment-style note line (`// …`) in `--color-accent`
-  in mono → secondary paragraph in `--color-text-muted` (`--text-sm`, not `.lead` — `.lead` is reserved
-  for the hero slogan).
+  in mono → secondary paragraph in `--color-text-muted` (`--text-sm`, not `.lead` — `.lead` is the page/post
+  introduction block).
 - **Lab grid:** 2-part layout inside `.section--labs`:
-  - **Left sidebar** (flex 1 1 260px, max-width 330px): beaker icon colored `#9dbb90` → `h2` in `Lora` `1.75rem` "Các lab" (`#efe9d6`) → small
-    description paragraph (`0.8125rem`, `#a29f92`) → "Xem tất cả các lab →" link `0.8125rem`, hover turns to `#b9d3aa`.
+  - **Left sidebar** (flex 1 1 260px, max-width 330px): beaker icon in `--color-accent` → `h2` in `Lora`
+    `--text-h2-home` "Các lab" (`--color-text`) → small description paragraph (`--text-xs`, `--color-text-muted`) →
+    "Xem tất cả các lab →" link `--text-xs` in `--color-text`, hover turns to `--color-accent`.
   - **Card grid on the right** (flex 3 1 480px): `repeat(auto-fit, minmax(min(200px, 100%), 1fr))`, gap 20px.
     When narrow, the sidebar stacks as one column above the card grid.
-  - **Lab card** 12px radius, 10px padding, 10px gap, translucent surface background:
-    - 72px cover image with 8px radius (color from `coverBg` in `labs.ts`)
-    - Compact category chip (`0.6875rem` font, `rgba(125,154,114,.16)` background, `#bcd1ad` text)
-    - Lab title in `Lora` `var(--text-sm)`, weight 500, color `#efe9d6`
-    - Summary `0.78125rem` in `#9a978a`, weight 300
+  - **Lab card** 12px radius, 10px padding, 10px gap, background `--color-surface`:
+    - **16:9** cover with 8px radius (color from `coverBg` in `labs.ts`), scaling with the card width
+    - Compact category chip (`--text-2xs`, accent-tinted background and text derived with `color-mix`)
+    - Lab title in `Lora` `var(--text-sm)`, weight 500, color `--color-text`
+    - Summary `--text-2xs` in `--color-text-muted`, weight 300
     - Date/status meta line `var(--text-2xs)` with a calendar icon
-    - Hover lifts the card 3px (`translateY(-3px)`) and changes the border to `rgba(157,187,144,.42)`.
-    - The literal colours and sizes in the lab card are existing known deviations; see
-      "Known deviations" in [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
+    - Hover lifts the card 3px (`translateY(-3px)`) and changes the border to a 42% accent mix.
+    - Colours, type sizes and hover durations all come from tokens.
 - **Post grid on `/bai-viet`:** 1 column by default, 2 columns from 768px, 3 columns from 1024px; gap 16px
   (20px from 1024px). Each post is a card with a 16:9 cover; the home page still uses the row-style list and
   does not change with this grid.
@@ -97,9 +100,10 @@
     the TOC column sticks below the header so it is always visible.
   - Short text blocks on other pages also use `.measure` (800px) and align left to line up with the grid
     below. The reading progress bar is pinned to the top edge of the viewport (section 6, `post-page.md`).
-- **Home section order:** hero (greeting) → Dev Lab → Về mình → Các lab → Bài viết mới →
-  Dự án khác → Liên hệ. The current code renders Về mình before Dev Lab; this is a known deviation,
-  not the intended order. See "Known deviations" in [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md).
+- **Home section order:** hero (greeting) → Về mình → Dev Lab → Các lab → Bài viết mới →
+  Dự án khác → Liên hệ. This order is **intentional** (decided 2026-10-28): the home page leads with the
+  portfolio — who is writing — and only then introduces Dev Lab as the gateway to the other projects.
+  Do not move Dev Lab above "Về mình".
   The "Về mình" and "Dự án khác" sections **only appear when there is real data** in
   `portal/src/data/profile.ts`; when absent they are hidden entirely, with no empty block or "sẽ bổ sung" sentence left behind.
   The "So sánh giữa các stack" section was dropped on 2026-10-18 and will be built together with section 1.5 in `ROADMAP.md` once there are real
@@ -111,7 +115,8 @@
   3. **Lab** — generated directly from `data/labs.ts`, not copied by hand.
   4. **Contact** — generated from `data/profile.ts` (GitHub, email if available) + `Trang liên hệ` link.
 
-  Each column is a `<nav aria-labelledby>` pointing at the column's `.eyebrow` label. Footer links use
+  The brand column is a `<div>`; the three navigation columns are `<nav aria-labelledby>` pointing at the
+  column's `.eyebrow` label. Footer links use
   `--color-text-muted`, only rising to `--color-link` on hover — four columns all in `--color-link` would be too loud.
   The bottom row is separated by a 1px `border-top`: `© [năm] [Tên] · Dev Lab` on the left, `Mã nguồn · Deploy trên
 Cloudflare` on the right. Data sources: see section 6, "Portfolio data sources" in `components.md`.
@@ -133,5 +138,5 @@ Cloudflare` on the right. Data sources: see section 6, "Portfolio data sources" 
 | `--space-section` | 40px / 48px | section vertical padding (mobile / desktop)                                  |
 | `--radius-sm`     | 4px         | tag, code block                                                              |
 | `--radius-md`     | 6px         | small elements needing a moderate radius (input, images, nav pill)           |
-| `--radius-lg`     | 8px         | lab card, data table frame, header capsule                                   |
+| `--radius-lg`     | 8px         | post card, header capsule, search dialog, facts chip                         |
 | `--radius-pill`   | 999px       | back-to-top button                                                           |

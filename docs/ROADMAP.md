@@ -1,13 +1,13 @@
 # Roadmap: Dev Lab
 
-**Current status (2026-10-25):** Phase 1 is still in progress. The portal, design tokens, content system, search, tag registry, covers and the three React articles are implemented. Still open: the deploy work in 1.6, the mobile header sheet, the performance comparison page, and the optional stack-comparison section.
+**Current status (2026-10-28):** Phase 1 is still in progress. The portal, design tokens, content system, search, tag registry, covers and the three React articles are implemented, and the portal is deployed on Cloudflare Pages. Still open: the React Lab Pages project and branch-preview checks in 1.6, the mobile header sheet, the performance comparison page, and the optional stack-comparison section.
 
 This document splits the project into phases. Each phase has a work checklist and completion criteria.
 
 **Current phase: Phase 1 — Foundation and the first React lab** 🟡 in progress
 
 **Open in phase 1:** 1.3 mobile sheet menu · "Stack comparison" section (paused) ·
-1.5 performance comparison page · 1.6 all deploy work.
+1.5 performance comparison page · 1.6 React Lab Pages project and branch previews.
 
 ---
 
@@ -47,7 +47,7 @@ This document splits the project into phases. Each phase has a work checklist an
 - [x] Apply layout and components from `design-reference/`: sections divided by rules, lab card as link + hover, eyebrow labels
 - [x] Standardise hover states (section 7.4 of `DESIGN_SYSTEM.md`): growing underline for links, accent nav pill, article titles, table rows
 - [x] Build the responsive foundation: breakpoints 560 / 640 / 768 / 1024, horizontal padding per breakpoint, self-filling lab grid
-- [x] Theme/mode picker: two native `<select>` elements on two independent axes; theme hides itself when only one theme exists
+- [x] Theme/mode picker: one icon button with a dropdown for mode, one `<select>` for theme on two independent axes; theme hides itself when only one theme exists
 - [x] "Back to top" button appears after scrolling 600px, respects `prefers-reduced-motion`
 - [x] Header in the style of `ngockhoi96.dev`: sticky, blurred capsule that shrinks on scroll, accent nav pill, hide/show on scroll direction, `transition:persist`
 - [x] Header: search button opens a command palette; `Ctrl/Cmd+K` or `/`, searches articles/labs/pages,
@@ -64,9 +64,10 @@ This document splits the project into phases. Each phase has a work checklist an
       — where supported it runs on the compositor via `animation-timeline: scroll()`, with no per-frame JS
 - [x] Sticky footer: when content is shorter than the viewport the footer still sits at the bottom of the viewport
 - [x] Four-column footer (brand · Content · Lab · Contact) + bottom row `© · Mã nguồn · Deploy`
-- [x] Home page becomes a portfolio: hero with role + three CTAs, plus an "About me" section (facts table, skills) and "Other projects" from real data
+- [x] Home page becomes a portfolio: hero with tagline + three CTAs, plus an "About me" section (facts table, skills) and "Other projects" from real data
 - [x] Home page visual refresh (2026-10-24, [ADR 0012](adr/0012-home-layout-and-parallax.md)): two-column hero, home background/parallax decoration, two-part Labs section, redesigned lab cards
-      — current literal values and the missing slogan line are tracked as known deviations in `DESIGN_SYSTEM.md`
+      — the hero slogan is rendered and every type size comes from a token (2026-10-28); only the decorative
+      values are still literal, as allowed by ADR 0012 and listed in `DESIGN_SYSTEM.md`
 - [x] `src/data/profile.ts` as the single source for personal information; empty fields are skipped by the UI
 - [ ] "Stack comparison" section on the home page — paused 2026-10-18, to be done together with 1.5 when real measurements exist
 - [x] Responsive check on mobile (the breakpoint foundation is already in place)
@@ -97,8 +98,8 @@ This document splits the project into phases. Each phase has a work checklist an
 
 ### 1.6 Deploy
 
-- [ ] Connect the repo to Cloudflare Pages (requires a Cloudflare account — step-by-step configuration in README, section "Deploy")
-- [ ] Configure the build for the portal
+- [x] Connect the repo to Cloudflare Pages (portal deployed 2026-10-28 — step-by-step configuration in README, section "Deploy")
+- [x] Configure the build for the portal
 - [ ] Set up a separate Pages project for React Lab — decided 2026-10-20 with ADR 0008, no subpath
 - [ ] Verify branch previews work
 

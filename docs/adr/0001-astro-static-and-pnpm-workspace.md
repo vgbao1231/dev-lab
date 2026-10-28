@@ -19,3 +19,8 @@ Dev Lab is an ecosystem of many specialised labs, and each lab may use a differe
 - A new lab can choose its own stack without affecting the portal.
 - Sharing design tokens between the portal and the labs, as well as how labs are placed (subdomain, subpath, or separate site), **has not been decided**.
 - The portal build runs through Rolldown, so there is a `tsconfig` gotcha (see "Gotchas" in `AGENTS.md`).
+
+## Implementation note (2026-10-28)
+
+The portal is now connected to Cloudflare Pages and deployed. The React Lab Pages project is still
+planned, so "not connected yet" above applies only to the lab now.

@@ -52,8 +52,7 @@ const isLink = Boolean(lab.href);
 <style>
   /*
    * Card lab: border-radius 12px theo reference, padding 10px, gap 10px,
-   * nền surface rất mờ (rgba(255,255,255,.025) trong ref).
-   * Hover nhấc 3px + đổi viền accent.
+   * nền --color-surface. Hover nhấc 3px + đổi viền accent.
    */
   .lab-card {
     position: relative;
@@ -67,19 +66,28 @@ const isLink = Boolean(lab.href);
     text-decoration: none;
     color: inherit;
     transition:
-      border-color 0.3s,
-      background 0.3s,
-      transform 0.35s cubic-bezier(0.22, 0.8, 0.3, 1);
+      border-color var(--duration-fast) var(--ease-standard),
+      background-color var(--duration-fast) var(--ease-standard),
+      transform var(--duration-base) var(--ease-standard);
   }
 
   /*
    * Chỉ lab đã có địa chỉ mới là affordance bấm được: viền đổi sang màu accent
-   * và card nhấc lên 3px (theo reference translateY(-3px), border-color accent rgba).
+   * và card nhấc lên 3px (theo reference translateY(-3px)).
+   * Tách hover (thiết bị có con trỏ thật) khỏi focus-within (bàn phím) để cảm ứng
+   * không dính trạng thái hover.
    */
-  .lab-card--link:hover,
+  @media (hover: hover) and (pointer: fine) {
+    .lab-card--link:hover {
+      border-color: color-mix(in oklab, var(--color-accent) 42%, transparent);
+      background-color: color-mix(in oklab, var(--color-surface) 97%, var(--color-text));
+      transform: translateY(-3px);
+    }
+  }
+
   .lab-card--link:focus-within {
-    border-color: rgba(157, 187, 144, 0.42);
-    background: color-mix(in oklab, var(--color-surface) 100%, white 3%);
+    border-color: color-mix(in oklab, var(--color-accent) 42%, transparent);
+    background-color: color-mix(in oklab, var(--color-surface) 97%, var(--color-text));
     transform: translateY(-3px);
   }
 
@@ -89,9 +97,9 @@ const isLink = Boolean(lab.href);
     }
   }
 
-  /* Cover: gradient decorative từ data.coverBg. Bo góc 8px theo reference. */
+  /* Cover: gradient decorative từ data.coverBg, cùng tỉ lệ 16:9 với cover bài viết. */
   .lab-card__cover {
-    height: 72px;
+    aspect-ratio: 16 / 9;
     border-radius: 8px;
     background-color: var(--color-surface);
     /* coverBg applied inline */
@@ -105,15 +113,16 @@ const isLink = Boolean(lab.href);
   }
 
   /*
-   * Category chip: 0.6875rem (11px) font, rgba(125,154,114,.16) background, #bcd1ad text per the reference.
+   * Category chip: --text-2xs, accent tint derived from the token so it follows
+   * theme × mode instead of using a literal green.
    */
   .lab-card__chip {
     align-self: flex-start;
-    font-size: 0.6875rem;
+    font-size: var(--text-2xs);
     padding: 3px 8px;
     border-radius: 5px;
-    background: rgba(125, 154, 114, 0.16);
-    color: #bcd1ad;
+    background: color-mix(in oklab, var(--color-accent) 16%, transparent);
+    color: color-mix(in oklab, var(--color-accent) 82%, var(--color-text));
   }
 
   /*
@@ -123,7 +132,7 @@ const isLink = Boolean(lab.href);
     font-family: var(--font-serif);
     font-size: var(--text-sm);
     font-weight: 500;
-    color: #efe9d6;
+    color: var(--color-text);
     margin: 0;
   }
 
@@ -141,12 +150,12 @@ const isLink = Boolean(lab.href);
     border-radius: inherit;
   }
 
-  /* Summary: 0.78125rem (12.5px), line-height 1.6, #9a978a, weight 300 per the reference. */
+  /* Summary: --text-2xs, line-height 1.6, muted, weight 300 per the reference. */
   .lab-card__summary {
     margin: 0;
-    font-size: 0.78125rem;
+    font-size: var(--text-2xs);
     line-height: 1.6;
-    color: #9a978a;
+    color: var(--color-text-muted);
     font-weight: 300;
   }
 
@@ -156,7 +165,7 @@ const isLink = Boolean(lab.href);
     align-items: center;
     gap: 8px;
     font-size: var(--text-2xs);
-    color: #9a978a;
+    color: var(--color-text-muted);
     margin: 2px 0 0;
   }
 </style>

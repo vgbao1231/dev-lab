@@ -52,6 +52,14 @@
   --text-display: 3rem;
   /* Brand trên header: chữ display một mình nên cần lớn hơn cỡ chữ UI. */
   --text-brand: 1.75rem;
+  /*
+   * Cỡ chữ theo vai trò, tách khỏi thang body để giữ đúng dáng của trang chủ
+   * (docs/design/typography.md, mục 4). Vẫn là token — không hard-code trong component.
+   */
+  --text-hero: clamp(3.5rem, 8vw, 5.75rem);
+  --text-note: 1.375rem;
+  --text-h2-home: 1.75rem;
+  --text-h1-mobile: 1.875rem;
 
   /*
    * Bố cục — docs/DESIGN_SYSTEM.md mục 5.

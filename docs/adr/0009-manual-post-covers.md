@@ -28,8 +28,8 @@ image optimisation pipeline.
   `import.meta.glob(..., { query: '?raw', import: 'default' })`. This lets the SVG use CSS custom
   properties (`--color-surface`, `--color-accent`, …) and follow the theme/mode automatically.
 - `PostCover.astro` is the only place that renders a cover. If a post has no `cover`, the component
-  renders a monogram fallback from the first letter of the title; the fallback does not create a fake
-  alt and is not a link.
+  renders a monogram fallback from up to two initials (the first letters of the first two words, e.g.
+  `RF`); the fallback does not create a fake alt and is not a link.
 - Covers use a 16:9 ratio, at the top of the card; images in the post body are not used as covers.
 - Adding a cover is a deliberate change: add the SVG file, add the key to `covers.ts`, and use it in
   frontmatter. Arbitrary paths in frontmatter are not allowed.

@@ -57,7 +57,7 @@ h3 {
 
 @media (max-width: 560px) {
   h1 {
-    font-size: 1.875rem;
+    font-size: var(--text-h1-mobile);
   }
 }
 
@@ -449,6 +449,9 @@ html[data-mode-preference='dark'] [data-mode-icon='dark'] {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   padding: 0.05rem 0.4rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--color-text-muted);
 }
 
 .stack > * + * {
@@ -585,7 +588,7 @@ html[data-mode-preference='dark'] [data-mode-icon='dark'] {
   border-radius: var(--radius-sm);
   color: var(--color-text-muted);
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-2xs);
   line-height: 1.5;
   white-space: nowrap;
 }
@@ -638,7 +641,7 @@ html[data-mode-preference='dark'] [data-mode-icon='dark'] {
   background-color: var(--color-bg);
   color: var(--color-text-muted);
   font: inherit;
-  font-size: 0.6875rem;
+  font-size: var(--text-2xs);
   line-height: 1.5;
   text-align: center;
 }

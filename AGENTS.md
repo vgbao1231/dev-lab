@@ -2,7 +2,14 @@
 
 Instructions for AI agents (Claude Code, OpenCode, Cursor, Copilot, etc.) working in the Dev Lab repo.
 
-Dev Lab is a static Astro portal plus independent labs under `labs/`, managed as a pnpm workspace. The home page is a personal portfolio; posts are Markdown/MDX in the Astro content collection. **Current phase: Phase 1 — Foundation and the first React lab**; see the top of `docs/ROADMAP.md` for the live status and open items.
+## Project at a glance
+
+- **What:** a static Astro portal (personal portfolio + technical blog) plus independent labs in a pnpm workspace. The portal introduces and links to the labs; each lab is its own app.
+- **Stack:** Astro 7 static output, plain CSS + design tokens, View Transitions + `motion/mini`, content collections (Markdown/MDX). No backend, CMS, auth or database.
+- **Shape:** `portal/` is the site, `labs/` holds standalone apps, `packages/tags` is the shared tag registry. Routes: `/`, `/labs`, `/bai-viet`, `/bai-viet/<slug>`, `/lien-he`.
+- **Current phase:** Phase 1 — Foundation and the first React lab. Live status and open items: top of `docs/ROADMAP.md`. Known doc/code gaps: `docs/DESIGN_SYSTEM.md`.
+- **Decisions:** one-line index in `docs/adr/README.md` — static Astro + workspace, two-axis theme/mode, sticky capsule header, View Transitions, shared tags, search palette, home layout/parallax, manual SVG covers, reading progress.
+- **Source of truth:** docs decide, code implements. Values live in `docs/design/*`; ADRs keep only the reasoning.
 
 ## Language policy
 
@@ -41,17 +48,18 @@ This repo separates product language from project language.
 
 Do not read all of `docs/`. Pick by task:
 
-| Task                                                       | Read                                                                         |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Colour, theme, colour tokens                               | `docs/design/theme.md`                                                       |
-| Fonts, type scale                                          | `docs/design/typography.md`                                                  |
-| Page layout, header, footer, breakpoints                   | `docs/design/layout.md`                                                      |
-| Components: cards, tag, link, button, facts table, selects | `docs/design/components.md`                                                  |
-| Post detail page (table of contents, progress, `#` button) | `docs/design/post-page.md`                                                   |
-| Animation, hover, View Transitions                         | `docs/design/motion.md`                                                      |
-| Writing or editing a post                                  | `portal/src/content.config.ts`, `portal/src/data/content.ts`, `docs/TAGS.md` |
-| Proposing a feature or a new lab                           | `docs/PROJECT_OVERVIEW.md`, top of `docs/ROADMAP.md`                         |
-| Why the project is built this way                          | `docs/adr/`                                                                  |
+| Task                                                             | Read                                                                         |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| New to the project / orientation                                 | "Project at a glance" above + `docs/adr/README.md`                           |
+| Colour, theme, colour tokens                                     | `docs/design/theme.md`                                                       |
+| Fonts, type scale                                                | `docs/design/typography.md`                                                  |
+| Page layout, header, footer, breakpoints                         | `docs/design/layout.md`                                                      |
+| Components: cards, tag, link, button, facts table, mode dropdown | `docs/design/components.md`                                                  |
+| Post detail page (table of contents, progress, `#` button)       | `docs/design/post-page.md`                                                   |
+| Animation, hover, View Transitions                               | `docs/design/motion.md`                                                      |
+| Writing or editing a post                                        | `portal/src/content.config.ts`, `portal/src/data/content.ts`, `docs/TAGS.md` |
+| Proposing a feature or a new lab                                 | `docs/PROJECT_OVERVIEW.md`, top of `docs/ROADMAP.md`                         |
+| Why the project is built this way                                | `docs/adr/`                                                                  |
 
 Code comments say "`docs/DESIGN_SYSTEM.md` section N"; the table at the top of that file maps section N to the topic file.
 
@@ -104,7 +112,7 @@ If a request contradicts the documentation, ask the user instead of deciding uni
 - Elements inserted by JavaScript (the `#` button on post headings) have no `data-astro-cid`: keep their styles in `global.css`, not in a scoped `<style>` block.
 - The "About me" and "Other projects" sections are hidden entirely when `profile.ts` has no data: do not render an empty block or a placeholder sentence.
 - `profile.ts` contains only information approved for public display. As of 2026-10-19: name, role, location, email and GitHub are approved; LinkedIn, CV and avatar are not.
-- The home page currently has known documentation/code deviations (hard-coded colours, a missing slogan line, section order, decoration counts). Read the "Known deviations" section in `docs/DESIGN_SYSTEM.md` before changing the home page.
+- The home page currently has one known documentation/code deviation (hard-coded decoration counts and timings, allowed only there by ADR 0012). Read the "Known deviations" section in `docs/DESIGN_SYSTEM.md` before changing the home page.
 
 ## Definition of "done"
 

@@ -2,32 +2,84 @@
 import Icon from './Icon.astro';
 import { availableThemes } from '../data/themes';
 
-// Hai trục độc lập: mode (sáng / tối / hệ thống) và theme (Minimalist Editorial, ...).
-// Giá trị được ghi vào <html data-mode data-theme> và lưu ở localStorage.
-// Bộ chọn theme chỉ hiện khi có từ hai theme trở lên — xem docs/DESIGN_SYSTEM.md mục 1.
+// Two independent axes: mode (system / light / dark) and theme (Minimalist Editorial, ...).
+// Values are written to <html data-mode data-theme> and stored in localStorage.
+// The theme picker only appears when two or more themes exist — see docs/DESIGN_SYSTEM.md section 1.
+// The mode picker collapses into one icon button that opens a menu — see
+// docs/design/components.md, "Theme / mode selector".
 const showThemeSelector = availableThemes.length > 1;
 ---
 
 <div class="theme-toggle">
-  <label class="theme-toggle__field">
-    <span class="theme-toggle__label">Chế độ</span>
-    <span class="theme-toggle__icon" aria-hidden="true">
-      <span data-mode-icon="system">
-        <Icon name="monitor" size={14} />
+  <div class="mode-menu" data-mode-menu>
+    <button
+      class="mode-menu__trigger"
+      type="button"
+      data-mode-trigger
+      aria-haspopup="menu"
+      aria-controls="mode-menu-panel"
+      aria-expanded="false"
+      aria-label="Chế độ: Hệ thống"
+    >
+      <span class="mode-menu__icon" aria-hidden="true">
+        <span data-mode-icon="system">
+          <Icon name="monitor" size={16} />
+        </span>
+        <span data-mode-icon="light">
+          <Icon name="sun" size={16} />
+        </span>
+        <span data-mode-icon="dark">
+          <Icon name="moon" size={16} />
+        </span>
       </span>
-      <span data-mode-icon="light">
-        <Icon name="sun" size={14} />
-      </span>
-      <span data-mode-icon="dark">
-        <Icon name="moon" size={14} />
-      </span>
-    </span>
-    <select data-mode-set>
-      <option value="system">Hệ thống</option>
-      <option value="light">Sáng</option>
-      <option value="dark">Tối</option>
-    </select>
-  </label>
+    </button>
+
+    <div
+      class="mode-menu__panel"
+      id="mode-menu-panel"
+      data-mode-panel
+      role="menu"
+      aria-label="Chọn chế độ hiển thị"
+      hidden
+    >
+      <button
+        class="mode-menu__option"
+        type="button"
+        role="menuitemradio"
+        aria-checked="true"
+        data-mode-option="system"
+      >
+        <span class="mode-menu__option-icon" aria-hidden="true">
+          <Icon name="monitor" size={14} />
+        </span>
+        Hệ thống
+      </button>
+      <button
+        class="mode-menu__option"
+        type="button"
+        role="menuitemradio"
+        aria-checked="false"
+        data-mode-option="light"
+      >
+        <span class="mode-menu__option-icon" aria-hidden="true">
+          <Icon name="sun" size={14} />
+        </span>
+        Sáng
+      </button>
+      <button
+        class="mode-menu__option"
+        type="button"
+        role="menuitemradio"
+        aria-checked="false"
+        data-mode-option="dark"
+      >
+        <span class="mode-menu__option-icon" aria-hidden="true">
+          <Icon name="moon" size={14} />
+        </span>
+        Tối
+      </button>
+    </div>
+  </div>
 
   {showThemeSelector && (
     <label class="theme-toggle__field">
@@ -45,14 +97,22 @@ const showThemeSelector = availableThemes.length > 1;
   const STORAGE_MODE = 'dev-lab:mode';
   const STORAGE_THEME = 'dev-lab:theme';
 
+  const MODE_LABELS = {
+    system: 'Hệ thống',
+    light: 'Sáng',
+    dark: 'Tối',
+  } as const;
+
+  type ModePreference = keyof typeof MODE_LABELS;
+
   const root = document.documentElement;
   const media = window.matchMedia('(prefers-color-scheme: dark)');
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /*
-   * Đổi theme/mode chạy trong một view transition để màu cross-fade cho đều cả trang.
-   * Mặc định chỉ cross-fade phần nội dung (xem global.css), nên phải bật cờ
-   * `data-theme-transition` trên <html> để lúc này cả trang là một khối màu duy nhất.
+   * Changing mode/theme runs inside a view transition so colors cross-fade across the
+   * whole page. By default only the content cross-fades (see global.css), so set the
+   * `data-theme-transition` flag on <html> to treat the page as one color block.
    */
   const withViewTransition = (update: () => void): void => {
     if (!document.startViewTransition || prefersReducedMotion) {
@@ -70,18 +130,18 @@ const showThemeSelector = availableThemes.length > 1;
       const transition = document.startViewTransition(update);
       void transition.finished.then(clearFlag, clearFlag);
     } catch {
-      // Có thể trùng với view transition của điều hướng đang chạy.
+      // May overlap with a navigation view transition that is already running.
       clearFlag();
       update();
     }
   };
 
-  const readModePreference = (): 'light' | 'dark' | 'system' => {
+  const readModePreference = (): ModePreference => {
     const value = root.dataset.modePreference;
     return value === 'light' || value === 'dark' ? value : 'system';
   };
 
-  const applyMode = (preference: 'light' | 'dark' | 'system') => {
+  const applyMode = (preference: ModePreference) => {
     const mode = preference === 'system' ? (media.matches ? 'dark' : 'light') : preference;
     root.dataset.modePreference = preference;
     root.dataset.mode = mode;
@@ -91,16 +151,59 @@ const showThemeSelector = availableThemes.length > 1;
     root.dataset.theme = theme;
   };
 
+  const getMenuParts = (menu: HTMLElement) => {
+    const trigger = menu.querySelector<HTMLButtonElement>('[data-mode-trigger]');
+    const panel = menu.querySelector<HTMLElement>('[data-mode-panel]');
+    const options = [...menu.querySelectorAll<HTMLButtonElement>('[data-mode-option]')];
+    return { trigger, panel, options };
+  };
+
+  const closeModeMenu = (menu: HTMLElement, moveFocus = false) => {
+    const { trigger, panel } = getMenuParts(menu);
+    if (!trigger || !panel) return;
+
+    const wasOpen = !panel.hidden;
+    panel.hidden = true;
+    trigger.setAttribute('aria-expanded', 'false');
+    if (wasOpen && moveFocus) trigger.focus();
+  };
+
+  const openModeMenu = (menu: HTMLElement, focus?: 'first' | 'last' | 'selected') => {
+    const { trigger, panel, options } = getMenuParts(menu);
+    if (!trigger || !panel) return;
+
+    panel.hidden = false;
+    trigger.setAttribute('aria-expanded', 'true');
+
+    if (!focus) return;
+
+    const target =
+      focus === 'first'
+        ? options[0]
+        : focus === 'last'
+          ? options[options.length - 1]
+          : (options.find((option) => option.getAttribute('aria-checked') === 'true') ??
+            options[0]);
+    target?.focus();
+  };
+
   /*
-   * Luôn truy vấn DOM tại thời điểm gọi: <select> được render lại khi chuyển trang,
-   * nên không giữ tham chiếu tới phần tử của trang cũ.
+   * Always query the DOM when called: the header is persisted across navigation, but a
+   * hard reload can replace it, and the theme picker only renders for some themes.
    */
   const syncState = () => {
     const preference = readModePreference();
     const theme = root.dataset.theme ?? '';
 
-    for (const select of document.querySelectorAll<HTMLSelectElement>('select[data-mode-set]')) {
-      select.value = preference;
+    for (const trigger of document.querySelectorAll<HTMLButtonElement>('[data-mode-trigger]')) {
+      const menu = trigger.closest<HTMLElement>('[data-mode-menu]');
+      const panel = menu ? getMenuParts(menu).panel : null;
+      trigger.setAttribute('aria-label', `Chế độ: ${MODE_LABELS[preference]}`);
+      trigger.setAttribute('aria-expanded', String(panel ? !panel.hidden : false));
+    }
+
+    for (const option of document.querySelectorAll<HTMLButtonElement>('[data-mode-option]')) {
+      option.setAttribute('aria-checked', String(option.dataset.modeOption === preference));
     }
 
     for (const select of document.querySelectorAll<HTMLSelectElement>('select[data-theme-set]')) {
@@ -108,37 +211,146 @@ const showThemeSelector = availableThemes.length > 1;
     }
   };
 
+  const setModePreference = (preference: ModePreference) => {
+    withViewTransition(() => {
+      applyMode(preference);
+      localStorage.setItem(STORAGE_MODE, preference);
+      syncState();
+    });
+  };
+
   /*
-   * Uỷ quyền sự kiện ở document thay vì gắn vào từng <select>: listener trên document
-   * tồn tại qua mọi lần chuyển trang.
+   * Delegate on document instead of binding each control: the listener survives every
+   * navigation and works on markup rendered by a later page load.
    */
-  document.addEventListener('change', (event) => {
+  document.addEventListener('click', (event) => {
     const target = event.target;
-    if (!(target instanceof HTMLSelectElement)) return;
+    if (!(target instanceof Element)) return;
 
-    const modeValue = target.dataset.modeSet;
-    if (modeValue !== undefined) {
-      if (modeValue !== 'light' && modeValue !== 'dark' && modeValue !== 'system') return;
+    const trigger = target.closest<HTMLButtonElement>('[data-mode-trigger]');
+    if (trigger) {
+      const menu = trigger.closest<HTMLElement>('[data-mode-menu]');
+      if (!menu) return;
 
-      withViewTransition(() => {
-        applyMode(modeValue);
-        localStorage.setItem(STORAGE_MODE, modeValue);
-        syncState();
-      });
+      const { panel } = getMenuParts(menu);
+      if (!panel) return;
+
+      if (panel.hidden) openModeMenu(menu, event.detail === 0 ? 'selected' : undefined);
+      else closeModeMenu(menu, true);
       return;
     }
 
-    const themeValue = target.dataset.themeSet;
-    if (themeValue) {
-      withViewTransition(() => {
-        applyTheme(themeValue);
-        localStorage.setItem(STORAGE_THEME, themeValue);
-        syncState();
-      });
+    const option = target.closest<HTMLButtonElement>('[data-mode-option]');
+    if (option) {
+      const value = option.dataset.modeOption;
+      if (value !== 'system' && value !== 'light' && value !== 'dark') return;
+
+      setModePreference(value);
+      const menu = option.closest<HTMLElement>('[data-mode-menu]');
+      if (menu) closeModeMenu(menu, true);
+      return;
+    }
+
+    // Click outside: close any open menu.
+    for (const menu of document.querySelectorAll<HTMLElement>('[data-mode-menu]')) {
+      closeModeMenu(menu);
     }
   });
 
-  // Chỉ theo dõi hệ thống khi người dùng chọn "Hệ thống"
+  document.addEventListener('keydown', (event) => {
+    const target = event.target;
+
+    if (event.key === 'Escape') {
+      const openMenu = document
+        .querySelector<HTMLElement>('[data-mode-panel]:not([hidden])')
+        ?.closest<HTMLElement>('[data-mode-menu]');
+
+      if (!openMenu) return;
+      event.preventDefault();
+      closeModeMenu(openMenu, true);
+      return;
+    }
+
+    if (!(target instanceof Element)) return;
+    const menu = target.closest<HTMLElement>('[data-mode-menu]');
+    if (!menu) return;
+
+    const { panel, options } = getMenuParts(menu);
+    if (!panel) return;
+
+    if (panel.hidden) {
+      if (
+        (event.key === 'ArrowDown' || event.key === 'ArrowUp') &&
+        target.closest('[data-mode-trigger]')
+      ) {
+        event.preventDefault();
+        openModeMenu(menu, event.key === 'ArrowDown' ? 'first' : 'last');
+      }
+      return;
+    }
+
+    if (event.key === 'Tab') {
+      closeModeMenu(menu);
+      return;
+    }
+
+    /*
+     * The menu can already be open while focus is still on the trigger (it was opened
+     * with the mouse). Arrow keys should then move into the options instead of doing
+     * nothing.
+     */
+    if (
+      (event.key === 'ArrowDown' || event.key === 'ArrowUp') &&
+      target.closest('[data-mode-trigger]')
+    ) {
+      event.preventDefault();
+      options[event.key === 'ArrowDown' ? 0 : options.length - 1]?.focus();
+      return;
+    }
+
+    const current = target.closest<HTMLButtonElement>('[data-mode-option]');
+    if (!current || options.length === 0) return;
+
+    const currentIndex = options.indexOf(current);
+    let nextIndex: number;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        nextIndex = (currentIndex + 1) % options.length;
+        break;
+      case 'ArrowUp':
+        nextIndex = (currentIndex - 1 + options.length) % options.length;
+        break;
+      case 'Home':
+        nextIndex = 0;
+        break;
+      case 'End':
+        nextIndex = options.length - 1;
+        break;
+      default:
+        return;
+    }
+
+    event.preventDefault();
+    options[nextIndex]?.focus();
+  });
+
+  document.addEventListener('change', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLSelectElement)) return;
+    if (!target.hasAttribute('data-theme-set')) return;
+
+    const themeValue = target.value;
+    if (!themeValue) return;
+
+    withViewTransition(() => {
+      applyTheme(themeValue);
+      localStorage.setItem(STORAGE_THEME, themeValue);
+      syncState();
+    });
+  });
+
+  // Follow the system only while the preference is "System".
   media.addEventListener('change', () => {
     if (readModePreference() === 'system') {
       applyMode('system');
@@ -147,20 +359,25 @@ const showThemeSelector = availableThemes.length > 1;
   });
 
   /*
-   * Astro ClientRouter thay toàn bộ attribute của <html> bằng bản của trang mới
-   * (swapRootAttributes), nên data-theme/data-mode do JS gán sẽ bị xoá và theme bị
-   * reset sau khi chuyển trang. Chép chúng sang document mới để giữ nguyên.
-   * Cờ .motion-ready thì cố ý không chép: trang mới không chạy lại entrance.
+   * Astro ClientRouter replaces every attribute on <html> with the new page's version
+   * (swapRootAttributes), so data-theme/data-mode set by JS would be lost after a
+   * navigation. Copy them to the new document to keep the current choice. The
+   * .motion-ready flag is intentionally not copied: the new page must not replay the
+   * entrance animation.
    */
   document.addEventListener('astro:before-swap', (event) => {
     const nextRoot = event.newDocument.documentElement;
     if (root.dataset.theme) nextRoot.dataset.theme = root.dataset.theme;
     if (root.dataset.mode) nextRoot.dataset.mode = root.dataset.mode;
     if (root.dataset.modePreference) nextRoot.dataset.modePreference = root.dataset.modePreference;
+
+    for (const menu of document.querySelectorAll<HTMLElement>('[data-mode-menu]')) {
+      closeModeMenu(menu);
+    }
   });
 
-  // Sau mỗi lần chuyển trang, <select> được render lại: đặt lại giá trị đang chọn.
-  // astro:page-load cũng bắn ở lần tải đầu tiên.
+  // After each navigation the persisted header keeps its DOM, but the theme picker may
+  // differ; run on first load too.
   document.addEventListener('astro:page-load', syncState);
 
   syncState();
@@ -172,6 +389,96 @@ const showThemeSelector = availableThemes.length > 1;
     flex-wrap: wrap;
     align-items: center;
     gap: 8px 12px;
+  }
+
+  .mode-menu {
+    position: relative;
+  }
+
+  .mode-menu__trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.125rem;
+    height: 2.125rem;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: color-mix(in oklab, var(--color-surface) 70%, transparent);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition:
+      border-color var(--duration-fast) var(--ease-standard),
+      color var(--duration-fast) var(--ease-standard);
+  }
+
+  .mode-menu__trigger:hover,
+  .mode-menu__trigger[aria-expanded='true'] {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .mode-menu__icon {
+    display: inline-flex;
+  }
+
+  .mode-menu__panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    z-index: 1;
+    min-width: 10rem;
+    padding: 0.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-surface);
+    box-shadow: 0 0.75rem 2rem color-mix(in oklab, var(--color-text) 14%, transparent);
+  }
+
+  .mode-menu__panel[hidden] {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mode-menu__panel {
+      animation: mode-menu-in var(--duration-fast) var(--ease-standard);
+    }
+  }
+
+  @keyframes mode-menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-0.25rem);
+    }
+  }
+
+  .mode-menu__option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.45rem 0.5rem;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background-color: transparent;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) var(--ease-standard),
+      color var(--duration-fast) var(--ease-standard);
+  }
+
+  .mode-menu__option:hover,
+  .mode-menu__option[aria-checked='true'] {
+    background-color: color-mix(in oklab, var(--color-accent) 12%, transparent);
+    color: var(--color-text);
+  }
+
+  .mode-menu__option-icon {
+    display: inline-flex;
   }
 
   .theme-toggle__field {
@@ -188,14 +495,9 @@ const showThemeSelector = availableThemes.length > 1;
     color: var(--color-text-muted);
   }
 
-  .theme-toggle__icon {
-    display: inline-flex;
-    color: var(--color-text-muted);
-  }
-
   /*
-   * Bộ chọn dùng <select> gốc: giữ được hành vi và bàn phím của hệ điều hành, không
-   * phải vẽ lại mũi tên (không hard-code màu trong component).
+   * The theme picker keeps a native <select>: it should keep OS behavior and keyboard
+   * support instead of redrawing the arrow (which would mean hard-coded colors here).
    */
   .theme-toggle select {
     background-color: var(--color-surface);
@@ -213,7 +515,7 @@ const showThemeSelector = availableThemes.length > 1;
     border-color: var(--color-accent);
   }
 
-  /* Header hẹp: ẩn nhãn chữ, giữ <label> cho screen reader. */
+  /* Narrow header: hide the theme text label, keep it for screen readers. */
   @media (max-width: 767px) {
     .theme-toggle__label {
       position: absolute;
@@ -224,6 +526,11 @@ const showThemeSelector = availableThemes.length > 1;
       overflow: hidden;
       clip-path: inset(50%);
       white-space: nowrap;
+    }
+
+    .mode-menu__trigger {
+      border-color: transparent;
+      background-color: transparent;
     }
   }
 </style>

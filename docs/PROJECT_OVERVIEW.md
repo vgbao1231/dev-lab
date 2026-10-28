@@ -100,7 +100,7 @@ Detailed rationale in [`adr/`](adr/README.md).
 - **Labs**: each lab is an independent app in `labs/`, and may have its own stack, repo and deploy process. First lab: `react-lab` (React, TypeScript, Vite).
 - **Content**: Markdown/MDX in the `posts` content collection; frontmatter schema in `portal/src/content.config.ts`.
 - **Design**: theme and mode are two independent axes ([ADR 0002](adr/0002-theme-mode-independent-axes.md)); phase 1 implements only the Minimalist Editorial theme. Tokens and rules in `docs/DESIGN_SYSTEM.md`.
-- **Hosting (planned, not connected)**: Cloudflare Pages.
+- **Hosting**: Cloudflare Pages — the portal is deployed; React Lab is not deployed yet.
 - **Lab placement**: each lab is its own Cloudflare Pages project, built from the same repo, and the portal links to it with absolute URLs ([ADR 0008](adr/0008-one-pages-project-per-lab.md)). Configuration in README, section "Deploy".
 
 ## 10. Undecided items

@@ -175,7 +175,7 @@ const dustParticles = [
               height="18"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#9dbb90"
+              stroke="currentColor"
               stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -188,6 +188,12 @@ const dustParticles = [
             {profile.name}
           </h1>
           {profile.tagline && <p class="hero-tagline">{profile.tagline}</p>}
+          {profile.slogan && (
+            <p class="hero-slogan">
+              <span aria-hidden="true">// </span>
+              {profile.slogan}
+            </p>
+          )}
           {/* Ba lối vào chính; cả ba đều có mũi tên để cùng một kiểu. */}
           <p class="link-row">
             <a href="/labs">
@@ -221,30 +227,29 @@ const dustParticles = [
             <svg width="340" height="230" viewBox="0 0 340 230" fill="none">
               <defs>
                 <radialGradient id="g1" cx="50%" cy="60%" r="50%">
-                  <stop offset="0" stop-color="#7f9c74" stop-opacity=".28" />
-                  <stop offset="1" stop-color="#7f9c74" stop-opacity="0" />
+                  <stop class="sprout-glow" offset="0" stop-opacity=".28" />
+                  <stop class="sprout-glow" offset="1" stop-opacity="0" />
                 </radialGradient>
                 {/* Gradient g2 của gò đất: mờ dần về opacity 0 ở đáy để hòa quyện êm ái vào nền */}
                 <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#2c3123" stop-opacity="1" />
-                  <stop offset="45%" stop-color="#22271c" stop-opacity="0.9" />
-                  <stop offset="75%" stop-color="#161b11" stop-opacity="0.45" />
-                  <stop offset="100%" stop-color="#0b0d09" stop-opacity="0" />
+                  <stop class="sprout-soil--top" offset="0%" stop-opacity="1" />
+                  <stop class="sprout-soil--mid" offset="45%" stop-opacity="0.9" />
+                  <stop class="sprout-soil--low" offset="75%" stop-opacity="0.45" />
+                  <stop class="sprout-soil--base" offset="100%" stop-opacity="0" />
                 </linearGradient>
               </defs>
               <ellipse cx="170" cy="90" rx="130" ry="90" fill="url(#g1)" />
               <path d="M10 225C50 168 110 148 170 156C230 148 292 172 330 225Z" fill="url(#g2)" />
               <path
+                class="sprout-stem"
                 d="M170 158C166 128 172 100 166 66"
-                stroke="#7f9c74"
                 stroke-width="3"
                 stroke-linecap="round"
               />
-              <path d="M166 70C140 58 130 38 136 18C162 24 174 46 166 70Z" fill="#5d7854" />
+              <path class="sprout-leaf" d="M166 70C140 58 130 38 136 18C162 24 174 46 166 70Z" />
               <path
+                class="sprout-leaf--soft"
                 d="M168 96C190 88 204 70 202 52C180 56 166 74 168 96Z"
-                fill="#7f9c74"
-                fill-opacity=".85"
               />
             </svg>
           </div>
@@ -319,7 +324,7 @@ const dustParticles = [
               height="26"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#9dbb90"
+              stroke="currentColor"
               stroke-width="1.4"
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -427,16 +432,15 @@ const dustParticles = [
    */
   :global(body:has(.home-wrapper)) {
     position: relative;
-    background:
-      radial-gradient(ellipse 90% 38% at 50% 0%, rgba(38, 50, 28, 0.55), rgba(11, 13, 9, 0) 70%),
-      #0b0d09;
-  }
-
-  :global(html[data-mode='light'] body:has(.home-wrapper)) {
+    /*
+     * Accent mixed into the page background instead of a literal moss colour, so the
+     * gradient follows theme × mode like every other surface. Both modes get the same
+     * recipe, only the token values change.
+     */
     background:
       radial-gradient(
         ellipse 90% 38% at 50% 0%,
-        color-mix(in oklab, var(--color-accent) 8%, transparent),
+        color-mix(in oklab, var(--color-accent) 14%, transparent),
         transparent 70%
       ),
       var(--color-bg);
@@ -445,12 +449,8 @@ const dustParticles = [
   .home-wrapper {
     position: relative;
     overflow: hidden;
-    color: #e9e5d3;
-    font-family: var(--font-sans);
-  }
-
-  :global(html[data-mode='light']) .home-wrapper {
     color: var(--color-text);
+    font-family: var(--font-sans);
   }
 
   /*
@@ -613,45 +613,67 @@ const dustParticles = [
   }
 
   /*
-   * Greeting line "Xin chào, tui là": leaf icon + 0.9375rem (15px) text, #cfcab8.
+   * Greeting line "Xin chào, tui là": leaf icon in accent + muted text.
    */
   .hero-greeting {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 0.9375rem;
-    color: #cfcab8;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
     margin-bottom: 2px;
   }
 
   .hero-greeting svg {
     flex-shrink: 0;
-    color: #9dbb90;
+    color: var(--color-accent);
   }
 
   /*
-   * Hero name: Caveat, cursive, up to 5.75rem (92px) via clamp for mobile, #f1ecd9 per the reference.
+   * Hero name: Caveat, cursive, role token --text-hero (clamp down to 3.5rem on mobile).
    */
   .hero-name {
     font-family: var(--font-caveat), cursive;
     font-weight: 400;
-    font-size: clamp(3.5rem, 8vw, 5.75rem);
+    font-size: var(--text-hero);
     line-height: 1.05;
-    color: #f1ecd9;
+    color: var(--color-text);
     letter-spacing: 0.01em;
     margin: 2px 0 6px;
   }
 
   /*
-   * Tagline under the name: 0.9375rem (15px), line-height 1.75, max-width 360px, #aaa799, weight 300.
+   * Tagline under the name: --text-base, line-height 1.75, max-width 360px, weight 300.
    */
   .hero-tagline {
     max-width: 360px;
-    font-size: 0.9375rem;
+    font-size: var(--text-base);
     line-height: 1.75;
-    color: #aaa799;
+    color: var(--color-text-muted);
     font-weight: 300;
-    margin: 0 0 28px;
+    margin: 0;
+  }
+
+  /*
+   * Motto: a comment-style note in accent under the tagline. The `//` marker is
+   * aria-hidden so screen readers only hear the sentence.
+   */
+  .hero-slogan {
+    max-width: 360px;
+    margin: 10px 0 0;
+    font-size: var(--text-base);
+    line-height: 1.6;
+    color: var(--color-accent);
+  }
+
+  /*
+   * Space before the CTA row must not depend on whether the tagline or slogan is
+   * present: whichever element comes last gets the gap.
+   */
+  .hero-tagline + .link-row,
+  .hero-slogan + .link-row,
+  .hero-name + .link-row {
+    margin-top: 28px;
   }
 
   .hero-visual {
@@ -671,20 +693,57 @@ const dustParticles = [
   }
 
   /*
-   * Note "Small steps / Big progress": Caveat, 1.375rem (22px), line-height 1.15, #b4b09f, rotate -10deg.
+   * Note "Small steps / Big progress": Caveat, --text-note, line-height 1.15, rotate -10deg.
    */
   .hero-note {
     position: absolute;
     right: 6%;
     top: 18%;
     font-family: var(--font-caveat), cursive;
-    font-size: 1.375rem;
+    font-size: var(--text-note);
     line-height: 1.15;
-    color: #b4b09f;
+    color: var(--color-text-muted);
     rotate: -10deg;
     transform-origin: left center;
     margin: 0;
     pointer-events: none;
+  }
+
+  /*
+   * Sprout illustration: every fill/stroke is derived from the accent token, so the
+   * drawing keeps the same shape in light and dark without a second colour table.
+   */
+  .sprout-glow {
+    stop-color: var(--color-accent);
+  }
+
+  .sprout-soil--top {
+    stop-color: color-mix(in oklab, var(--color-accent) 26%, var(--color-bg));
+  }
+
+  .sprout-soil--mid {
+    stop-color: color-mix(in oklab, var(--color-accent) 16%, var(--color-bg));
+  }
+
+  .sprout-soil--low {
+    stop-color: color-mix(in oklab, var(--color-accent) 7%, var(--color-bg));
+  }
+
+  .sprout-soil--base {
+    stop-color: var(--color-bg);
+  }
+
+  .sprout-stem {
+    stroke: var(--color-accent);
+  }
+
+  .sprout-leaf {
+    fill: var(--color-accent);
+  }
+
+  .sprout-leaf--soft {
+    fill: color-mix(in oklab, var(--color-accent) 72%, var(--color-bg));
+    fill-opacity: 0.85;
   }
 
   /* ─── Labs section layout ───────────────────────────────────────────── */
@@ -704,21 +763,25 @@ const dustParticles = [
     display: flex;
     align-items: center;
     gap: 14px;
-    color: #efe9d6;
+    color: var(--color-text);
+  }
+
+  .labs-sidebar__heading svg {
+    color: var(--color-accent);
   }
 
   .labs-sidebar__heading h2 {
     margin: 0;
     font-family: var(--font-serif), serif;
     font-weight: 400;
-    font-size: 1.75rem;
-    color: #efe9d6;
+    font-size: var(--text-h2-home);
+    color: var(--color-text);
   }
 
   .labs-sidebar__desc {
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
     line-height: 1.7;
-    color: #a29f92;
+    color: var(--color-text-muted);
     font-weight: 300;
     margin: 16px 0 24px;
   }
@@ -727,14 +790,14 @@ const dustParticles = [
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.8125rem;
-    color: #efe9d6;
+    font-size: var(--text-xs);
+    color: var(--color-text);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color var(--duration-fast) var(--ease-standard);
   }
 
   .labs-sidebar__link:hover {
-    color: #b9d3aa;
+    color: var(--color-accent);
     background-image: none;
   }
 </style>
