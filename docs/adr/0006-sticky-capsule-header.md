@@ -18,6 +18,12 @@ The header was rebuilt in the style of `ngockhoi96.dev` (an addition beyond `des
 
 Measurements in headless Chrome at 1280px: at 24px with `line-height: normal`, the brand's line box is 32px and determines the bar height (header 62px). At 28px with `line-height: 1`, the line box is 28px, so the tallest element becomes the nav and the header drops to 60.4px. 32px is the largest size that still keeps 62px, but the glyphs are then as large as `h1`.
 
+## Implementation note (2026-10-29)
+
+The 12px inset is kept, but `.site-header::before` is gone. The gap is transparent, so page content can
+pass behind the floating capsule; the opaque strip used to show as an extra band over the home-page gradient
+and was removed after visual review. The rest of the decision above still stands.
+
 ## Consequences
 
 - Changing the brand size within 28–32px does not trigger any other changes.

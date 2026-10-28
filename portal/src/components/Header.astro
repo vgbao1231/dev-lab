@@ -160,21 +160,6 @@ const isActive = (href: string) => currentPath.startsWith(href);
   }
 
   /*
-   * Khi đã cuộn, capsule được đẩy xuống một khoảng bằng `--header-inset`. Khoảng hở đó
-   * nằm trong luồng nên nội dung đang trôi phía sau sẽ lộ ra, cần một dải nền đục che
-   * lại. Đặt trên pseudo-element `position: absolute` nên không làm đổi chiều cao
-   * header — không reflow. Ở trạng thái đầu, capsule phủ lên dải này nên không thấy.
-   */
-  .site-header::before {
-    content: '';
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: var(--header-inset);
-    background-color: var(--color-bg);
-  }
-
-  /*
    * Cuộn xuống: header trượt lên khỏi màn hình. Trừ thêm `--header-inset` vì capsule
    * nhô ra dưới đáy header đúng một khoảng bằng nó, cộng thêm 2px để chắc chắn không
    * còn sót một vệt mảnh do làm tròn dưới pixel.
@@ -235,10 +220,11 @@ const isActive = (href: string) => currentPath.startsWith(href);
 
   /*
    * Đã cuộn: nền bán trong suốt + blur để nội dung trôi phía dưới, thanh thu lại thành
-   * capsule (hẹp hơn, bo góc, đủ viền) và hạ xuống `--header-inset`. Đây là ngoại lệ có
-   * chủ ý của quy tắc "chỉ animate opacity/transform": chỉ một phần tử nhỏ, chỉ đổi
-   * kích thước theo chiều ngang và dịch chuyển bằng `top` (đều không làm đổi chiều cao
-   * trang), và chỉ chạy khi vượt ngưỡng cuộn.
+   * capsule (hẹp hơn, bo góc, đủ viền) và hạ xuống `--header-inset`. Khe hở phía trên
+   * để trong suốt — nội dung được phép lộ ra, tạo cảm giác capsule trôi nổi. Đây là
+   * ngoại lệ có chủ ý của quy tắc "chỉ animate opacity/transform": chỉ một phần tử nhỏ,
+   * chỉ đổi kích thước theo chiều ngang và dịch chuyển bằng `top` (đều không làm đổi
+   * chiều cao trang), và chỉ chạy khi vượt ngưỡng cuộn.
    */
   html[data-scrolled='true'] .site-header__bar {
     background-color: color-mix(in oklab, var(--color-bg) 86%, transparent);
