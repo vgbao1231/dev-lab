@@ -59,41 +59,30 @@ Section numbers 1–9 stay as in the original, because comments in the code stil
 - [ ] Lab card without an address: no hover, no pointer cursor
 - [ ] `filled` button uses `color-mix`, not a hard-coded darker accent color
 
-## Known deviations (2026-10-25)
+## Known deviations (2026-10-28)
 
 The following are real mismatches between this documentation and the current code. They are listed so
 nobody mistakes them for approved patterns. Fix them; do not add new ones.
 
-1. **Home decoration is an accepted exception, but its values are hard-coded.** The home page uses a
-   background gradient, six blobs and 62 floating dust particles, with 2.4–2.8s transitions and
-   infinite keyframes. This is allowed only for the home page by [ADR 0012](adr/0012-home-layout-and-parallax.md),
-   and only as long as the decoration is `aria-hidden` and disabled under `prefers-reduced-motion`.
-   The numbers in ADR 0012 and `CHANGELOG.md` (four blobs, 65 particles) are historical and no longer
-   match the code.
-2. **The home page and lab card still use literal values instead of tokens.** `portal/src/pages/index.astro`
-   and `portal/src/components/LabCard.astro` contain literal colours (`#0b0d09`, `#efe9d6`,
-   `#9a978a`, `#bcd1ad`, and others), type sizes (`0.9375rem`, `5.75rem`, `1.375rem`, `0.78125rem`,
-   and others — all expressed in `rem`) and durations
-   (0.3s, 0.35s, 1s, 2.4s, 2.8s). This breaks the token rule in section 4 and the colour rule in
-   `docs/design/theme.md` section 3. It is also a light-mode contrast risk: `LabCard` is rendered on
-   `/labs` outside `.home-wrapper`, so its pale `#efe9d6` title sits on the light `--color-surface`.
-3. **The hero slogan is missing.** `docs/design/layout.md` specifies a `profile.slogan` note line under
-   the tagline, but `portal/src/pages/index.astro` does not render it.
-4. **The home section order differs from the spec.** `docs/design/layout.md` specifies
-   hero → Dev Lab → About me → Labs; the code renders About me before Dev Lab.
-5. **The footer says the site is deployed.** `Footer.astro` renders `Deploy trên Cloudflare`, while
-   Phase 1.6 is still open and `PROJECT_OVERVIEW.md` says hosting is not connected.
+1. **Home decoration is an accepted exception, but its values are hard-coded.** The home page uses
+   six blobs and 62 floating dust particles, with 1s–2.8s transitions and infinite keyframes. This is allowed
+   only for the home page by [ADR 0012](adr/0012-home-layout-and-parallax.md), and only as long as the
+   decoration is `aria-hidden` and disabled under `prefers-reduced-motion`. The numbers in ADR 0012 and
+   `CHANGELOG.md` (four blobs, 65 particles) are historical and no longer match the code.
+2. **One relative size stays literal.** The post-heading `#` copy button keeps `font-size: 0.7em` in
+   `global.css` so it scales with whichever heading it sits in. This is relative to its parent heading,
+   not a step on the type scale.
 
 ## Note: intentional differences from `design-reference/`
 
 `design-reference/` is a reference for layout and color. Its colors match section 2 (Minimalist Editorial + Digital Garden) exactly, so **there are no color differences**. The following points **intentionally do not** follow the reference:
 
-| Point                | Reference                                              | Dev Lab                                                       | Reason                                                            |
-| -------------------- | ------------------------------------------------------ | ------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Display font         | Balsamiq Sans, weight 700                              | Patrick Hand, weight 400                                      | Balsamiq Sans has no Vietnamese subset; Patrick Hand has 1 weight |
-| Theme selector       | 4 combined buttons (2 themes × 2 modes), no "Hệ thống" | 2 independent axes, one `<select>` per axis, keeps "Hệ thống" | Keeps the two-axis model from section 1; native controls for a11y |
-| Post title           | Inter 600, 17px                                        | display font, `--text-2xl`                                    | Inter currently only loads weights 400/500                        |
-| Site structure       | one page, anchor navigation                            | separate pages `/labs`, `/bai-viet`, `/lien-he`               | Content will grow and needs its own URLs                          |
-| Theme names          | short labels `ấm` / `dịu`                              | `Minimalist Editorial` / `Digital Garden`                     | Matches `src/data/themes.ts` and section 2                        |
-| `filled` hover color | (none)                                                 | `color-mix(in oklab, accent 88%, bg)`                         | Does not add a new color variable                                 |
-| Header               | none (no sticky layout)                                | sticky + blurred capsule on scroll + nav pill hover           | Requested addition, inspired by `ngockhoi96.dev`                  |
+| Point                | Reference                                              | Dev Lab                                                                                             | Reason                                                                                                 |
+| -------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Display font         | Balsamiq Sans, weight 700                              | Patrick Hand, weight 400                                                                            | Balsamiq Sans has no Vietnamese subset; Patrick Hand has 1 weight                                      |
+| Theme selector       | 4 combined buttons (2 themes × 2 modes), no "Hệ thống" | 2 independent axes: one icon button + dropdown for mode, one `<select>` for theme, keeps "Hệ thống" | Keeps the two-axis model from section 1; compact header, native control for the rarely used theme axis |
+| Post title           | Inter 600, 17px                                        | display font, `--text-2xl`                                                                          | Inter currently only loads weights 400/500                                                             |
+| Site structure       | one page, anchor navigation                            | separate pages `/labs`, `/bai-viet`, `/lien-he`                                                     | Content will grow and needs its own URLs                                                               |
+| Theme names          | short labels `ấm` / `dịu`                              | `Minimalist Editorial` / `Digital Garden`                                                           | Matches `src/data/themes.ts` and section 2                                                             |
+| `filled` hover color | (none)                                                 | `color-mix(in oklab, accent 88%, bg)`                                                               | Does not add a new color variable                                                                      |
+| Header               | none (no sticky layout)                                | sticky + blurred capsule on scroll + nav pill hover                                                 | Requested addition, inspired by `ngockhoi96.dev`                                                       |

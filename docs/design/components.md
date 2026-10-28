@@ -9,7 +9,7 @@ Two kinds of section headings:
 
 - **Main heading** (`h2`, display font, `--text-xl`): used for the most important section — currently
   "Dev Lab". The home-page Labs sidebar is the intentional exception from [ADR 0012](../adr/0012-home-layout-and-parallax.md):
-  `h2` in Lora `1.75rem`.
+  `h2` in Lora `--text-h2-home`.
 - **Section label (eyebrow)**: JetBrains Mono, `--text-sm`, `uppercase`, `letter-spacing: 0.08em`,
   color `--color-text-muted`. Used for the remaining sections (`Bài viết mới`, `Dự án khác`,
   `Liên hệ`).
@@ -22,15 +22,16 @@ Two kinds of section headings:
 - Background `--color-surface`, border `1px solid var(--color-border)`, 12px radius, 10px padding,
   10px gap, no shadow.
 - Layout (top to bottom):
-  - 72px cover area with 8px radius; its background comes from `coverBg` in `src/data/labs.ts`.
-  - Category chip: `0.6875rem`, `rgba(125, 154, 114, .16)` background, `#bcd1ad` text.
-  - Lab name (`h3`) in Lora `var(--text-sm)`, weight 500, `#efe9d6`.
-  - Summary in `0.78125rem`, `#9a978a`, weight 300.
+  - **16:9** cover area with 8px radius, the same ratio as post covers; its background comes from
+    `coverBg` in `src/data/labs.ts`, so it scales with the card instead of using a fixed height.
+  - Category chip: `--text-2xs`, background `color-mix(in oklab, accent 16%, transparent)`, text
+    `color-mix(in oklab, accent 82%, text)`.
+  - Lab name (`h3`) in Lora `var(--text-sm)`, weight 500, `--color-text`.
+  - Summary in `--text-2xs`, `--color-text-muted`, weight 300.
   - Meta line in `var(--text-2xs)` with a calendar icon and the status label.
-- **Hover** (only when it is a link): border changes to `rgba(157, 187, 144, .42)`, card lifts
-  `translateY(-3px)`.
-- The literal colours and sizes in this section are existing known deviations from the token rule;
-  see "Known deviations" in [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md). Do not copy them to new components.
+- **Hover** (only when it is a link): border changes to `color-mix(in oklab, accent 42%, transparent)`,
+  card lifts `translateY(-3px)`.
+- Colours, type sizes and hover durations all come from tokens; do not introduce literal values.
 
 ### Lab status
 
@@ -41,8 +42,8 @@ Two kinds of section headings:
 
 - JetBrains Mono, `--text-2xs`, color `--color-text-muted`, border `1px solid --color-border`, radius
   `--radius-sm`, padding `0.05rem 0.4rem`, no background color.
-- Declared **once in `global.css`**; used for post tags, the stack in lab cards and the skills list in the
-  "Về mình" section.
+- Declared **once in `global.css`** (font, size, colour and shape), used for post tags and the skills list in
+  the "Về mình" section. Lab cards do not render a stack row.
 - Post tags come from the shared **`@dev-lab/tags`** registry (`packages/tags`), not free-form strings. Frontmatter
   stores the id (`react`, `state-management`); the schema validates, sorts by
   Technology → Domain → Approach, then converts to canonical labels (`React`, `State Management`) before the
@@ -131,9 +132,9 @@ ngọt và gura`). This is text for readers, not a place to paste raw notes back
   sets and no dependency on an image optimization service.
 - Cover colors use tokens only: `--color-surface`, `--color-bg`, `--color-text`,
   `--color-text-muted`, `--color-accent`, `--color-link`, `--color-border`. Do not hard-code colors.
-- Posts without a cover use a monogram fallback: `--color-bg` background with a very light accent tint, the title's first letter
-  in the display font in `--color-accent`, and a muted mono post-type label. The fallback must not create a link
-  or a fake alt.
+- Posts without a cover use a monogram fallback: `--color-bg` background with a very light accent tint, up to
+  two initials from the first two words (e.g. `RF`) in the display font in `--color-accent`, and a muted mono
+  post-type label. The fallback must not create a link or a fake alt.
 
 ### Post card on `/bai-viet`
 
@@ -190,17 +191,29 @@ ngọt và gura`). This is text for readers, not a place to paste raw notes back
 
 ### Theme / mode selector
 
-- Two independent axes, each axis is a `<label>` wrapping a native `<select>`: mono label at `--text-2xs` and
-  mono `<select>` at `--text-2xs`, background `--color-surface`, border `1px --color-border`, radius
-  `--radius-md`; hover changes the border to `--color-accent`.
-- Uses a native `<select>` to keep OS behavior and keyboard support rather than redrawing the arrow
-  (redrawing would mean hard-coding colors in the component).
-- The theme group hides itself when only one theme is available. The text label is hidden below 768px (the
-  `<label>` remains for screen readers).
-- The mode group contains `Hệ thống`, `Sáng`, `Tối`; the theme group lists themes from `src/data/themes.ts`.
-- Before the mode `<select>` there is a 14px icon matching the preference: `monitor` (Hệ thống), `sun` (Sáng), `moon`
-  (Tối). The icon is chosen by CSS based on `html[data-mode-preference]`, no separate JS needed; the icon is decorative
-  so `aria-hidden`.
+- Two independent axes. **Mode** is one 34px square icon button in the header that opens a dropdown menu.
+  **Theme** stays a native `<select>` and only appears when two or more themes exist.
+- The mode trigger shows a 16px icon matching the preference: `monitor` (Hệ thống), `sun` (Sáng), `moon`
+  (Tối). The icon is chosen by CSS based on `html[data-mode-preference]`, so no JS is needed to swap it; it is
+  decorative (`aria-hidden`). The button updates `aria-label` (`Chế độ: <label>`) and `aria-expanded`.
+- Trigger styling: `color-mix(in oklab, surface 70%, transparent)` background, `1px --color-border`,
+  `--radius-md`; hover and open change the border and icon to `--color-accent`. Below 768px it drops the border
+  and background, matching the search button.
+- Menu: `role="menu"` with `role="menuitemradio"` options carrying `aria-checked`, so the selected state is
+  expressed by semantics rather than a detached `.active` class. Each option shows a 14px icon and a mono label
+  at `--text-2xs`.
+- Panel: right-aligned to the trigger, min-width 160px, background `--color-surface`, border `1px --color-border`,
+  radius `--radius-lg`, soft shadow via `color-mix(in oklab, --color-text 14%, transparent)`. The selected option
+  uses a 12% accent background. The open animation uses motion tokens and is skipped under
+  `prefers-reduced-motion`.
+- Clicking the trigger toggles the menu; clicking outside or choosing an option closes it. `ArrowDown` / `ArrowUp`
+  open the menu (or move into it when it is already open) and move between options, `Home` / `End` jump to the
+  ends, `Esc` closes and returns focus to the trigger, and `Tab` closes it.
+- Mode options: `Hệ thống`, `Sáng`, `Tối`; the choice is stored at `dev-lab:mode` and written to
+  `data-mode-preference` / `data-mode` on `<html>`.
+- The theme picker keeps a native `<select>` to keep OS behavior and keyboard support rather than redrawing the
+  arrow (redrawing would mean hard-coding colors in the component). Its text label hides below 768px while the
+  `<label>` remains for screen readers.
 
 ### Search
 

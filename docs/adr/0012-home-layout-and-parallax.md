@@ -33,3 +33,15 @@ The current implementation uses **6** blobs and **62** dust particles, not the 4
 recorded in the context and the 2026-10-24 changelog entry. The decision itself is unchanged. The
 literal colours, sizes and durations used by this page are listed as known deviations in
 `docs/DESIGN_SYSTEM.md`.
+
+## Implementation note (2026-10-28)
+
+- The background is painted on `body:has(.home-wrapper)`, not on `.home-wrapper`, so the header and footer
+  share the same canvas. The gradient is built from `--color-accent` mixed into `--color-bg`, so it follows
+  theme × mode instead of using literal colours.
+- Parallax runs from an immediate `initParallax()` call plus an `astro:page-load` listener; there is no
+  `DOMContentLoaded` listener.
+- The lab-card cover is now **16:9** (`aspect-ratio`) instead of a fixed 72px height, and the interface
+  colours are token-based. Type sizes moved to tokens on 2026-10-28 (`--text-hero`, `--text-note`,
+  `--text-h2-home`). The decisions above are unchanged; only the decorative values remain literal, and
+  they are listed as known deviations in `docs/DESIGN_SYSTEM.md`.

@@ -14,7 +14,7 @@ Goal: share knowledge, reinforce existing knowledge through practice, and build 
 - Content: Markdown/MDX through Astro content collections
 - First lab: React, TypeScript, Vite
 - Code quality: TypeScript `strict`, ESLint (flat config), Prettier
-- Deploy: Cloudflare Pages _(not connected yet — see the Deploy section below)_
+- Deploy: Cloudflare Pages (portal live; React Lab not deployed yet — see the Deploy section below)
 
 ## Repository layout
 
@@ -114,13 +114,12 @@ build. Tag conventions: [`docs/TAGS.md`](docs/TAGS.md).
 
 > The three current React internals posts are real content; the sample post `bai-viet-mau.md` has been removed.
 
-## Deploy (Cloudflare Pages) — planned runbook
+## Deploy (Cloudflare Pages) — runbook
 
-**Status: not connected yet.** Phase 1.6 in [docs/ROADMAP.md](docs/ROADMAP.md) is still open, and
-Cloudflare Pages is the planned host, not a live setup (see
-[docs/PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md)). The table and steps below describe the
-intended configuration to follow when the Cloudflare account is available; nothing here is
-deployed today.
+**Status (2026-10-28): the portal is deployed.** The repo is connected to Cloudflare Pages and the
+portal build is configured; the React Lab Pages project is **not** created yet
+([docs/ROADMAP.md](docs/ROADMAP.md), section 1.6). The table and steps below document how both projects
+are configured, so they are also the checklist for the remaining React Lab project.
 
 The portal and **each lab are a separate Pages project**, all built from this repo. Rationale in [ADR 0008](docs/adr/0008-one-pages-project-per-lab.md).
 

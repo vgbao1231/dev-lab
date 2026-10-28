@@ -77,8 +77,9 @@ Implementation details (in `portal/`):
 ### 7.4 Hover and interaction states
 
 Principle: hover must **say something** (this element is clickable, or what state it is in).
-Use `--duration-fast` (120ms) and `--ease-standard`. No enlarging, no shadows, no
-movement beyond 1px (only the lab card lifts 1px).
+Colour changes use `--duration-fast` (120ms); the small card lift uses `--duration-base` (200ms); both use
+`--ease-standard`. No enlarging, no shadows. Movement stays small: 2px for post cards, 3px for lab cards
+(the reference values); do not introduce larger offsets.
 
 | Element                                | Default                       | Hover                                                                                      |
 | -------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------ |
@@ -87,9 +88,9 @@ movement beyond 1px (only the lab card lifts 1px).
 | Nav link                               | `--color-text-muted`          | `--color-accent` + translucent accent pill expanding                                       |
 | Brand in header                        | `--color-text`                | `--color-accent`, no underline                                                             |
 | Post title                             | `--color-text`                | `--color-link`                                                                             |
-| Lab card (when it is a link)           | border `--color-border`       | border `--color-accent` + `translateY(-1px)`                                               |
+| Lab card (when it is a link)           | border `--color-border`       | border 42% accent mix + `translateY(-3px)`                                                 |
 | Post card on `/bai-viet`               | border `--color-border`       | 55% accent border + `translateY(-2px)`; title to `--color-link`                            |
-| Table row                              | background `--color-surface`  | background `--color-bg`                                                                    |
+| Table row                              | transparent                   | background `--color-bg`                                                                    |
 | TOC link                               | `--color-text-muted`          | `--color-text`; current item also gets `--color-surface` background + `--color-accent` bar |
 | Copy button on post headings           | hidden (`opacity: 0`)         | shown + `--color-accent` (also shown on focus)                                             |
 | `ghost` / `outlined` / `filled` button | button table, `components.md` | button table, `components.md`                                                              |
