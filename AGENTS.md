@@ -130,4 +130,7 @@ If a request contradicts the documentation, ask the user instead of deciding uni
 
 - Use Conventional Commits: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `chore:`. Write the message in English.
 - One branch per task, named in English: `feat/<short-description>`, `docs/<short-description>`.
+- **Start every task branch from the latest `main`:** run `git switch main && git pull --ff-only`, then
+  `git switch -c <branch>`. Do not branch off the current branch or another unmerged branch, even when it
+  holds related work. If a task cannot be separated from unmerged work, ask the user first.
 - Do not commit directly to `main`.
