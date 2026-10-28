@@ -63,7 +63,7 @@ Do not read all of `docs/`. Pick by task:
 
 Code comments say "`docs/DESIGN_SYSTEM.md` section N"; the table at the top of that file maps section N to the topic file.
 
-If a request contradicts the documentation, ask the user instead of deciding unilaterally.
+If a request contradicts the documentation, explain the conflict and ask before making the conflicting change; do not decide unilaterally.
 
 ## General principles
 
@@ -72,7 +72,12 @@ If a request contradicts the documentation, ask the user instead of deciding uni
 - **Do not add dependencies** without agreement. State the reason when proposing one.
 - **Do not build a feature only to dogfood.** Using a technology to build the site is optional, not mandatory for every post.
 - **Do not add gradients, glows or decorative effects** unless the design system or an accepted ADR already allows them. The current exception is the home-page decoration from ADR 0012; do not extend it to other pages or components.
-- **Documentation decides, code implements.** If they disagree, report the disagreement; do not silently change the rule to match the code.
+
+### Conflicts and uncertainty
+
+- **Documentation vs code:** documentation decides, code implements. If they disagree, report the discrepancy; do not silently change the rule to match the code.
+- **Documentation vs documentation:** name both sources. Current values and UI rules live in `docs/design/`; `docs/DESIGN_SYSTEM.md` is the index, principles, checklist and known deviations; ADRs record rationale and do not override the specs. If precedence is still unclear, ask instead of silently choosing one source.
+- **Low-risk implementation details** that do not affect architecture, product behaviour or documented requirements: choose the simplest consistent solution and proceed; do not ask unnecessary questions.
 
 ## Code rules
 
@@ -106,17 +111,17 @@ If a request contradicts the documentation, ask the user instead of deciding uni
 
 - `portal/tsconfig.json` **must not** use an array-form `extends`: Rolldown (Vite inside Astro) resolves it incorrectly and the build breaks.
 - The header uses `transition:persist`: its DOM survives navigations, so `aria-current` must be updated by JavaScript.
-- View Transitions replace every attribute on `<html>`: copy `data-theme` / `data-mode` to the new document in `astro:before-swap`.
+- View Transitions replace every attribute on `<html>`: copy `data-theme`, `data-mode` and `data-mode-preference` to the new document in `astro:before-swap`.
 - `[data-animate]` runs only on the first page load. `view-transition-name` must be a valid custom-ident and must not repeat within one page (post titles use `vt-post-<id>`).
 - `BaseLayout` renders a `background` slot as the first child of `<body>`, outside `<main>`. Use it for page-wide decorative layers that must continue behind the header and footer; raise `main` and the footer above the layer with `z-index`.
 - Elements inserted by JavaScript (the `#` button on post headings) have no `data-astro-cid`: keep their styles in `global.css`, not in a scoped `<style>` block.
 - The "About me" and "Other projects" sections are hidden entirely when `profile.ts` has no data: do not render an empty block or a placeholder sentence.
 - `profile.ts` contains only information approved for public display. As of 2026-10-19: name, role, location, email and GitHub are approved; LinkedIn, CV and avatar are not.
-- The home page currently has one known documentation/code deviation (hard-coded decoration counts and timings, allowed only there by ADR 0012). Read the "Known deviations" section in `docs/DESIGN_SYSTEM.md` before changing the home page.
+- Known documentation/code deviations (hard-coded home-decoration values and one relative heading-anchor size) are listed in the "Known deviations" section of `docs/DESIGN_SYSTEM.md`; read it before changing the home page or heading anchors.
 
 ## Definition of "done"
 
-1. The "Check (same as CI)" command above passes. If any command fails, do not report completion: describe the failure and propose a fix.
+1. The "Check (same as CI)" command above passes. Run it and observe the result; never report a check as passed otherwise. If any command fails, do not report completion: describe the failure and propose a fix.
 2. UI changes: check light and dark (currently only Minimalist Editorial) and a mobile viewport.
 3. Update documentation in the same change only when relevant:
    - Finished a roadmap item: tick `[x]` in `docs/ROADMAP.md`.

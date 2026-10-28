@@ -12,11 +12,14 @@ Two **independent** axes, the user picks each one separately:
 
 Because the two axes are independent, the number of combinations is **not fixed**: each theme only needs to define its own light and dark palettes.
 
-The theme is applied to `<html>` with two attributes:
+The theme and mode are applied to `<html>` with two attributes, plus the stored mode preference:
 
 ```html
-<html data-theme="minimalist-editorial" data-mode="dark"></html>
+<html data-theme="minimalist-editorial" data-mode="dark" data-mode-preference="dark"></html>
 ```
+
+`data-mode` is the resolved mode (`light` or `dark`); `data-mode-preference` keeps the user's choice
+(`light`, `dark` or `system`) so it survives navigation.
 
 How to extend: adding a new theme = adding a palette to this file (`docs/design/theme.md`) + adding a CSS variables block for that theme + registering it in `portal/src/data/themes.ts`. Layout and typography do **not** change per theme; only color changes.
 

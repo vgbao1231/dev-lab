@@ -169,7 +169,7 @@ immediately, with only CI checking it beforehand.
 
 ## Conventions
 
-Code rules, gotchas and the definition of "done" live in [AGENTS.md](AGENTS.md); UI rules live in [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md). Two things to know when developing on your own:
+Code rules, gotchas and the definition of "done" live in [AGENTS.md](AGENTS.md); UI specs live in [docs/design/](docs/design/) with [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) as the index. Two things to know when developing on your own:
 
 - Never hard-code colours, fonts, durations or easing: use the tokens in `portal/src/styles/tokens.css`.
 - When you finish an item in `docs/ROADMAP.md`, tick it `[x]` in the same change.

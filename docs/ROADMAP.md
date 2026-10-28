@@ -32,7 +32,7 @@ This document splits the project into phases. Each phase has a work checklist an
       — theme and mode are two independent axes; the theme picker hides itself when only one theme is available
 - [x] Check contrast for text and links in Minimalist Editorial light and dark
       — every token pair meets WCAG AA; secondary text on surface in light is 4.87:1, close to the threshold, so it must not be lowered further
-- [x] Add motion tokens (duration, easing) and motion rules — see `docs/DESIGN_SYSTEM.md` section 7
+- [x] Add motion tokens (duration, easing) and motion rules — see section 7 in `docs/design/motion.md`
 
 ### 1.3 Portal
 
@@ -45,7 +45,7 @@ This document splits the project into phases. Each phase has a work checklist an
 - [x] Contact page
 - [x] Page transitions with View Transitions (`<ClientRouter />`) + entrance animation for content blocks (`motion/mini`, `data-animate`)
 - [x] Apply layout and components from `design-reference/`: sections divided by rules, lab card as link + hover, eyebrow labels
-- [x] Standardise hover states (section 7.4 of `DESIGN_SYSTEM.md`): growing underline for links, accent nav pill, article titles, table rows
+- [x] Standardise hover states (section 7.4 of `docs/design/motion.md`): growing underline for links, accent nav pill, article titles, table rows
 - [x] Build the responsive foundation: breakpoints 560 / 640 / 768 / 1024, horizontal padding per breakpoint, self-filling lab grid
 - [x] Theme/mode picker: one icon button with a dropdown for mode, one `<select>` for theme on two independent axes; theme hides itself when only one theme exists
 - [x] "Back to top" button appears after scrolling 600px, respects `prefers-reduced-motion`
