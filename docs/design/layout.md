@@ -41,11 +41,11 @@
   - Hide/show by scroll direction: only start hiding after scrolling past **320px**, require a **16px** delta
     to change state (prevents jitter on small scrolls), with a **250ms** cooldown between two consecutive hides,
     and scrolling up shows it again immediately. Fully disabled when `prefers-reduced-motion: reduce`.
-  - When scrolled, the capsule is pushed down by `--header-inset` (12px, only from 640px) instead of sticking to
-    the screen edge. The push uses `position: relative; top` — a property that **only changes on paint**, not
-    layout, so the header keeps its height. That gap exposes content drifting behind it, so an opaque strip
-    covers it via `.site-header::before` (`position: absolute`, out of flow): in the initial state the capsule
-    covers this strip, so it is not visible.
+  - When scrolled, the capsule floats **12px below the top edge** (from 640px). The offset uses
+    `position: relative; top` — a property that **only changes on paint**, not layout, so the header keeps its
+    height. The gap stays transparent: page content is allowed to show through it, which makes the capsule read
+    as floating. An opaque `.site-header::before` strip used to cover that gap, but it showed as an extra band
+    over the home-page gradient and was removed on 2026-10-29. Do not reintroduce the strip.
   - The header uses `transition:persist`, so the DOM is kept across navigations — therefore `aria-current` must
     be updated by JS. The nav only has `Labs`, `Bài viết`, `Liên hệ`; the brand links home, so there is **no**
     separate "Trang chủ" item.
