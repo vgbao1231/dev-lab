@@ -5,7 +5,7 @@ Each file records **one** decision: the context, the decision, and the trade-off
 Conventions:
 
 - File name `NNNN-short-name.md`, numbered in ascending order.
-- Do not edit the content of old ADRs. If a decision changes, add a new ADR and write "Supersedes ADR NNNN".
+- Do not rewrite the decision or rationale of an old ADR. If a decision changes, add a new ADR and write "Supersedes ADR NNNN". Implementation drift may be recorded by appending a dated `## Implementation note (YYYY-MM-DD)` section; the original decision stays unchanged.
 - The spec (values, current rules) lives in `docs/design/`; ADRs keep only the rationale.
 
 Template:

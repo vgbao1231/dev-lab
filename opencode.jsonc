@@ -1,31 +1,31 @@
 {
-  // Cấu hình OpenCode dùng chung cho repo Dev Lab.
-  // Tài liệu: https://opencode.ai/v2/docs/config
+  // Shared OpenCode configuration for the Dev Lab repo.
+  // Docs: https://opencode.ai/v2/docs/config
   "$schema": "https://opencode.ai/config.json",
 
-  // 1) Model mặc định. Luôn ghi dạng "provider/model".
+  // 1) Default model. Always use the "provider/model" form.
   "model": "opencode/deepseek-v4.1-flash-free",
 
-  // 2) Cắt bớt kết quả tool trước khi đưa vào context.
-  //    Mặc định là 2000 dòng / 50 KiB. Đây là "núm" tiết kiệm token mạnh nhất,
-  //    vì output của read/grep/shell thường chiếm phần lớn context.
+  // 2) Trim tool output before it enters the context.
+  //    Defaults are 2000 lines / 50 KiB. This is the strongest token-saving
+  //    lever, because read/grep/shell output takes up most of the context.
   "tool_output": {
     "max_lines": 500,
     "max_bytes": 24000,
   },
 
-  // 3) Nén hội thoại sớm hơn và giữ ít phần "đuôi" hơn.
-  //    Mặc định: keep.tokens = 15000, buffer = 10% giới hạn context.
+  // 3) Compact conversations earlier and keep a smaller tail.
+  //    Defaults: keep.tokens = 15000, buffer = 10% of the context limit.
   "compaction": {
     "auto": true,
     "keep": { "tokens": 8000 },
     "buffer": 12000,
   },
 
-  // 4) Giữ websearch cho việc cần tra cứu ngoài repo; bỏ comment dòng dưới nếu muốn tắt.
+  // 4) Keep websearch for external lookups; uncomment the line below to turn it off.
   // "websearch": false,
 
-  // 5) Ảnh lớn được thu nhỏ trước khi gửi cho model.
+  // 5) Large images are downscaled before being sent to the model.
   "media": {
     "image": {
       "auto_resize": true,
@@ -34,13 +34,13 @@
     },
   },
 
-  // 6) Không theo dõi thư mục build (đỡ việc nền, đỡ nhiễu file).
+  // 6) Do not watch build directories (less background work, less file noise).
   "watcher": {
     "ignore": ["node_modules/**", "**/dist/**", "**/.next/**", "**/build/**"],
   },
 
-  // 7) Agent: giới hạn số bước model cho một lượt, và cho subagent khám phá
-  //    dùng biến thể "low" để tốn ít token suy luận.
+  // 7) Agents: cap the number of model steps per turn, and let the explore
+  //    subagent use the "low" variant to spend fewer reasoning tokens.
   "agents": {
     "build": {
       "steps": 40,

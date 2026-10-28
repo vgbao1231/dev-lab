@@ -51,8 +51,8 @@ Section numbers 1–9 stay as in the original, because comments in the code stil
 - [x] Post covers: inline SVG using tokens, renders correctly in light/dark; posts without a cover get a
       monogram fallback; `coverAlt` required when a cover exists
 - [x] `/bai-viet`: 1/2/3-column grid, 16:9 covers, one link per card; home page unchanged
-- [x] Theme is not reset after navigating with View Transitions (copying `data-theme` /
-      `data-mode` in `astro:before-swap`)
+- [x] Theme and mode preference are not reset after navigating with View Transitions (copying
+      `data-theme`, `data-mode` and `data-mode-preference` in `astro:before-swap`)
 - [ ] Motion duration and JS bundle of `motion/mini` on mobile (Lighthouse Performance)
 - [ ] Hover of links, nav, lab card and table rows matches section 7.4 (`design/motion.md`) in both light and dark
 - [ ] Growing underline causes no layout shift; long in-post links do not break when they wrap

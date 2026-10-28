@@ -70,9 +70,9 @@ Implementation details (in `portal/`):
 - The `.motion-ready` flag on `<html>` is inserted by an inline script **before paint**, and only when
   the user has not requested reduced motion. That way there is no flash, and content is never
   hidden when JavaScript fails.
-- View Transitions replace all attributes of `<html>`, so `data-theme` / `data-mode` must
-  be copied to the new document in `astro:before-swap`; otherwise the theme would be reset after
-  navigation.
+- View Transitions replace all attributes of `<html>`, so `data-theme`, `data-mode` and
+  `data-mode-preference` must be copied to the new document in `astro:before-swap`; otherwise the
+  theme and mode preference would be reset after navigation.
 
 ### 7.4 Hover and interaction states
 
