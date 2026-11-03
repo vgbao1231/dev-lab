@@ -1,13 +1,12 @@
 # Roadmap: Dev Lab
 
-**Current status (2026-10-28):** Phase 1 is still in progress. The portal, design tokens, content system, search, tag registry, covers and the three React articles are implemented, and the portal is deployed on Cloudflare Pages. Still open: the React Lab Pages project and branch-preview checks in 1.6, the mobile header sheet, the performance comparison page, and the optional stack-comparison section.
+**Current status (2026-11-04):** Phase 1 is still in progress. The portal, design tokens, content system, search, tag registry, covers and the three React articles are implemented, and the portal is deployed on Cloudflare Pages. Still open: the React Lab Pages project and branch-preview checks in 1.6, and the mobile header sheet.
 
 This document splits the project into phases. Each phase has a work checklist and completion criteria.
 
 **Current phase: Phase 1 — Foundation and the first React lab** 🟡 in progress
 
-**Open in phase 1:** 1.3 mobile sheet menu · "Stack comparison" section (paused) ·
-1.5 performance comparison page · 1.6 React Lab Pages project and branch previews.
+**Open in phase 1:** 1.3 mobile sheet menu · 1.6 React Lab Pages project and branch previews.
 
 ---
 
@@ -69,7 +68,6 @@ This document splits the project into phases. Each phase has a work checklist an
       — the hero slogan is rendered and every type size comes from a token (2026-10-28); only the decorative
       values are still literal, as allowed by ADR 0012 and listed in `DESIGN_SYSTEM.md`
 - [x] `src/data/profile.ts` as the single source for personal information; empty fields are skipped by the UI
-- [ ] "Stack comparison" section on the home page — paused 2026-10-18, to be done together with 1.5 when real measurements exist
 - [x] Responsive check on mobile (the breakpoint foundation is already in place)
       — verified 360/390/414px in light and dark: single-row nav, single-column lab grid, TOC at the top of the article, facts chips do not overflow; no horizontal overflow at page level
 
@@ -94,7 +92,6 @@ This document splits the project into phases. Each phase has a work checklist an
       and the limits of the commit phase
 - [x] Article 3 (Concept): Tearing & `useSyncExternalStore` — snapshot, subscription and how to
       avoid two components reading two versions of the data
-- [ ] Comparison page for bundle size, JS, LCP and build time across labs (data updated as labs are finished)
 
 ### 1.6 Deploy
 
@@ -135,7 +132,6 @@ This document splits the project into phases. Each phase has a work checklist an
 - [ ] Standardise the process for adding a new lab (repo template or guide)
 - [ ] Add a third lab following the chosen direction
 - [ ] Revisit the ecosystem name and domain structure
-- [ ] Update the performance comparison page automatically from CI
 
 **Completion criteria:** Adding a new lab takes no more than a weekend, and the portal updates the lab list on its own.
 
