@@ -10,16 +10,17 @@ and its docs. Parallel work packages and file ownership: [`docs/WORKSTREAMS.md`]
 
 ## Status
 
-| Package        | Scope                                           | Status             |
-| -------------- | ----------------------------------------------- | ------------------ |
-| A — foundation | shell, hash router, lazy registry, styles, docs | done               |
-| B1 — variants  | variants + stagger demo                         | not started        |
-| B2 — gestures  | hover, tap, drag demo                           | not started        |
-| B3 — layout    | layout animation + `AnimatePresence` demo       | not started        |
-| B4 — scroll    | scroll-linked demo                              | not started        |
-| B5 — springs   | spring vs tween demo                            | not started        |
-| C1 — content   | first portal article(s) + `motion` tag          | not started        |
-| C2 — release   | deploy docs, portal status, roadmap ticks       | blocked on B\*, C1 |
+| Package             | Scope                                           | Status         |
+| ------------------- | ----------------------------------------------- | -------------- |
+| A — foundation      | shell, hash router, lazy registry, styles, docs | done           |
+| B1 — variants       | variants + stagger demo                         | done           |
+| B2 — gestures       | hover, tap, drag demo                           | done           |
+| B3 — layout         | layout animation + `AnimatePresence` demo       | done           |
+| B4 — scroll         | scroll-linked demo                              | done           |
+| B5 — springs        | spring vs tween demo                            | done           |
+| B6 — reduced motion | reduced-motion demo                             | done           |
+| C1 — content        | first portal article(s) + `motion` tag          | done           |
+| C2 — release        | deploy docs, portal status, roadmap ticks       | deploy pending |
 
 B1–B6 are independent: each owns one folder under `src/demos/` and can run in parallel. C1 touches
 portal content only, so it can also run in parallel. C2 runs last.
@@ -60,11 +61,11 @@ B5 springs, B6 reduced motion.
 
 ## Phase C — content and release
 
-- [ ] C1: one article in `portal/src/content/posts/` with `lab: motion-lab`, and a `motion` tag in
+- [x] C1: one article in `portal/src/content/posts/` with `lab: motion-lab`, and a `motion` tag in
       `@dev-lab/tags`; 2–3 tags per article rules still apply
 - [ ] C2: Cloudflare Pages project for the lab (`pnpm --filter motion-lab build`, output
       `labs/motion-lab/dist`), then set `status` / `href` for `motion-lab` in `portal/src/data/labs.ts`
-- [ ] C2: tick the Phase 2 boxes in `docs/ROADMAP.md`, add the deploy row to the root `README.md`,
+- [x] C2: tick the Phase 2 boxes in `docs/ROADMAP.md`, add the deploy row to the root `README.md`,
       add a CHANGELOG entry for the lab release
 
 ## Completion criteria

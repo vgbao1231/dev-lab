@@ -115,9 +115,9 @@ This document splits the project into phases. Each phase has a work checklist an
 
 **Goal:** Add interactive demos and the second lab (Motion Lab).
 
-- [ ] Motion Lab: scaffold and first demo set — plan, work packages and file ownership live in
+- [x] Motion Lab: scaffold and first demo set — plan, work packages and file ownership live in
       `labs/motion-lab/ROADMAP.md` and `labs/motion-lab/docs/WORKSTREAMS.md`
-- [ ] Motion Lab: publish the first articles in the portal (`lab: motion-lab`) and add a `motion` tag
+- [x] Motion Lab: publish the first articles in the portal (`lab: motion-lab`) and add a `motion` tag
 - [ ] Motion Lab: deploy as its own Pages project and link it from `labs.ts`
 - [ ] Add interactive demos to React Lab
 - [ ] Add article filtering by tag (search already exists from phase 1)

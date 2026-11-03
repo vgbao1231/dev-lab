@@ -50,9 +50,10 @@ dependencies, and do not run repo-wide formatters or builds while another packag
 
 ## Status
 
-Scaffold in progress: shell, routing and the lazy registry are in place; the six demos are being
-written by separate packages. Cloudflare Pages project: not created yet (build command
-`pnpm --filter motion-lab build`, output directory `labs/motion-lab/dist`, root directory `/`).
+The six demos are live (each in its own chunk) and the first article is published; the lazy registry
+keeps unopened demos out of the entry bundle. The Cloudflare Pages project is **not created yet**
+(build command `pnpm --filter motion-lab build`, output directory `labs/motion-lab/dist`, root
+directory `/`); until it is deployed the portal still lists the lab as `planned`.
 
 ## Notes
 
