@@ -13,7 +13,13 @@ export const meta: DemoMeta = {
   ],
   code: `<AnimatePresence initial={false}>
   {items.map((item) => (
-    <motion.li key={item} layout exit={{ opacity: 0, x: -16 }} />
+    <motion.li
+      key={item.id}
+      layout={!reducedMotion}
+      initial={reducedMotion ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={reducedMotion ? undefined : { opacity: 0, x: -16 }}
+    />
   ))}
 </AnimatePresence>`,
 };
