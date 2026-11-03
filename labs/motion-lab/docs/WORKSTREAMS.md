@@ -142,3 +142,31 @@ Create `src/demos/<id>/meta.ts` (unique `order`, group from `src/demos/types.ts`
 `styles.css`. No registry edit, no shell edit: the index page and the hash route pick it up on the
 next dev-server reload. If a new group is needed, ask package A — group labels live in
 `registry.ts`.
+
+## Scaling to N agents
+
+Run this only after the foundation (package A) is green and the ownership map is final. Rules that
+keep N agents from stepping on each other:
+
+1. **Three tiers, one gate.** Foundation (1 agent) → leaf packages (N agents, parallel) →
+   integration (1 agent). Only the integration agent runs repo-wide commands
+   (`pnpm install`, `pnpm format`, `pnpm build`, `eslint .`, full `git add`). Leaf agents verify
+   with filtered commands and a private output directory
+   (`pnpm --filter motion-lab exec vite build --outDir /tmp/<pkg>`).
+2. **Pick the isolation strategy by size.** With ≤ 3–4 leaf packages, one shared working tree plus
+   the ownership map is enough (no merges needed). From 4–5 packages, give each agent its own git
+   worktree (`tools.opencode.worktree_create` + `session_move`) so commits, `dist/` and dev servers
+   never touch another agent; merge back to the feature branch when the package lands.
+3. **Self-contained prompts.** A subagent starts with an empty context: its prompt must carry the
+   contract path, the exact owned paths, done criteria, verify commands, the fixed dev port and the
+   commit message. Never make a subagent infer an interface.
+4. **Budget, not enthusiasm.** One agent = prompt + fix rounds. Split by cost: cheap models for
+   leaf packages that follow a spec, a strong model for the integration gate. Cap parallel agents to
+   what the balance supports; 2–3 in parallel is safer than 6, because a dead agent mid-way (out of
+   balance) stalls the whole batch. One level of spawning max: coordinator → leaf, no deep trees.
+5. **Shared files have one writer.** A new shared primitive, group or config change goes through the
+   package that owns that file (usually the foundation or the integration agent). A leaf agent that
+   needs one stops and asks instead of editing "just this once".
+
+The 3-tier + 1-gate shape is the generic recipe for any feature in this repo, not just Motion Lab
+demos: settle the spec first, split by disjoint ownership, integrate once.
