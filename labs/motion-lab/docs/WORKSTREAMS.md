@@ -1,7 +1,8 @@
 # Motion Lab work packages
 
 How to split Motion Lab work across several agents without them fighting over files. Read
-[`../ROADMAP.md`](../ROADMAP.md) for the plan; this file is the contract.
+[`../ROADMAP.md`](../ROADMAP.md) for the plan; this file is the contract. The generic recipe for any
+feature lives in [`../../docs/PARALLEL_AGENTS.md`](../../docs/PARALLEL_AGENTS.md).
 
 ## Ownership map
 

@@ -74,6 +74,13 @@ If a request contradicts the documentation, explain the conflict and ask before 
 - **Do not build a feature only to dogfood.** Using a technology to build the site is optional, not mandatory for every post.
 - **Do not add gradients, glows or decorative effects** unless the design system or an accepted ADR already allows them. The current exception is the home-page decoration from ADR 0003; do not extend it to other pages or components.
 
+### Running many agents in parallel
+
+When a feature is split across several agents, follow `docs/PARALLEL_AGENTS.md`: settle the spec
+first, then tier 0 (foundation) → tier 1 (leaf packages, parallel, disjoint ownership) → tier 2
+(integration, one full check). Only the integration agent runs repo-wide commands; a leaf package
+never edits a file it does not own.
+
 ### Conflicts and uncertainty
 
 - **Documentation vs code:** documentation decides, code implements. If they disagree, report the discrepancy; do not silently change the rule to match the code.
