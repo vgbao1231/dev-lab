@@ -1,0 +1,100 @@
+.gestures-demo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lab-space-4);
+  min-inline-size: 0;
+}
+
+.gestures-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--lab-space-4);
+  align-items: start;
+}
+
+.gestures-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lab-space-3);
+  min-inline-size: 0;
+}
+
+.gestures-heading {
+  color: var(--lab-text-muted);
+  font-size: var(--lab-text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.gestures-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lab-space-2);
+  inline-size: 100%;
+  padding: var(--lab-space-4);
+  background: var(--lab-surface-muted);
+  border: 1px solid var(--lab-border);
+  border-radius: var(--lab-radius-md);
+  color: var(--lab-text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.gestures-card:hover {
+  border-color: var(--lab-accent);
+}
+
+.gestures-card__title {
+  font-weight: 600;
+}
+
+.gestures-card__text {
+  color: var(--lab-text-muted);
+  font-size: var(--lab-text-sm);
+  line-height: 1.5;
+}
+
+.gestures-drag-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 10rem;
+  padding: var(--lab-space-3);
+  background: var(--lab-surface-muted);
+  border: 1px dashed var(--lab-border);
+  border-radius: var(--lab-radius-md);
+  overflow: hidden;
+}
+
+.gestures-drag-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lab-space-1);
+  flex: none;
+  inline-size: 6.5rem;
+  block-size: 6.5rem;
+  padding: var(--lab-space-2);
+  background: var(--lab-surface);
+  border: 2px solid var(--lab-accent);
+  border-radius: var(--lab-radius-md);
+  color: var(--lab-text);
+  text-align: center;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.gestures-drag-box__title {
+  font-size: var(--lab-text-sm);
+  font-weight: 600;
+}
+
+.gestures-drag-box__hint {
+  color: var(--lab-text-muted);
+  font-size: var(--lab-text-sm);
+  line-height: 1.2;
+}

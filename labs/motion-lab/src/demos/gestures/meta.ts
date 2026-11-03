@@ -11,12 +11,16 @@ export const meta: DemoMeta = {
     'drag cần một vùng giới hạn (ref) nếu không phần tử sẽ kéo ra khỏi bố cục.',
     'Đừng dùng hover làm cách duy nhất để lộ thông tin: thiết bị cảm ứng không có hover.',
   ],
-  code: `<motion.div
+  code: `<motion.button
+  whileHover={reduce ? { opacity: 0.92 } : { scale: 1.03 }}
+  whileTap={reduce ? { opacity: 0.8 } : { scale: 0.96 }}
+  onClick={activate}
+/>
+
+<motion.div
   drag
-  dragConstraints={boundsRef}
-  dragElastic={0.18}
-  whileHover={{ scale: 1.04 }}
-  whileTap={{ scale: 0.96 }}
-  whileDrag={{ cursor: 'grabbing' }}
+  dragConstraints={frameRef}
+  dragElastic={reduce ? 0 : 0.18}
+  whileDrag={{ scale: 1.03 }}
 />`,
 };
