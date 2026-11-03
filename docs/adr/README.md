@@ -1,12 +1,20 @@
 # Architecture Decision Records (ADR)
 
-Each file records **one** decision: the context, the decision, and the trade-offs. Use it to answer "why was it done this way" without digging through commit history.
+These files record the **main** decisions for the portal and for how the ecosystem is put together:
+the context, the decision, and the trade-offs. Use them to answer "why was it done this way" without
+digging through commit history.
+
+**Scope:** ADRs are about the portal (`portal/`) and how labs are hosted. Each lab is an independent app
+with its own stack, design and rules; lab-internal decisions belong in that lab's own `README.md` /
+`AGENTS.md`, not here. The portal's design system and ADRs are not requirements for a lab.
 
 Conventions:
 
-- File name `NNNN-short-name.md`, numbered in ascending order.
-- Do not rewrite the decision or rationale of an old ADR. If a decision changes, add a new ADR and write "Supersedes ADR NNNN". Implementation drift may be recorded by appending a dated `## Implementation note (YYYY-MM-DD)` section; the original decision stays unchanged.
-- The spec (values, current rules) lives in `docs/design/`; ADRs keep only the rationale.
+- One file per **area**, not per small change, to keep the context an agent has to read small. File name
+  `NNNN-short-name.md`, numbered in ascending order.
+- Current values and UI rules live in `docs/design/`; ADRs keep only the reasoning.
+- Do not rewrite the rationale of an old decision. If a decision changes, add a dated
+  `## Implementation note (YYYY-MM-DD)` section or a new ADR that supersedes it.
 
 Template:
 
@@ -25,17 +33,13 @@ Date: YYYY-MM-DD
 
 ## List
 
-| ADR                                              | Decision                                                         |
-| ------------------------------------------------ | ---------------------------------------------------------------- |
-| [0001](0001-astro-static-and-pnpm-workspace.md)  | Static Astro portal, independent labs in a pnpm workspace        |
-| [0002](0002-theme-mode-independent-axes.md)      | Theme and mode are two independent axes                          |
-| [0003](0003-patrick-hand-display-font.md)        | Patrick Hand as the display font instead of Balsamiq Sans        |
-| [0004](0004-view-transition-navigation.md)       | Page navigation with View Transitions                            |
-| [0005](0005-mono-2px-smaller-than-inter.md)      | Mono text is always 2px smaller than Inter text in the same role |
-| [0006](0006-sticky-capsule-header.md)            | Sticky capsule header with a translucent background              |
-| [0007](0007-reading-progress-scroll-timeline.md) | Reading progress bar driven by `animation-timeline: scroll()`    |
-| [0008](0008-one-pages-project-per-lab.md)        | Each lab is its own Cloudflare Pages project                     |
-| [0009](0009-manual-post-covers.md)               | Post covers are assigned manually, inline SVG per theme          |
-| [0010](0010-shared-tag-package.md)               | Shared tags through the `@dev-lab/tags` package                  |
-| [0011](0011-search-command-palette.md)           | Search command palette, index generated at build time            |
-| [0012](0012-home-layout-and-parallax.md)         | Home page layout and background parallax effect                  |
+| ADR                                  | Decision                                                                        |
+| ------------------------------------ | ------------------------------------------------------------------------------- |
+| [0001](0001-portal-architecture.md)  | Static Astro portal in a pnpm workspace; each lab is its own Pages project      |
+| [0002](0002-design-foundations.md)   | Theme × mode axes, typography rules and token usage                             |
+| [0003](0003-portal-ui-and-motion.md) | View Transitions, sticky capsule header, reading progress, home-page decoration |
+| [0004](0004-content-and-search.md)   | Post covers, shared tag registry and the build-time search index                |
+
+On 2026-11-04 the first twelve ADRs were merged into these four areas so an agent does not have to read
+twelve files for the same context. The original wording is still in git history and in
+[`CHANGELOG.md`](../CHANGELOG.md) where a change was notable.

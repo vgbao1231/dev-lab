@@ -8,7 +8,7 @@
 Two kinds of section headings:
 
 - **Main heading** (`h2`, display font, `--text-xl`): used for the most important section — currently
-  "Dev Lab". The home-page Labs sidebar is the intentional exception from [ADR 0012](../adr/0012-home-layout-and-parallax.md):
+  "Dev Lab". The home-page Labs sidebar is the intentional exception from [ADR 0003](../adr/0003-portal-ui-and-motion.md):
   `h2` in Lora `--text-h2-home`.
 - **Section label (eyebrow)**: JetBrains Mono, `--text-sm`, `uppercase`, `letter-spacing: 0.08em`,
   color `--color-text-muted`. Used for the remaining sections (`Bài viết mới`, `Dự án khác`,

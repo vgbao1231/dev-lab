@@ -68,10 +68,11 @@ If a request contradicts the documentation, explain the conflict and ask before 
 ## General principles
 
 - **Do not settle architecture decisions on your own.** The "Undecided items" section in `docs/PROJECT_OVERVIEW.md` is not decided: propose options with trade-offs and wait for confirmation.
+- **ADRs and the design system describe the portal, not the labs.** Each lab is an independent app: it keeps its own `README.md` / `AGENTS.md`, its own stack and its own visual language. Do not apply portal ADRs, `docs/design/` or `DESIGN_SYSTEM.md` rules to a lab unless that lab's own docs say so.
 - **Small scope, small changes.** One change solves one problem. Do not refactor or restructure beyond what was asked.
 - **Do not add dependencies** without agreement. State the reason when proposing one.
 - **Do not build a feature only to dogfood.** Using a technology to build the site is optional, not mandatory for every post.
-- **Do not add gradients, glows or decorative effects** unless the design system or an accepted ADR already allows them. The current exception is the home-page decoration from ADR 0012; do not extend it to other pages or components.
+- **Do not add gradients, glows or decorative effects** unless the design system or an accepted ADR already allows them. The current exception is the home-page decoration from ADR 0003; do not extend it to other pages or components.
 
 ### Conflicts and uncertainty
 

@@ -121,7 +121,7 @@ portal build is configured; the React Lab Pages project is **not** created yet
 ([docs/ROADMAP.md](docs/ROADMAP.md), section 1.6). The table and steps below document how both projects
 are configured, so they are also the checklist for the remaining React Lab project.
 
-The portal and **each lab are a separate Pages project**, all built from this repo. Rationale in [ADR 0008](docs/adr/0008-one-pages-project-per-lab.md).
+The portal and **each lab are a separate Pages project**, all built from this repo. Rationale in [ADR 0001](docs/adr/0001-portal-architecture.md).
 
 | Setting                | Portal (`dev-lab-gura`)                        | React Lab (`react-lab-gura`)                   |
 | ---------------------- | ---------------------------------------------- | ---------------------------------------------- |
