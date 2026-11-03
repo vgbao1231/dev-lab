@@ -49,6 +49,7 @@ This section supplements the "Principles" part (section 8, `../DESIGN_SYSTEM.md`
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Page transition        | `<ClientRouter />`; the root does not animate, only `main` cross-fades                                                                                                        |
 | Sticky header          | Scroll down: `translateY(-100%)`; scroll up: show again. The capsule changes background, border, radius, width                                                                |
+| Mobile sheet menu      | Bottom sheet (`<dialog>`): opacity plus `translateY(100%)` → `0`, `--duration-base`; closes in reverse. No new token, and the reduced-motion guard makes it instant           |
 | Shared elements        | matching `view-transition-name` on both pages, the element morphs instead of cross-fading                                                                                     |
 | Theme / mode change    | `document.startViewTransition()` wrapping the `data-theme` / `data-mode` assignment                                                                                           |
 | First page load        | `[data-animate]` elements fade in with `motion/mini`, stagger by token                                                                                                        |

@@ -1,12 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import ThemeToggle from './ThemeToggle.astro';
-
-const navItems = [
-  { href: '/labs', label: 'Labs' },
-  { href: '/bai-viet', label: 'Bài viết' },
-  { href: '/lien-he', label: 'Liên hệ' },
-];
+import { navItems } from '../data/nav';
 
 const currentPath = Astro.url.pathname;
 const isActive = (href: string) => currentPath.startsWith(href);
@@ -51,6 +46,17 @@ const isActive = (href: string) => currentPath.startsWith(href);
         </kbd>
       </button>
       <ThemeToggle />
+      <button
+        class="site-menu-toggle"
+        type="button"
+        data-menu-open
+        aria-label="Mở menu điều hướng"
+        aria-haspopup="dialog"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+      >
+        <Icon name="menu" size={18} />
+      </button>
     </div>
   </div>
 </header>
@@ -177,9 +183,7 @@ const isActive = (href: string) => currentPath.startsWith(href);
     top: 0;
     display: grid;
     grid-template-columns: auto 1fr;
-    grid-template-areas:
-      'brand actions'
-      'nav nav';
+    grid-template-areas: 'brand actions';
     align-items: center;
     gap: 10px 16px;
     width: 100%;
@@ -278,10 +282,12 @@ const isActive = (href: string) => currentPath.startsWith(href);
   .site-nav {
     grid-area: nav;
     justify-self: start;
+    display: none;
   }
 
   @media (min-width: 640px) {
     .site-nav {
+      display: block;
       justify-self: center;
     }
   }
@@ -401,6 +407,39 @@ const isActive = (href: string) => currentPath.startsWith(href);
 
     .site-search__label,
     .site-search__key {
+      display: none;
+    }
+  }
+
+  /*
+   * Below 640px the inline nav is hidden and this button opens the mobile sheet menu;
+   * from 640px the inline nav returns and the button disappears — see
+   * docs/design/layout.md, "Header". Styling matches the mobile search/mode buttons.
+   */
+  .site-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.125rem;
+    height: 2.125rem;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background-color: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition:
+      border-color var(--duration-fast) var(--ease-standard),
+      color var(--duration-fast) var(--ease-standard);
+  }
+
+  .site-menu-toggle:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  @media (min-width: 640px) {
+    .site-menu-toggle {
       display: none;
     }
   }

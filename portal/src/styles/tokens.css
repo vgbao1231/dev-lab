@@ -77,8 +77,10 @@
   /* Cột mục lục ở trang chi tiết bài viết (chỉ có từ 1200px). */
   --width-toc: 220px;
   /*
-   * Khoảng chừa cho header dính khi nhảy tới anchor và khi ghim mục lục: cao hơn header
-   * một chút để tiêu đề không nằm sát mép. Header hai hàng trên mobile cao khoảng 92px.
+   * Space reserved for the sticky header when jumping to an anchor and when pinning the
+   * table of contents: a little taller than the header so headings are not flush with the
+   * edge. The header is about 60px tall at every breakpoint (below 640px the nav lives in
+   * the mobile sheet menu), so 96px leaves breathing room.
    */
   --offset-header: 96px;
   --space-section: 40px;

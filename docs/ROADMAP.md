@@ -1,13 +1,13 @@
 # Roadmap: Dev Lab
 
-**Current status (2026-10-28):** Phase 1 is still in progress. The portal, design tokens, content system, search, tag registry, covers and the three React articles are implemented, and the portal is deployed on Cloudflare Pages. Still open: the React Lab Pages project and branch-preview checks in 1.6, the mobile header sheet, the performance comparison page, and the optional stack-comparison section.
+**Current status (2026-11-04):** Phase 1 is still in progress. The portal, design tokens, content system, search, tag registry, covers and the three React articles are implemented, and the portal is deployed on Cloudflare Pages. Still open: the React Lab Pages project and branch-preview checks in 1.6, the performance comparison page, and the optional stack-comparison section.
 
 This document splits the project into phases. Each phase has a work checklist and completion criteria.
 
 **Current phase: Phase 1 — Foundation and the first React lab** 🟡 in progress
 
-**Open in phase 1:** 1.3 mobile sheet menu · "Stack comparison" section (paused) ·
-1.5 performance comparison page · 1.6 React Lab Pages project and branch previews.
+**Open in phase 1:** "Stack comparison" section (paused) · 1.5 performance comparison page ·
+1.6 React Lab Pages project and branch previews.
 
 ---
 
@@ -56,7 +56,8 @@ This document splits the project into phases. Each phase has a work checklist an
       metadata, footer; replaces scattered characters/emoji
 - [x] `/bai-viet`: 1/2/3-column card grid, 16:9 cover, tags, reading time; the home page keeps its
       line-based list
-- [ ] Header: mobile sheet menu (not needed in this phase)
+- [x] Header: mobile sheet menu below 640px — a 34px icon button opens a bottom sheet
+      (`<dialog>`) with the same nav links; focus trap and `Esc` come from the native dialog
 - [x] Article detail page: table of contents (TOC) generated from headings, marks the section being read based on scroll position
       — from 1200px it is a separate column stuck below the header so it stays visible; below 1200px it is a block at the top of the article
 - [x] Article detail page: `#` button on each heading, shown on hover/focus, click copies a link to the anchor
