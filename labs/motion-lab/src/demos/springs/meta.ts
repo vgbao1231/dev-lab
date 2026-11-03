@@ -11,13 +11,10 @@ export const meta: DemoMeta = {
     'Spring không có duration cố định; đừng cố ép nó thành đúng 300ms.',
     'Damping quá thấp sẽ rung, quá cao sẽ chậm và nặng — chỉnh theo khối lượng và quãng đường.',
   ],
-  code: `<motion.div
-  animate={{ x: on ? 220 : 0 }}
-  transition={{ type: 'spring', stiffness: 220, damping: 18 }}
-/>
+  code: `const SPRING: Transition = { type: 'spring', stiffness: 220, damping: 18 };
+const TWEEN: Transition = { type: 'tween', duration: 0.4, ease: 'easeInOut' };
+const JUMP: Transition = { duration: 0 };
 
-<motion.div
-  animate={{ x: on ? 220 : 0 }}
-  transition={{ type: 'tween', duration: 0.4, ease: 'easeInOut' }}
-/>`,
+<motion.span animate={{ x: atEnd ? travel : 0 }} transition={reduce ? JUMP : SPRING} />
+<motion.span animate={{ x: atEnd ? travel : 0 }} transition={reduce ? JUMP : TWEEN} />`,
 };
