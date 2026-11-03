@@ -1,6 +1,6 @@
 # Roadmap: Dev Lab
 
-**Current status (2026-11-04):** Phase 1 is still in progress. The portal, design tokens, content system, search, tag registry, covers and the three React articles are implemented, and the portal is deployed on Cloudflare Pages. Still open: the React Lab Pages project and branch-preview checks in 1.6, and the mobile header sheet.
+**Current status (2026-11-04):** Phase 1 is still in progress. The portal, design tokens, content system, search, tag registry, covers and the three React articles are implemented, and the portal is deployed on Cloudflare Pages. Still open: the React Lab Pages project and branch-preview checks in 1.6, and the mobile header sheet. React Lab is the first lab and is still a scaffold; Motion Lab is the second lab and has not started.
 
 This document splits the project into phases. Each phase has a work checklist and completion criteria.
 
@@ -64,9 +64,9 @@ This document splits the project into phases. Each phase has a work checklist an
 - [x] Sticky footer: when content is shorter than the viewport the footer still sits at the bottom of the viewport
 - [x] Four-column footer (brand · Content · Lab · Contact) + bottom row `© · Mã nguồn · Deploy`
 - [x] Home page becomes a portfolio: hero with tagline + three CTAs, plus an "About me" section (facts table, skills) and "Other projects" from real data
-- [x] Home page visual refresh (2026-10-24, [ADR 0012](adr/0012-home-layout-and-parallax.md)): two-column hero, home background/parallax decoration, two-part Labs section, redesigned lab cards
+- [x] Home page visual refresh (2026-10-24, [ADR 0003](adr/0003-portal-ui-and-motion.md)): two-column hero, home background/parallax decoration, two-part Labs section, redesigned lab cards
       — the hero slogan is rendered and every type size comes from a token (2026-10-28); only the decorative
-      values are still literal, as allowed by ADR 0012 and listed in `DESIGN_SYSTEM.md`
+      values are still literal, as allowed by ADR 0003 and listed in `DESIGN_SYSTEM.md`
 - [x] `src/data/profile.ts` as the single source for personal information; empty fields are skipped by the UI
 - [x] Responsive check on mobile (the breakpoint foundation is already in place)
       — verified 360/390/414px in light and dark: single-row nav, single-column lab grid, TOC at the top of the article, facts chips do not overflow; no horizontal overflow at page level
@@ -97,7 +97,7 @@ This document splits the project into phases. Each phase has a work checklist an
 
 - [x] Connect the repo to Cloudflare Pages (portal deployed 2026-10-28 — step-by-step configuration in README, section "Deploy")
 - [x] Configure the build for the portal
-- [ ] Set up a separate Pages project for React Lab — decided 2026-10-20 with ADR 0008, no subpath
+- [ ] Set up a separate Pages project for React Lab — decided 2026-10-20 with ADR 0001, no subpath
 - [ ] Verify branch previews work
 
 ### Phase 1 completion criteria
@@ -112,16 +112,21 @@ This document splits the project into phases. Each phase has a work checklist an
 
 ## Phase 2: Expand content and interactivity
 
-**Goal:** Add interactive demos and a second lab.
+**Goal:** Add interactive demos and the second lab (Motion Lab).
 
-- [ ] Decide how to build interactive demos (island component, iframe, or playground)
+- [ ] Scaffold `labs/motion-lab` (React, TypeScript, Vite, Motion) with an on-demand demo registry —
+      a demo that is not opened is never downloaded
+- [ ] Motion Lab: first demo set (variants, gestures, layout/presence, scroll-linked, springs,
+      reduced motion), each with live demo + code + when to use / pitfalls
+- [ ] Motion Lab: publish the first articles in the portal (`lab: motion-lab`) and add a `motion` tag
+- [ ] Motion Lab: deploy as its own Pages project and link it from `labs.ts`
 - [ ] Add interactive demos to React Lab
-- [ ] Pick the second lab (planned: JS Under the Hood or Next.js Lab)
 - [ ] Add article filtering by tag (search already exists from phase 1)
 - [ ] Add an RSS feed
 - [ ] Add a second theme (Digital Garden) — the theme picker will appear on its own once there are two themes
 
-**Completion criteria:** At least 2 labs, one working interactive demo, and readers can find articles by tag.
+**Completion criteria:** Two labs, Motion Lab has at least five demos and at least one article, and
+readers can find articles by tag.
 
 ---
 

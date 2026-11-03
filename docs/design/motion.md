@@ -33,11 +33,11 @@ This section supplements the "Principles" part (section 8, `../DESIGN_SYSTEM.md`
    it only affects one small element. The exception must not be extended to other elements.
 2. Maximum duration 340ms (`--duration-chrome`). No infinite looping animation, no
    overshooting bounce/spring. **Accepted exception:** the home-page blobs and dust particles from
-   [ADR 0012](../adr/0012-home-layout-and-parallax.md) use 2.4–2.8s transitions and infinite keyframes.
+   [ADR 0003](../adr/0003-portal-ui-and-motion.md) use 2.4–2.8s transitions and infinite keyframes.
    They are decorative, `aria-hidden`, and fully disabled under `prefers-reduced-motion: reduce`.
    Do not extend this exception to other pages or components.
 3. Do not add gradients, glows or decorative effects through animation. The home-page decoration in
-   ADR 0012 is the only accepted exception.
+   ADR 0003 is the only accepted exception.
 4. Every motion **must** be disabled when `prefers-reduced-motion: reduce`. This is a
    requirement, not an option.
 5. Keep only animation that explains a state change or hierarchy; if it explains

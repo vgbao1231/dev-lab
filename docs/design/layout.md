@@ -26,7 +26,7 @@
     768px. Dialog behavior is in `components.md`, the "Search" section.
   - The brand is `--text-brand` (28px) with `line-height: 1` pinned, so header height is decided by the nav (about
     60px) rather than by the brand size. Changing the brand size within 28–32px pulls no other change.
-    Measurements and reasoning: [ADR 0006](../adr/0006-sticky-capsule-header.md).
+    Measurements and reasoning: [ADR 0003](../adr/0003-portal-ui-and-motion.md).
   - The header has **no** background of its own; the opaque background is on the bar. That way, when scrolled,
     the area outside the capsule is transparent and no rectangle shows behind the four rounded corners. On the
     home page, while at the top, the bar is transparent so the page background shows through.
