@@ -41,7 +41,7 @@ This repo separates product language from project language.
 - `portal/src/styles/tokens.css`: token values (colour, type size, spacing, motion)
 - `packages/tags/`: shared `@dev-lab/tags` registry; the only source for tag IDs, labels and groups
 - `docs/design/`: per-topic UI specs; `docs/adr/`: decisions and rationale; `docs/TAGS.md`: tag conventions; `docs/CHANGELOG.md`: design change history
-- `labs/<name>/`: each lab is an independent app
+- `labs/<name>/`: each lab is an independent app with its own stack, `README.md` and plan; portal ADRs and design specs do not apply to it
 - `design-reference/`: reference only; never build it, never edit it
 
 ## What to read first

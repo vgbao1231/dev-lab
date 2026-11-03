@@ -115,10 +115,8 @@ This document splits the project into phases. Each phase has a work checklist an
 
 **Goal:** Add interactive demos and the second lab (Motion Lab).
 
-- [ ] Scaffold `labs/motion-lab` (React, TypeScript, Vite, Motion) with an on-demand demo registry —
-      a demo that is not opened is never downloaded
-- [ ] Motion Lab: first demo set (variants, gestures, layout/presence, scroll-linked, springs,
-      reduced motion), each with live demo + code + when to use / pitfalls
+- [ ] Motion Lab: scaffold and first demo set — plan, work packages and file ownership live in
+      `labs/motion-lab/ROADMAP.md` and `labs/motion-lab/docs/WORKSTREAMS.md`
 - [ ] Motion Lab: publish the first articles in the portal (`lab: motion-lab`) and add a `motion` tag
 - [ ] Motion Lab: deploy as its own Pages project and link it from `labs.ts`
 - [ ] Add interactive demos to React Lab

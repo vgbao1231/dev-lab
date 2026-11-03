@@ -19,8 +19,6 @@ The published content lives in the portal, because posts belong to the portal's 
 - **Concurrent Rendering: lanes and scheduling** (`react-concurrent-rendering-lanes-scheduling.md`) — lanes, the scheduler, interruptible rendering, and the limits of the commit phase.
 - **Tearing & `useSyncExternalStore`** (`tearing-use-sync-external-store.md`) — snapshots, subscriptions, and how to avoid two components reading two versions of the same data.
 
-Still open in Phase 1.5: the page comparing bundle size, JS, LCP and build time across labs.
-
 ## Notes
 
 - Styles currently only cover layout. Whether labs share design tokens with the portal is
