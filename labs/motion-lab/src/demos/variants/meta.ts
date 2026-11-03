@@ -11,14 +11,15 @@ export const meta: DemoMeta = {
     'Quên đặt initial/animate ở parent thì variants của con không tự chạy.',
     'Stagger chỉ hoạt động khi các con là motion component và nhận variants từ parent.',
   ],
-  code: `const list = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.07 } },
+  code: `const list: Variants = {
+  hidden: {},
+  visible: { transition: { delayChildren: 0.15, staggerChildren: 0.09 } },
 };
-
+const item: Variants = {
+  hidden: { opacity: 0, y: 14, transition: { duration: 0.35 } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
+};
 <motion.ul variants={list} initial="hidden" animate={open ? 'visible' : 'hidden'}>
-  {items.map((item) => (
-    <motion.li key={item} variants={cell} />
-  ))}
+  {steps.map((step) => <motion.li key={step.api} variants={item}>{step.api}</motion.li>)}
 </motion.ul>`,
 };
