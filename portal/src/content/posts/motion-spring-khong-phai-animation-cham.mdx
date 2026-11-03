@@ -1,0 +1,113 @@
+---
+title: 'Spring không phải animation chậm: đọc chuyển động như một hệ vật lý'
+date: 2026-11-04
+type: concept
+lab: motion-lab
+tags: ['motion', 'frontend', 'internals']
+summary: 'Tween mô tả đường đi bằng thời gian, spring mô tả bằng lực. Hiểu khác biệt đó để chọn đúng kiểu chuyển động, ngắt giữa chừng và tôn trọng prefers-reduced-motion.'
+draft: false
+---
+
+Cùng một hộp vuông trượt từ trái sang phải, hai cấu hình cho cảm giác rất khác nhau: một cái “chạy đúng 400ms rồi dừng”, một cái “được đẩy tới rồi bật nhẹ lại”. Nhìn bề ngoài, spring chỉ như tween có thêm chút nảy. Nhưng hai thứ này không cùng một mô hình — và chọn sai mô hình là nguồn gốc của phần lớn animation “cảm giác sai” trong UI.
+
+## Tween: đường đi là một hàm của thời gian
+
+Tween (interpolation theo thời gian) định nghĩa một hàm `value(t)` trên đoạn `[0, 1]`, rồi ánh xạ sang `[from, to]`. Đường cong quyết định tốc độ:
+
+```ts
+const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+const value = from + (to - from) * easeInOut(elapsed / duration);
+```
+
+Hai tính chất quan trọng, và cả hai đều là hệ quả trực tiếp của công thức trên:
+
+- **Thời lượng do bạn đặt trước.** `duration` không phụ thuộc quãng đường: đi 10px và đi 400px đều mất đúng 400ms, nên chuyển động ngắn sẽ trông chậm và chuyển động dài trông vội.
+- **Đường đi độc lập với trạng thái hiện tại.** Nếu animation bị ngắt giữa chừng, giá trị đang có không nằm trên đường cong mới; muốn nối mượt phải tự tính lại điểm bắt đầu và thời lượng.
+
+Tween phù hợp khi thời gian là phần của thiết kế: fade một lớp phủ, đổi màu, chạy một progress bar. Nó dễ đoán, dễ đồng bộ với âm thanh hoặc một chuỗi bước cố định.
+
+## Spring: đường đi là kết quả của lực
+
+Spring không có `duration`. Nó mô phỏng một vật gắn vào lò xo, có khối lượng và ma sát. Ở mỗi frame, chương trình tính gia tốc từ độ lệch vị trí và vận tốc hiện tại, rồi tích phân để ra vị trí mới:
+
+```ts
+// rút gọn: một chiều, không có lực ngoài
+const stiffness = 220; // độ cứng lò xo
+const damping = 18; // ma sát
+const mass = 1;
+
+const acceleration = (-stiffness * (x - target) - damping * velocity) / mass;
+velocity += acceleration * dt;
+x += velocity * dt;
+```
+
+Ba hệ quả khác hẳn tween:
+
+- **Không có thời lượng cố định.** Cùng một bộ tham số, quãng đường dài mất nhiều thời gian hơn quãng đường ngắn. Đó thường là hành vi ta muốn: chuyển động xa thì tự nhiên chậm hơn, gần thì nhanh hơn.
+- **Có vận tốc, nên ngắt được.** Nếu người dùng đổi hướng giữa chừng, spring giữ vận tốc hiện tại và chuyển tiếp liên tục. Đây là lý do spring hợp với drag, gesture và scroll-linked motion.
+- **Có thể vượt đích.** Khi `damping` thấp, vật đi qua `target` rồi quay lại. Đó là overshoot — hữu ích để tạo cảm giác “nặng”, nhưng dễ thành lỗi nếu phần tử vượt ra ngoài vùng nhìn thấy.
+
+Nói cách khác: tween mô tả **bạn muốn đi trong bao lâu**, spring mô tả **vật đó nặng bao nhiêu và bị kéo mạnh đến đâu**. “Spring chậm” chỉ là spring có `stiffness` thấp hoặc `mass` cao; nó vẫn không phải tween.
+
+### Đọc tham số theo ý nghĩa vật lý
+
+- `stiffness`: lò xo cứng đến đâu. Tăng thì chuyển động nhanh và dứt khoát hơn.
+- `damping`: ma sát. Tăng thì ít nảy, tắt dần nhanh; quá cao thì ì.
+- `mass`: khối lượng. Tăng thì chậm khởi động và lâu dừng, hợp với phần tử lớn.
+
+Một mẹo thực dụng: chỉnh `stiffness` và `damping` cùng lúc theo tỉ lệ. Giữ nguyên `damping ratio` (`damping / (2 * sqrt(stiffness * mass))`) thì tăng tốc mà không đổi cảm giác nảy.
+
+## Trong `motion/react`: cùng một đích, hai transition
+
+Điểm mạnh của API là đích (`animate`) giống nhau, chỉ transition đổi. Nhờ vậy có thể so sánh công bằng giữa hai mô hình:
+
+```tsx
+const target = on ? 220 : 0;
+
+<motion.div
+  className="box"
+  animate={{ x: target }}
+  transition={{ type: 'spring', stiffness: 220, damping: 18 }}
+/>
+
+<motion.div
+  className="box"
+  animate={{ x: target }}
+  transition={{ type: 'tween', duration: 0.4, ease: 'easeInOut' }}
+/>
+```
+
+Với scroll-linked motion, spring còn dùng để làm mượt tiến trình cuộn. Ở đây nó không thay thế `useScroll` mà bọc lấy giá trị đã map:
+
+```tsx
+const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+const y = useTransform(scrollYProgress, [0, 1], [40, -40]);
+const smooth = useSpring(y, { stiffness: 120, damping: 24 });
+```
+
+Lưu ý: `scrollYProgress` cập nhật theo từng frame cuộn, còn `useSpring` thêm quán tính. Nếu quán tính quá lớn, phần tử sẽ “trôi” sau ngón tay; với nội dung cần bám chính xác, dùng trực tiếp `y` và chỉ spring những thuộc tính trang trí.
+
+## Giảm chuyển động không phải tắt thông tin
+
+Một animation tốt vẫn phải truyền đạt trạng thái khi người dùng chọn giảm chuyển động. `prefers-reduced-motion: reduce` không có nghĩa là “đừng hiển thị gì nữa”, mà là “đừng di chuyển nhiều”.
+
+```tsx
+const reduce = useReducedMotion();
+const transition = reduce ? { duration: 0 } : { type: 'spring', stiffness: 220, damping: 18 };
+
+<motion.div animate={{ x: on ? 220 : 0, opacity: on ? 1 : 0.55 }} transition={transition} />;
+```
+
+Điểm cần chú ý: khi bỏ chuyển động, đừng bỏ luôn thay đổi thứ hai. Trong ví dụ trên, `opacity` vẫn phân biệt hai trạng thái dù `x` nhảy tức thời. Với những chỗ dựa hoàn toàn vào chuyển động để diễn đạt — ví dụ một phần tử “bay” từ danh sách sang chi tiết — cần thêm nhãn hoặc trạng thái tĩnh thay thế.
+
+`MotionConfig reducedMotion="user"` xử lý được phần lớn transform và layout animation ở cấp cây, nhưng nó không biết demo của bạn muốn thay bằng gì. Vì vậy vẫn nên đọc `useReducedMotion()` ở nơi cần quyết định cách truyền đạt.
+
+## Cạm bẫy thường gặp
+
+- **Ép spring thành đúng 300ms.** Spring không có duration; muốn “đúng 300ms” thì đó là bài toán của tween. Cố ép bằng cách chỉnh `stiffness` cho khớp một con số sẽ hỏng ngay khi quãng đường đổi.
+- **Chỉnh `damping` mà quên `mass`.** Cùng `damping`, tăng `mass` sẽ làm vật nảy nhiều hơn; tham số không độc lập.
+- **Animate thuộc tính gây layout.** `width`, `height`, `top`, `left` buộc trình duyệt tính lại layout mỗi frame. Ưu tiên `transform` và `opacity`, kể cả khi dùng spring.
+- **Quên dọn listener.** Scroll và pointer listener gắn ở `window` phải được remove trong cleanup của effect, nếu không sẽ chồng chất sau mỗi lần mount.
+- **Bỏ qua bàn phím.** Nếu chuyển động chỉ kích hoạt bằng hover, người dùng bàn phím không bao giờ thấy nó. Mọi trạng thái animation cần một trigger dùng được bằng `Enter`/`Space`.
+
+Motion Lab có ba demo minh hoạ trực tiếp những điểm trên: **Scroll-linked motion**, **Spring và tween**, và **Giảm chuyển động**. Mỗi demo chạy được bằng bàn phím, giữ nguyên thông tin khi bật giảm chuyển động, và cho phép so sánh hai cấu hình trên cùng một đích đến.

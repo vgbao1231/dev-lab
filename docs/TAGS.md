@@ -23,21 +23,27 @@ Management`, not `Nextjs`, `Node`, `state`.
 - Display order is decided by the registry: **Technology → Domain → Approach**, and within a group by
   label. Frontmatter does not need to be sorted.
 
-## Current list (23 tags)
+## Current list (24 tags)
 
 ### Technology — tools, languages, platforms
 
-| ID           | Label      | Use when                                              |
-| ------------ | ---------- | ----------------------------------------------------- |
-| `react`      | React      | React, hooks, rendering and the related ecosystem     |
-| `typescript` | TypeScript | Type system, generics, strict mode and tooling        |
-| `javascript` | JavaScript | The JavaScript language, its runtime and mechanics    |
-| `astro`      | Astro      | Astro, islands, content collections and static builds |
-| `nextjs`     | Next.js    | Next.js, SSR/SSG, Server Components and caching       |
-| `nodejs`     | Node.js    | Node.js runtime, HTTP, middleware and APIs            |
-| `docker`     | Docker     | Containers, images, compose and runtime environments  |
-| `sql`        | SQL        | Queries, indexes, joins and transactions              |
-| `git`        | Git        | Commit graph, merge, rebase and workflow              |
+| ID           | Label      | Use when                                                 |
+| ------------ | ---------- | -------------------------------------------------------- |
+| `react`      | React      | React, hooks, rendering and the related ecosystem        |
+| `typescript` | TypeScript | Type system, generics, strict mode and tooling           |
+| `javascript` | JavaScript | The JavaScript language, its runtime and mechanics       |
+| `astro`      | Astro      | Astro, islands, content collections and static builds    |
+| `nextjs`     | Next.js    | Next.js, SSR/SSG, Server Components and caching          |
+| `nodejs`     | Node.js    | Node.js runtime, HTTP, middleware and APIs               |
+| `docker`     | Docker     | Containers, images, compose and runtime environments     |
+| `sql`        | SQL        | Queries, indexes, joins and transactions                 |
+| `git`        | Git        | Commit graph, merge, rebase and workflow                 |
+| `motion`     | Motion     | UI motion: spring, easing, scroll-linked, reduced motion |
+
+> `motion` covers UI motion as a concept — timing, springs, scroll-linked progress and reduced
+> motion — not only the `motion` library. Keep `react` for React specifics, `performance` for
+> measured runtime cost and `rendering` for render/commit mechanics; `motion` is not a synonym for
+> any of them. When an article uses several motion ideas, `motion` plus one domain tag is enough.
 
 ### Domain — technical areas or concepts
 
