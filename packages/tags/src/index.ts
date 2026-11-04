@@ -80,6 +80,12 @@ export const tags = [
     group: 'technology',
     description: 'Commit graph, merge, rebase và quy trình làm việc với Git.',
   },
+  {
+    id: 'motion',
+    label: 'Motion',
+    group: 'technology',
+    description: 'Chuyển động trong UI: spring, easing, scroll-linked và accessibility.',
+  },
 
   // Domain — lĩnh vực hoặc khái niệm kỹ thuật.
   {

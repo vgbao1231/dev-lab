@@ -13,7 +13,7 @@
 | Body      | Inter / Sans   | Post content, paragraphs, UI (the home page also supports `Be Vietnam Pro`)                     |
 | Mono      | JetBrains Mono | Metadata, dates, tags, code blocks, standalone data tables (not yet implemented), facts labels  |
 
-> **Home-page exception (ADR 0012):** the hero name and note use Caveat, the Labs sidebar heading uses
+> **Home-page exception (ADR 0003):** the hero name and note use Caveat, the Labs sidebar heading uses
 > Lora, and the lab card title uses Lora `--text-sm`. These keep their own role tokens below
 > (`--text-hero`, `--text-note`, `--text-h2-home`) rather than borrowing from the body scale; every
 > size is still a token, never a literal.
@@ -60,7 +60,7 @@
 | `--text-h2-home`   | 1.75rem (28px)                          | "Các lab" sidebar heading on the home page (Lora)                                                                                                                                                             |
 | `--text-h1-mobile` | 1.875rem (30px)                         | `h1` below 560px, one step down from `--text-2xl`                                                                                                                                                             |
 
-Reasoning and revision history: [ADR 0005](../adr/0005-mono-2px-smaller-than-inter.md) and
+Reasoning and revision history: [ADR 0002](../adr/0002-design-foundations.md) and
 [`CHANGELOG.md`](../CHANGELOG.md). When changing the scale, re-check three fragile spots: whether the header nav
 still fits on one row at 1024px, whether long titles in the 220px TOC column wrap badly, and whether the header
 height changes with the brand size.

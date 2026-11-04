@@ -8,7 +8,7 @@
 Two kinds of section headings:
 
 - **Main heading** (`h2`, display font, `--text-xl`): used for the most important section — currently
-  "Dev Lab". The home-page Labs sidebar is the intentional exception from [ADR 0012](../adr/0012-home-layout-and-parallax.md):
+  "Dev Lab". The home-page Labs sidebar is the intentional exception from [ADR 0003](../adr/0003-portal-ui-and-motion.md):
   `h2` in Lora `--text-h2-home`.
 - **Section label (eyebrow)**: JetBrains Mono, `--text-sm`, `uppercase`, `letter-spacing: 0.08em`,
   color `--color-text-muted`. Used for the remaining sections (`Bài viết mới`, `Dự án khác`,
@@ -56,7 +56,7 @@ Two kinds of section headings:
 - Shared icon set in `portal/src/components/Icon.astro`: viewBox 24, `1.5px` stroke, round caps,
   `currentColor`; solid icons (GitHub) use `fill`. Sizes in use: 14px in metadata, 16–18px
   in buttons/search field, 20px in page headings, 24px in the brand.
-- Current catalogue: `leaf`, `search`, `sun`, `moon`, `monitor`, `flask`, `file-text`, `calendar`,
+- Current catalogue: `leaf`, `menu`, `search`, `sun`, `moon`, `monitor`, `flask`, `file-text`, `calendar`,
   `clock`, `github`, `x`, `enter`, `arrow-up`, `arrow-down`.
 - Do not use emoji as functional icons (emoji in prose is fine). No shadows, no background fill
   for icons, except the 40×40px icon box in page headings: background `color-mix(in oklab, accent 14%, transparent)`,
@@ -238,7 +238,26 @@ ngọt và gura`). This is text for readers, not a place to paste raw notes back
   matches `Fiber`, `reconciliation` matches `Reconciliation`.
 - **Index** generated at build time at `/search-index.json`; the client fetches lazily on first open and caches
   in memory. No runtime dependency added, no external API calls.
-- **Not used** for a mobile menu; the mobile menu remains separate work (roadmap section 1.3).
+- Search is **not** reused as the mobile menu; the menu is its own sheet (next section).
+
+### Mobile menu
+
+- Shown **below 640px** only. Above that the inline header nav returns and the trigger is hidden.
+- **Trigger:** 34px square icon button (`menu` icon, 18px) at the end of the header actions, styled like the
+  mobile search and mode buttons — transparent background and border, `--color-text-muted`, hover to
+  `--color-accent`. It carries `aria-haspopup="dialog"`, `aria-controls="mobile-menu"` and `aria-expanded`.
+- **Sheet:** native `<dialog>` opened with `showModal()` (top layer, focus trap, `Esc` for free), pinned to the
+  bottom edge: full width, `--color-surface` background, 1px `--color-border` top border, `--radius-lg` on the
+  top corners only, `--space-inline` horizontal padding and `env(safe-area-inset-bottom)` in the bottom padding.
+  Backdrop matches the search dialog (62% `--color-bg` + 4px blur).
+- **Content:** compact mono eyebrow label `Điều hướng` and an `x` close button on one row, then the three nav
+  links (`Labs`, `Bài viết`, `Liên hệ`) from `src/data/nav.ts`, one per row with a 1px rule between them. Links
+  are mono `--text-xs` with 12px vertical padding; the current page uses `--color-accent` plus a 10% accent
+  background. The same `aria-current` sync that updates the inline nav updates these links.
+- **Behaviour:** choosing a link closes the sheet before navigating; backdrop click, the close button, `Esc`
+  and growing past 640px also close it. Scroll is locked while it is open and released on close. Focus returns
+  to the trigger on close.
+- Motion: see section 7.3 (`motion.md`), "Mobile sheet menu".
 
 ### Back-to-top button
 

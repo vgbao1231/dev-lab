@@ -24,9 +24,17 @@
   state the bar blends into the page with **no rule**; the 1px border appears together with the scrolled capsule.
   - The search button is a pill from 768px (icon + `Tìm kiếm…` + `kbd`), collapsing into a square icon button below
     768px. Dialog behavior is in `components.md`, the "Search" section.
+  - Below 640px the inline nav is hidden and a 34px menu icon button (after the search and mode
+    buttons) opens the **mobile sheet menu**. The sheet is a native `<dialog>` opened with
+    `showModal()` — bottom-anchored, full width, `--color-surface` background, 1px top border,
+    `--radius-lg` top corners — and holds the same three nav links with 12px tap padding. It closes
+    when a link is chosen, on backdrop or close-button click, on `Esc`, and when the viewport grows
+    to 640px. The trigger carries `aria-expanded`, the dialog supplies the top layer and focus trap,
+    and focus returns to the trigger on close. The header is therefore one row tall below 640px.
+    Details in `components.md`, the "Mobile menu" section; motion in section 7.
   - The brand is `--text-brand` (28px) with `line-height: 1` pinned, so header height is decided by the nav (about
     60px) rather than by the brand size. Changing the brand size within 28–32px pulls no other change.
-    Measurements and reasoning: [ADR 0006](../adr/0006-sticky-capsule-header.md).
+    Measurements and reasoning: [ADR 0003](../adr/0003-portal-ui-and-motion.md).
   - The header has **no** background of its own; the opaque background is on the bar. That way, when scrolled,
     the area outside the capsule is transparent and no rectangle shows behind the four rounded corners. On the
     home page, while at the top, the bar is transparent so the page background shows through.
@@ -106,8 +114,6 @@
   Do not move Dev Lab above "Về mình".
   The "Về mình" and "Dự án khác" sections **only appear when there is real data** in
   `portal/src/data/profile.ts`; when absent they are hidden entirely, with no empty block or "sẽ bổ sung" sentence left behind.
-  The "So sánh giữa các stack" section was dropped on 2026-10-18 and will be built together with section 1.5 in `ROADMAP.md` once there are real
-  measurements.
 - **Footer:** four columns on the `--width-page` frame, stacked when narrow, then 2 columns from 640px and 4
   columns from 1024px (brand column `1.6fr` wide, three navigation columns `1fr`):
   1. **Brand** — display-font name + one description line (`--text-sm`, muted, max 34ch).

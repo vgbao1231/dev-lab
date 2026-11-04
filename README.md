@@ -116,22 +116,22 @@ build. Tag conventions: [`docs/TAGS.md`](docs/TAGS.md).
 
 ## Deploy (Cloudflare Pages) — runbook
 
-**Status (2026-10-28): the portal is deployed.** The repo is connected to Cloudflare Pages and the
-portal build is configured; the React Lab Pages project is **not** created yet
-([docs/ROADMAP.md](docs/ROADMAP.md), section 1.6). The table and steps below document how both projects
-are configured, so they are also the checklist for the remaining React Lab project.
+**Status (2026-11-04): the portal is deployed.** The repo is connected to Cloudflare Pages and the
+portal build is configured; the React Lab and Motion Lab Pages projects are **not** created yet
+([docs/ROADMAP.md](docs/ROADMAP.md), section 1.6 and Phase 2). The table and steps below document how
+the three projects are configured, so they are also the checklist for the two remaining lab projects.
 
-The portal and **each lab are a separate Pages project**, all built from this repo. Rationale in [ADR 0008](docs/adr/0008-one-pages-project-per-lab.md).
+The portal and **each lab are a separate Pages project**, all built from this repo. Rationale in [ADR 0001](docs/adr/0001-portal-architecture.md).
 
-| Setting                | Portal (`dev-lab-gura`)                        | React Lab (`react-lab-gura`)                   |
-| ---------------------- | ---------------------------------------------- | ---------------------------------------------- |
-| Repository             | `vgbao1231/dev-lab`                            | `vgbao1231/dev-lab`                            |
-| Production branch      | `main`                                         | `main`                                         |
-| Framework preset       | Astro (then override the build command)        | React (Vite) (then override the build command) |
-| Root directory         | `/`                                            | `/`                                            |
-| Build command          | `pnpm --filter portal build`                   | `pnpm --filter react-lab build`                |
-| Build output directory | `portal/dist`                                  | `labs/react-lab/dist`                          |
-| Environment variables  | `NODE_VERSION=22.22.0`, `PNPM_VERSION=12.14.0` | same as the portal                             |
+| Setting                | Portal (`dev-lab-gura`)                        | React Lab (`react-lab-gura`)                   | Motion Lab (`motion-lab-gura`)                 |
+| ---------------------- | ---------------------------------------------- | ---------------------------------------------- | ---------------------------------------------- |
+| Repository             | `vgbao1231/dev-lab`                            | `vgbao1231/dev-lab`                            | `vgbao1231/dev-lab`                            |
+| Production branch      | `main`                                         | `main`                                         | `main`                                         |
+| Framework preset       | Astro (then override the build command)        | React (Vite) (then override the build command) | React (Vite) (then override the build command) |
+| Root directory         | `/`                                            | `/`                                            | `/`                                            |
+| Build command          | `pnpm --filter portal build`                   | `pnpm --filter react-lab build`                | `pnpm --filter motion-lab build`               |
+| Build output directory | `portal/dist`                                  | `labs/react-lab/dist`                          | `labs/motion-lab/dist`                         |
+| Environment variables  | `NODE_VERSION=22.22.0`, `PNPM_VERSION=12.14.0` | same as the portal                             | same as the portal                             |
 
 Three things that are easy to get wrong:
 

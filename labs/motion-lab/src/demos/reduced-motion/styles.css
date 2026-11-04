@@ -1,0 +1,32 @@
+.reduced-motion-demo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lab-space-4);
+}
+
+.reduced-motion-value {
+  font-weight: 600;
+}
+
+.reduced-motion-chip--reduce {
+  background: var(--lab-accent-soft);
+  border: 1px solid var(--lab-accent);
+}
+
+.reduced-motion-track {
+  display: flex;
+  align-items: center;
+  padding: var(--lab-space-2);
+  background: var(--lab-surface-muted);
+  border: 1px solid var(--lab-border);
+  border-radius: var(--lab-radius-md);
+}
+
+.reduced-motion-box {
+  flex: none;
+  width: 50%;
+  height: 3.25rem;
+  background: var(--lab-surface);
+  border: 2px solid var(--lab-accent);
+  border-radius: var(--lab-radius-sm);
+}

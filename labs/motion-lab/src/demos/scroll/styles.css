@@ -1,0 +1,81 @@
+.scroll-demo {
+  display: grid;
+  gap: var(--lab-space-4);
+  align-content: start;
+}
+
+.scroll-viewport {
+  block-size: 12rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--lab-surface-muted);
+  border: 1px solid var(--lab-border);
+  border-radius: var(--lab-radius-md);
+  scrollbar-width: thin;
+}
+
+.scroll-track {
+  display: grid;
+  gap: var(--lab-space-2);
+  padding: var(--lab-space-3);
+}
+
+.scroll-card {
+  display: grid;
+  gap: var(--lab-space-2);
+  padding: var(--lab-space-3);
+  background: var(--lab-surface);
+  border: 1px solid var(--lab-accent);
+  border-radius: var(--lab-radius-md);
+}
+
+.scroll-card__text {
+  margin: 0;
+  color: var(--lab-text-muted);
+  font-size: var(--lab-text-sm);
+  line-height: 1.5;
+}
+
+.scroll-card__text code {
+  color: var(--lab-accent);
+  font-family: var(--lab-font-mono);
+}
+
+.scroll-row {
+  display: flex;
+  align-items: center;
+  gap: var(--lab-space-2);
+  padding: var(--lab-space-2) var(--lab-space-3);
+  background: var(--lab-surface);
+  border: 1px solid var(--lab-border);
+  border-radius: var(--lab-radius-sm);
+}
+
+.scroll-row__marker {
+  inline-size: var(--lab-space-2);
+  block-size: var(--lab-space-2);
+  border-radius: 50%;
+  background: var(--lab-accent-soft);
+  border: 1px solid var(--lab-accent);
+}
+
+.scroll-row__label {
+  font-size: var(--lab-text-sm);
+}
+
+.scroll-progress {
+  flex: 1;
+  min-inline-size: 8rem;
+  block-size: var(--lab-space-2);
+  background: var(--lab-surface-muted);
+  border: 1px solid var(--lab-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.scroll-progress__fill {
+  inline-size: 100%;
+  block-size: 100%;
+  background: var(--lab-accent);
+  transform-origin: 0 50%;
+}
