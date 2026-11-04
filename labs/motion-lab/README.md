@@ -18,6 +18,7 @@ src/
 ├── main.tsx                entry point
 ├── styles.css              shared design tokens and primitives (shell only)
 ├── lib/useHashRoute.ts     tiny hash router (#/ and #/demos/<id>)
+├── lib/useTheme.ts         light / dark / system switch, persisted
 └── demos/
     ├── registry.ts         auto-discovers demo folders via import.meta.glob
     ├── types.ts            DemoMeta / Demo contract
@@ -42,6 +43,18 @@ file imported it statically.
 A folder with `meta.ts` but no `index.tsx` is skipped, so a demo can be written without breaking the
 build for everyone else.
 
+## Visual language
+
+The lab looks like Dev Lab without looking like the blog. It borrows the portal's grammar — warm
+neutral ground, Be Vietnam Pro for copy, JetBrains Mono for metadata, an 880px measure and
+border-led sections — and keeps a violet accent plus its own demo stage for the motion identity.
+Palette, type, spacing and shell rules live in [`docs/DESIGN.md`](docs/DESIGN.md); `src/styles.css`
+implements them and is the only place tokens are declared.
+
+The header carries a tối / sáng / hệ thống switch; the choice is stored in
+`localStorage['motion-lab:mode']` and applied before React mounts. Reduced motion still follows the
+OS setting, because every demo reads `useReducedMotion()`.
+
 ## Working in parallel
 
 The lab is split into packages that own disjoint folders; see [`ROADMAP.md`](ROADMAP.md) and
@@ -50,12 +63,14 @@ dependencies, and do not run repo-wide formatters or builds while another packag
 
 ## Status
 
-The six demos are live (each in its own chunk) and the first article is published; the lazy registry
-keeps unopened demos out of the entry bundle. The Cloudflare Pages project is **not created yet**
-(build command `pnpm --filter motion-lab build`, output directory `labs/motion-lab/dist`, root
-directory `/`); until it is deployed the portal still lists the lab as `planned`.
+The six demos are live (each in its own chunk), the shell has been aligned with the Dev Lab visual
+grammar, and the first article is published; the lazy registry keeps unopened demos out of the entry
+bundle. The Cloudflare Pages project is **not created yet** (build command
+`pnpm --filter motion-lab build`, output directory `labs/motion-lab/dist`, root directory `/`);
+until it is deployed the portal still lists the lab as `planned`.
 
 ## Notes
 
-- The lab owns its visual identity: portal design tokens and ADRs do not apply here.
+- The lab owns its visual identity: portal design tokens and ADRs do not apply here, only the shared
+  grammar described in [`docs/DESIGN.md`](docs/DESIGN.md).
 - No backend, CMS or auth; the build is fully static.
