@@ -10,17 +10,18 @@ and its docs. Parallel work packages and file ownership: [`docs/WORKSTREAMS.md`]
 
 ## Status
 
-| Package             | Scope                                           | Status         |
-| ------------------- | ----------------------------------------------- | -------------- |
-| A — foundation      | shell, hash router, lazy registry, styles, docs | done           |
-| B1 — variants       | variants + stagger demo                         | done           |
-| B2 — gestures       | hover, tap, drag demo                           | done           |
-| B3 — layout         | layout animation + `AnimatePresence` demo       | done           |
-| B4 — scroll         | scroll-linked demo                              | done           |
-| B5 — springs        | spring vs tween demo                            | done           |
-| B6 — reduced motion | reduced-motion demo                             | done           |
-| C1 — content        | first portal article(s) + `motion` tag          | done           |
-| C2 — release        | deploy docs, portal status, roadmap ticks       | deploy pending |
+| Package              | Scope                                           | Status         |
+| -------------------- | ----------------------------------------------- | -------------- |
+| A — foundation       | shell, hash router, lazy registry, styles, docs | done           |
+| B1 — variants        | variants + stagger demo                         | done           |
+| B2 — gestures        | hover, tap, drag demo                           | done           |
+| B3 — layout          | layout animation + `AnimatePresence` demo       | done           |
+| B4 — scroll          | scroll-linked demo                              | done           |
+| B5 — springs         | spring vs tween demo                            | done           |
+| B6 — reduced motion  | reduced-motion demo                             | done           |
+| C1 — content         | first portal article(s) + `motion` tag          | done           |
+| C2 — release         | deploy docs, portal status, roadmap ticks       | deploy pending |
+| D — visual alignment | shell, tokens, header/footer/breadcrumb, docs   | done           |
 
 B1–B6 are independent: each owns one folder under `src/demos/` and can run in parallel. C1 touches
 portal content only, so it can also run in parallel. C2 runs last.
@@ -68,6 +69,24 @@ B5 springs, B6 reduced motion.
 - [x] C2: tick the Phase 2 boxes in `docs/ROADMAP.md`, add the deploy row to the root `README.md`,
       add a CHANGELOG entry for the lab release
 
+## Phase D — visual alignment (done)
+
+Goal: the lab reads as part of Dev Lab without copying the blog's digital-garden identity. The shared
+grammar is warm neutrals, Be Vietnam Pro + JetBrains Mono, an 880px measure, border-led sections and
+the same header → content → footer rhythm; the lab keeps a violet accent and its own demo stage.
+
+- [x] Tokens: one `--lab-*` source in `src/styles.css`, warm neutrals shared with the portal, violet
+      accent, `light-dark()` so each token is declared once
+- [x] Shell: header with brand, mono nav and a tối / sáng / hệ thống switch (`src/lib/useTheme.ts`),
+      breadcrumb with demo counter, stage frame, notes, snippet, prev/next pager, mono footer
+- [x] Index: hero plus one grid of demo cards with group label and number
+- [x] Docs: [`docs/DESIGN.md`](docs/DESIGN.md) is the contract; `README.md` describes the visual
+      language and the mode switch
+- [x] Reference mockup `design-reference/motion-lab/` followed for layout and type, not copied
+
+Reduced motion stays an OS-level setting: demos read `useReducedMotion()`, so the mockup's global
+"giảm chuyển động" header toggle is intentionally not shipped (see `docs/DESIGN.md`).
+
 ## Completion criteria
 
 - Six demos, each reachable and each in its own chunk
@@ -80,5 +99,7 @@ B5 springs, B6 reduced motion.
 - No benchmark or library-comparison page (product decision, see portal
   `../../docs/PROJECT_OVERVIEW.md`)
 - No backend, CMS, auth or runtime data
-- No shared design tokens with the portal: the lab has its own identity
+- No shared design tokens with the portal, but the same visual grammar: warm neutral ground, the
+  portal's two font families, an 880px measure and border-led sections. The accent, the demo stage
+  and the lab's own `--lab-*` token names stay lab-specific.
 - No demo that auto-plays for more than a few seconds; the reader drives the interaction

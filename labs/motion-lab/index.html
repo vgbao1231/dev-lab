@@ -8,6 +8,23 @@
       name="description"
       content="Demo các kiểu chuyển động, cách dùng API và cạm bẫy khi làm motion."
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <script>
+      // Apply the stored mode before the first paint so the palette never flashes.
+      try {
+        var stored = localStorage.getItem('motion-lab:mode');
+        if (stored === 'light' || stored === 'dark') {
+          document.documentElement.dataset.mode = stored;
+        }
+      } catch (error) {
+        // Storage blocked: keep the system preference.
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
