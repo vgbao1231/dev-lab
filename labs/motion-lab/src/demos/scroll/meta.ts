@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
   group: 'scroll',
   order: 40,
   summary: 'Gắn chuyển động vào tiến trình cuộn thay vì một animation có thời lượng.',
+  preview: 'scroll',
   api: ['useScroll', 'useTransform', 'useSpring'],
   pitfalls: [
     'Gắn useScroll vào một vùng cuộn bên trong (container), không phải cuộn cả trang — nếu không tiến trình sẽ chạy theo cả trang và khó đoán.',

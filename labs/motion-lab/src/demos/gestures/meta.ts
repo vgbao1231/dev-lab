@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
   group: 'gestures',
   order: 20,
   summary: 'Phản hồi theo thao tác người dùng mà không cần state thủ công.',
+  preview: 'gesture',
   api: ['whileHover', 'whileTap', 'whileDrag', 'drag', 'dragConstraints', 'dragElastic'],
   pitfalls: [
     'drag cần một vùng giới hạn (ref) nếu không phần tử sẽ kéo ra khỏi bố cục.',

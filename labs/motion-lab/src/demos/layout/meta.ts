@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
   group: 'layout',
   order: 30,
   summary: 'Đổi bố cục và thêm/bớt phần tử mà không bị nhảy giật.',
+  preview: 'layout',
   api: ['layout', 'AnimatePresence', 'initial={false}', 'exit'],
   pitfalls: [
     'Thiếu AnimatePresence thì exit không chạy, phần tử biến mất ngay.',

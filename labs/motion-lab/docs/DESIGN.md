@@ -66,7 +66,36 @@ stays quiet.
 - **Snippet** — one bordered code block, `JetBrains Mono` 13px.
 - **Pager** — previous/next demo with their numbers (`← 04 · scroll`), accent coloured.
 - **Footer** — mono, one border on top: `© <year> Dev Lab` left; portal, source and lab line right.
-- **Index** — hero, then one grid of demo cards (group + number row, title, summary, API line).
+- **Index** — hero, then a group filter row (`tất cả` plus one chip per group, count on the
+  right), then one grid of demo cards. Each card starts with a 72px preview band, followed by the
+  group + number row, title, summary and API line.
+
+## Card preview
+
+A card has to show what a demo feels like before it is opened. Every demo declares
+`preview: DemoPreview` in its `meta.ts`; the shell renders one shared 72px band
+(`src/components/DemoPreview.tsx`) and CSS does the rest.
+
+| Kind      | What the band shows                                                |
+| --------- | ------------------------------------------------------------------ |
+| `spring`  | a dot overshoots a goal line, then settles                         |
+| `stagger` | four blocks arrive one after another                               |
+| `gesture` | a pointer reaches a target and the target grows, then springs back |
+| `layout`  | one block moves to the bottom slot while the others close the gap  |
+| `scroll`  | a thumb travels down its track while a progress bar fills          |
+| `reduce`  | the dot jumps straight to the end, no easing                       |
+
+Rules:
+
+- The preview is **not** the demo. It is a one-shot CSS animation, 900ms, no React state, no extra
+  chunk, and the demo folder does not ship a second implementation.
+- The resting state (base CSS) is the end state, so when the animation is disabled the card still
+  reads correctly.
+- It runs once on mount and replays on hover or focus: the card remounts the preview with a `key`
+  bump. Nothing loops, nothing plays on a timer.
+- `aria-hidden="true"`: the title and summary carry the meaning; the preview is decoration.
+- A new demo reuses an existing kind. A new kind is a shell change (package A) and a row in this
+  table, not something a demo package invents.
 
 ## Demo primitives
 
@@ -81,8 +110,9 @@ gradients or glow, and no fixed positioning outside its own box.
 
 - Light and dark both come from tokens with contrast checked; the accent passes on both grounds.
 - `:focus-visible` is a 2px accent outline with 3px offset, never removed.
-- Everything is keyboard-operable; the mode switch is a `role="group"` of `aria-pressed` buttons.
-- There is no hover-only information.
+- Everything is keyboard-operable; the mode switch is a `role="group"` of `aria-pressed` buttons, and
+  the index filter uses the same pattern with a `role="status"` count.
+- There is no hover-only information: the card preview also plays on keyboard focus.
 - `prefers-reduced-motion: reduce` is honoured twice: the global CSS guard shortens shell
   transitions, and each demo reads `useReducedMotion()` to swap movement for an instant state change.
   The mockup showed a global "giảm chuyển động" toggle in the header; it is deliberately not shipped,

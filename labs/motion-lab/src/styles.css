@@ -278,13 +278,367 @@ pre {
   margin-top: var(--lab-space-4);
 }
 
+/* Index filters */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lab-space-2);
+  margin-top: var(--lab-space-4);
+}
+
+.filter {
+  min-height: 32px;
+  padding: 6px var(--lab-space-3);
+  color: var(--lab-text-muted);
+  background: transparent;
+  border: 1px solid var(--lab-border);
+  border-radius: var(--lab-radius-pill);
+  font-family: var(--lab-font-mono);
+  font-size: var(--lab-text-2xs);
+  cursor: pointer;
+}
+
+.filter:hover {
+  color: var(--lab-text);
+  border-color: var(--lab-text-muted);
+}
+
+.filter[aria-pressed='true'] {
+  color: var(--lab-text);
+  background: var(--lab-surface);
+  border-color: var(--lab-text-muted);
+}
+
+.filters__count {
+  margin-left: auto;
+  color: var(--lab-text-muted);
+  font-family: var(--lab-font-mono);
+  font-size: var(--lab-text-2xs);
+}
+
+@media (max-width: 559px) {
+  .filters__count {
+    flex-basis: 100%;
+    margin-left: 0;
+    text-align: right;
+  }
+}
+
+/* Index card preview — one-shot, 72px, end state is the resting state */
+
+.preview {
+  position: relative;
+  display: block;
+  height: var(--lab-space-7);
+  margin-bottom: var(--lab-space-1);
+  overflow: hidden;
+  background: var(--lab-surface-muted);
+  border: 1px solid var(--lab-border);
+  border-radius: var(--lab-radius-sm);
+}
+
+.preview__item {
+  position: absolute;
+  display: none;
+  animation-duration: 900ms;
+  animation-timing-function: var(--lab-ease);
+  animation-fill-mode: both;
+  animation-iteration-count: 1;
+}
+
+.preview--spring .preview__item--1,
+.preview--spring .preview__item--2,
+.preview--stagger .preview__item,
+.preview--gesture .preview__item--1,
+.preview--gesture .preview__item--2,
+.preview--layout .preview__item--1,
+.preview--layout .preview__item--2,
+.preview--layout .preview__item--3,
+.preview--scroll .preview__item--1,
+.preview--scroll .preview__item--2,
+.preview--scroll .preview__item--3,
+.preview--reduce .preview__item--1 {
+  display: block;
+}
+
+/* Spring: a dot overshoots the goal line, then settles. */
+.preview--spring .preview__item--1 {
+  top: 50%;
+  right: 16px;
+  width: 2px;
+  height: 26px;
+  margin-top: -13px;
+  background: var(--lab-text-muted);
+}
+
+.preview--spring .preview__item--2 {
+  top: 50%;
+  left: 78%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  margin-left: -8px;
+  background: var(--lab-accent);
+  border-radius: 50%;
+  animation-name: preview-spring;
+}
+
+/* Stagger: four blocks arrive one after another. */
+.preview--stagger .preview__item {
+  top: 50%;
+  width: 12px;
+  height: 24px;
+  margin-top: -12px;
+  background: var(--lab-accent);
+  border-radius: 2px;
+  animation-name: preview-stagger;
+}
+
+.preview--stagger .preview__item--1 {
+  left: 22%;
+  animation-delay: 0ms;
+}
+
+.preview--stagger .preview__item--2 {
+  left: 40%;
+  animation-delay: 90ms;
+}
+
+.preview--stagger .preview__item--3 {
+  left: 58%;
+  animation-delay: 180ms;
+}
+
+.preview--stagger .preview__item--4 {
+  left: 76%;
+  animation-delay: 270ms;
+}
+
+/* Gesture: the target grows under the pointer, then springs back. */
+.preview--gesture .preview__item--1 {
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  background: var(--lab-accent-soft);
+  border: 1px solid var(--lab-accent);
+  border-radius: var(--lab-radius-md);
+  animation-name: preview-gesture;
+}
+
+.preview--gesture .preview__item--2 {
+  top: 60%;
+  left: 18%;
+  width: 7px;
+  height: 7px;
+  background: var(--lab-text-muted);
+  border-radius: 50%;
+  animation-name: preview-gesture-pointer;
+}
+
+/* Layout: one block moves to the bottom slot, the others close the gap. */
+.preview--layout .preview__item {
+  left: 30%;
+  width: 40%;
+  height: 10px;
+  background: var(--lab-border);
+  border-radius: 2px;
+}
+
+.preview--layout .preview__item--1 {
+  top: 44px;
+  background: var(--lab-accent);
+  animation-name: preview-layout-first;
+}
+
+.preview--layout .preview__item--2 {
+  top: 14px;
+  animation-name: preview-layout-up;
+}
+
+.preview--layout .preview__item--3 {
+  top: 29px;
+  animation-name: preview-layout-down;
+}
+
+/* Scroll: the thumb travels down its track while a progress bar fills. */
+.preview--scroll .preview__item--1 {
+  right: 22%;
+  bottom: 12px;
+  left: 22%;
+  height: 2px;
+  background: var(--lab-accent);
+  transform-origin: left center;
+  animation-name: preview-scroll-fill;
+}
+
+.preview--scroll .preview__item--2 {
+  top: 44px;
+  right: 21.5%;
+  width: 7px;
+  height: 7px;
+  background: var(--lab-accent);
+  border-radius: 50%;
+  animation-name: preview-scroll-thumb;
+}
+
+.preview--scroll .preview__item--3 {
+  top: 16px;
+  right: 22%;
+  width: 2px;
+  height: 40px;
+  background: var(--lab-border);
+  border-radius: 2px;
+}
+
+/* Reduced motion: the dot jumps straight to the end, no easing. */
+.preview--reduce .preview__item--1 {
+  top: 50%;
+  left: 78%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  margin-left: -8px;
+  background: var(--lab-accent);
+  border-radius: 50%;
+  animation-name: preview-reduce;
+}
+
+@keyframes preview-spring {
+  0% {
+    left: 18%;
+  }
+
+  60% {
+    left: 88%;
+  }
+
+  100% {
+    left: 78%;
+  }
+}
+
+@keyframes preview-stagger {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes preview-gesture {
+  0% {
+    transform: scale(1);
+  }
+
+  55% {
+    transform: scale(1.22);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes preview-gesture-pointer {
+  0% {
+    top: 62%;
+    left: 18%;
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  55% {
+    top: 48%;
+    left: 44%;
+  }
+
+  100% {
+    top: 48%;
+    left: 44%;
+    opacity: 0;
+  }
+}
+
+@keyframes preview-layout-first {
+  from {
+    top: 14px;
+  }
+
+  to {
+    top: 44px;
+  }
+}
+
+@keyframes preview-layout-up {
+  from {
+    top: 29px;
+  }
+
+  to {
+    top: 14px;
+  }
+}
+
+@keyframes preview-layout-down {
+  from {
+    top: 44px;
+  }
+
+  to {
+    top: 29px;
+  }
+}
+
+@keyframes preview-scroll-thumb {
+  from {
+    top: 14px;
+  }
+
+  to {
+    top: 42px;
+  }
+}
+
+@keyframes preview-scroll-fill {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes preview-reduce {
+  0%,
+  45% {
+    left: 18%;
+  }
+
+  46%,
+  100% {
+    left: 78%;
+  }
+}
+
 /* Index */
 
 .demo-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
   gap: var(--lab-space-3);
-  margin-top: var(--lab-space-5);
+  margin-top: var(--lab-space-4);
   padding: 0;
   list-style: none;
 }

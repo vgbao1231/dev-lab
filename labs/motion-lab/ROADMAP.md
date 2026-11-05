@@ -49,6 +49,7 @@ src/demos/<id>/styles.css  demo-specific classes, prefixed with the demo id
 A demo is done when:
 
 - [ ] it opens from the index and from its hash URL (`#/demos/<id>`)
+- [ ] `meta.preview` names one of the shared card kinds (see `docs/DESIGN.md`)
 - [ ] the interaction is real (button, toggle, drag, scroll), not an autoplay loop
 - [ ] it uses the APIs named in `meta.api`; `meta.code` matches the actual code shown
 - [ ] it holds at 390px and 1280px, in light and dark, with no horizontal scroll
@@ -86,6 +87,18 @@ the same header → content → footer rhythm; the lab keeps a violet accent and
 
 Reduced motion stays an OS-level setting: demos read `useReducedMotion()`, so the mockup's global
 "giảm chuyển động" header toggle is intentionally not shipped (see `docs/DESIGN.md`).
+
+## Phase E — index preview (done)
+
+Goal: a reader can tell what a demo does before opening it, without breaking the "one chunk per demo"
+rule.
+
+- [x] `DemoPreview` band in `src/components/`, one shared CSS vocabulary of six kinds
+      (`spring`, `stagger`, `gesture`, `layout`, `scroll`, `reduce`)
+- [x] `meta.preview` on every demo; the band is `aria-hidden`, one-shot, and replays on hover/focus
+- [x] Resting state equals the end state, so reduced motion shows a correct still frame
+- [x] Group filter chips on the index with a live count (`role="status"`)
+- [x] `docs/DESIGN.md` documents the kinds and the rules for adding one
 
 ## Completion criteria
 
