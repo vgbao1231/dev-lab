@@ -9,7 +9,7 @@ The portal is static and should stay smooth without a framework. Motion has to c
 hierarchy, not decorate. Three areas drove this: page navigation, the sticky header, the reading progress
 bar, and the home-page visual refresh. The header was rebuilt in the style of `ngockhoi96.dev`, an
 addition beyond `design-reference/`. The first reading-progress version wrote on every scroll frame and
-stuttered. The home refresh follows `design-reference/home-html/Main.dc.html` and needs blobs, dust
+stuttered. The home refresh follows `design-reference/dev-lab/Main.dc.html` and needs blobs, dust
 particles and pointer/scroll parallax.
 
 ## Decision

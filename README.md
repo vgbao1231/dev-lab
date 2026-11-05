@@ -31,7 +31,7 @@ dev-lab/
 │   ├── design/               # Per-topic specs: theme, typography, layout, components, post-page, motion
 │   ├── adr/                  # Architecture/design decisions: why, and what was traded off
 │   └── CHANGELOG.md          # History of design iterations
-├── design-reference/         # Layout and colour references (HTML + screenshots), excluded from the build
+├── design-reference/         # Layout and colour references per site (HTML + screenshots), excluded from the build
 ├── eslint.config.js          # ESLint flat config shared by the whole workspace
 ├── prettier.config.mjs
 ├── tsconfig.base.json        # Shared strict TypeScript configuration
