@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
   group: 'core',
   order: 10,
   summary: 'Khai báo trạng thái một lần, cho parent điều phối và trẻ con chạy so le.',
+  preview: 'stagger',
   api: ['initial', 'animate', 'variants', 'staggerChildren', 'delayChildren'],
   pitfalls: [
     'Quên đặt initial/animate ở parent thì variants của con không tự chạy.',

@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
   group: 'accessibility',
   order: 60,
   summary: 'Tôn trọng lựa chọn của người dùng mà không làm mất thông tin.',
+  preview: 'reduce',
   api: ['useReducedMotion'],
   pitfalls: [
     'Motion không tự tắt transform khi người dùng chọn giảm chuyển động: phải tự xử lý.',

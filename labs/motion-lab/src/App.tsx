@@ -1,6 +1,8 @@
-import { Suspense, lazy, useEffect, type ReactNode } from 'react';
+import { Suspense, lazy, useEffect, useState, type ReactNode } from 'react';
+import { DemoPreview } from './components/DemoPreview';
 import { DemoBoundary } from './demos/DemoBoundary';
 import { demoGroups, demos, type Demo } from './demos/registry';
+import type { DemoGroup } from './demos/types';
 import { useHashRoute } from './lib/useHashRoute';
 import { useTheme, type ThemeMode } from './lib/useTheme';
 
@@ -176,49 +178,100 @@ const DemoPage = ({ demo, children }: { demo: Demo; children: ReactNode }) => {
   );
 };
 
-const IndexPage = () => (
-  <>
-    <section className="hero">
-      <p className="kicker">Dev Lab · lab 02</p>
-      <h1>Motion Lab</h1>
-      <p className="lead">
-        Demo các kiểu chuyển động, cách dùng API và những chỗ dễ sai. Mỗi demo là một module riêng:
-        chỉ demo bạn mở mới được tải.
-      </p>
-      <p className="mono hero__meta">{pad(demos.length)} demo · React 19 · Motion · static</p>
-    </section>
+const DemoCard = ({ demo, index }: { demo: Demo; index: number }) => {
+  const [playKey, setPlayKey] = useState(0);
 
-    {demos.length > 0 ? (
-      <ul className="demo-list">
-        {demos.map((demo, index) => (
-          <li key={demo.id}>
-            <a
-              className="demo-card"
-              href={`#/demos/${demo.id}`}
-              onPointerEnter={() => void demo.load()}
-              onFocus={() => void demo.load()}
+  // Hover and focus replay the card preview by remounting it, so the animation
+  // starts from its first frame instead of finishing once and staying still.
+  const replay = () => setPlayKey((value) => value + 1);
+
+  return (
+    <li>
+      <a
+        className="demo-card"
+        href={`#/demos/${demo.id}`}
+        onPointerEnter={() => {
+          replay();
+          void demo.load();
+        }}
+        onFocus={() => {
+          replay();
+          void demo.load();
+        }}
+      >
+        <DemoPreview key={playKey} kind={demo.preview} />
+        <span className="demo-card__meta">
+          <span className="demo-card__group">
+            {demoGroups.find((group) => group.id === demo.group)?.label ?? 'Demo'}
+          </span>
+          <span className="demo-card__index">{pad(index + 1)}</span>
+        </span>
+        <span className="demo-card__title">{demo.title}</span>
+        <span className="demo-card__summary">{demo.summary}</span>
+        <span className="demo-card__api">{demo.api.slice(0, 3).join(' · ')}</span>
+      </a>
+    </li>
+  );
+};
+
+const IndexPage = () => {
+  const [filter, setFilter] = useState<DemoGroup | 'all'>('all');
+  const visible = filter === 'all' ? demos : demos.filter((demo) => demo.group === filter);
+
+  return (
+    <>
+      <section className="hero">
+        <p className="kicker">Dev Lab · lab 02</p>
+        <h1>Motion Lab</h1>
+        <p className="lead">
+          Demo các kiểu chuyển động, cách dùng API và những chỗ dễ sai. Mỗi demo là một module
+          riêng: chỉ demo bạn mở mới được tải.
+        </p>
+        <p className="mono hero__meta">{pad(demos.length)} demo · React 19 · Motion · static</p>
+      </section>
+
+      {demos.length > 0 ? (
+        <>
+          <div className="filters" role="group" aria-label="Lọc demo theo nhóm">
+            <button
+              type="button"
+              className="filter"
+              aria-pressed={filter === 'all'}
+              onClick={() => setFilter('all')}
             >
-              <span className="demo-card__meta">
-                <span className="demo-card__group">
-                  {demoGroups.find((group) => group.id === demo.group)?.label ?? 'Demo'}
-                </span>
-                <span className="demo-card__index">{pad(index + 1)}</span>
-              </span>
-              <span className="demo-card__title">{demo.title}</span>
-              <span className="demo-card__summary">{demo.summary}</span>
-              <span className="demo-card__api">{demo.api.slice(0, 3).join(' · ')}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p className="demo-hint">
-        Các demo đang được viết. Mỗi demo xuất hiện ở đây khi thư mục của nó có{' '}
-        <code>index.tsx</code>.
-      </p>
-    )}
-  </>
-);
+              tất cả
+            </button>
+            {demoGroups.map((group) => (
+              <button
+                key={group.id}
+                type="button"
+                className="filter"
+                aria-pressed={filter === group.id}
+                onClick={() => setFilter(group.id)}
+              >
+                {group.label}
+              </button>
+            ))}
+            <span className="filters__count" role="status">
+              {pad(visible.length)} demo
+            </span>
+          </div>
+
+          <ul className="demo-list">
+            {visible.map((demo) => (
+              <DemoCard key={demo.id} demo={demo} index={demos.indexOf(demo)} />
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p className="demo-hint">
+          Các demo đang được viết. Mỗi demo xuất hiện ở đây khi thư mục của nó có{' '}
+          <code>index.tsx</code>.
+        </p>
+      )}
+    </>
+  );
+};
 
 const App = () => {
   const route = useHashRoute();

@@ -6,17 +6,17 @@ feature lives in [`../../docs/PARALLEL_AGENTS.md`](../../docs/PARALLEL_AGENTS.md
 
 ## Ownership map
 
-| Package | Owns (write)                                                                                                                                                                                                                                           | Reads (never edits)                            |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
-| **A**   | `src/App.tsx`, `src/main.tsx`, `src/styles.css`, `src/lib/`, `src/demos/types.ts`, `src/demos/registry.ts`, `src/demos/DemoBoundary.tsx`, `vite.config.ts`, `tsconfig.json`, `package.json`, `index.html`, `README.md`, `ROADMAP.md`, `docs/DESIGN.md` | —                                              |
-| **B1**  | `src/demos/variants/`                                                                                                                                                                                                                                  | everything in A; `src/demos/types.ts`          |
-| **B2**  | `src/demos/gestures/`                                                                                                                                                                                                                                  | same                                           |
-| **B3**  | `src/demos/layout/`                                                                                                                                                                                                                                    | same                                           |
-| **B4**  | `src/demos/scroll/`                                                                                                                                                                                                                                    | same                                           |
-| **B5**  | `src/demos/springs/`                                                                                                                                                                                                                                   | same                                           |
-| **B6**  | `src/demos/reduced-motion/`                                                                                                                                                                                                                            | same                                           |
-| **C1**  | `portal/src/content/posts/motion-*.mdx` (new files), `packages/tags/src/index.ts`, `docs/TAGS.md`                                                                                                                                                      | `portal/src/content.config.ts`, `docs/design/` |
-| **C2**  | `README.md` (root), `portal/src/data/labs.ts`, `docs/ROADMAP.md`, `docs/CHANGELOG.md`, this lab's `README.md`                                                                                                                                          | everything else                                |
+| Package | Owns (write)                                                                                                                                                                                                                                                              | Reads (never edits)                            |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| **A**   | `src/App.tsx`, `src/main.tsx`, `src/styles.css`, `src/components/`, `src/lib/`, `src/demos/types.ts`, `src/demos/registry.ts`, `src/demos/DemoBoundary.tsx`, `vite.config.ts`, `tsconfig.json`, `package.json`, `index.html`, `README.md`, `ROADMAP.md`, `docs/DESIGN.md` | —                                              |
+| **B1**  | `src/demos/variants/`                                                                                                                                                                                                                                                     | everything in A; `src/demos/types.ts`          |
+| **B2**  | `src/demos/gestures/`                                                                                                                                                                                                                                                     | same                                           |
+| **B3**  | `src/demos/layout/`                                                                                                                                                                                                                                                       | same                                           |
+| **B4**  | `src/demos/scroll/`                                                                                                                                                                                                                                                       | same                                           |
+| **B5**  | `src/demos/springs/`                                                                                                                                                                                                                                                      | same                                           |
+| **B6**  | `src/demos/reduced-motion/`                                                                                                                                                                                                                                               | same                                           |
+| **C1**  | `portal/src/content/posts/motion-*.mdx` (new files), `packages/tags/src/index.ts`, `docs/TAGS.md`                                                                                                                                                                         | `portal/src/content.config.ts`, `docs/design/` |
+| **C2**  | `README.md` (root), `portal/src/data/labs.ts`, `docs/ROADMAP.md`, `docs/CHANGELOG.md`, this lab's `README.md`                                                                                                                                                             | everything else                                |
 
 Rules that make this safe:
 
@@ -37,7 +37,7 @@ You write three files inside your folder (the metadata file already exists, refi
 diverges from the spec):
 
 ```
-src/demos/<id>/meta.ts     DemoMeta: id, title, group, order, summary, api, pitfalls, code
+src/demos/<id>/meta.ts     DemoMeta: id, title, group, order, summary, preview, api, pitfalls, code
 src/demos/<id>/index.tsx   export default function <Name>Demo() { … }
 src/demos/<id>/styles.css  <id>-prefixed classes; import it from index.tsx
 ```
@@ -63,6 +63,9 @@ Requirements:
 - One interaction the reader controls. If it cannot be operated without a mouse, it is not done.
 - `meta.code` is the short snippet shown under the demo. Keep it readable (≤ 12 lines) and in sync
   with the real code; no comments inside it.
+- `meta.preview` picks one of the shared card kinds (`spring`, `stagger`, `gesture`, `layout`,
+  `scroll`, `reduce`). Reuse an existing kind; a new kind belongs to package A and is documented in
+  `docs/DESIGN.md` first.
 - The demo must not import from `App.tsx`, `registry.ts`, another demo, or `DemoBoundary`; the shell
   wraps it already.
 - Reuse the shared primitives (`demo-row`, `demo-button`, `demo-hint`, `demo-output`, `chip`,

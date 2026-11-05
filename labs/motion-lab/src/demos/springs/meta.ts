@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
   group: 'core',
   order: 50,
   summary: 'Cùng một đích đến, hai cách cảm nhận thời gian khác nhau.',
+  preview: 'spring',
   api: ['type: "spring"', 'stiffness', 'damping', 'type: "tween"', 'duration', 'ease'],
   pitfalls: [
     'Spring không có duration cố định; đừng cố ép nó thành đúng 300ms.',

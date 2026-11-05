@@ -17,6 +17,7 @@ src/
 ├── App.tsx                 shell: header, index page, demo page, Suspense + error boundary
 ├── main.tsx                entry point
 ├── styles.css              shared design tokens and primitives (shell only)
+├── components/DemoPreview.tsx  one-shot 72px card preview used by the index
 ├── lib/useHashRoute.ts     tiny hash router (#/ and #/demos/<id>)
 ├── lib/useTheme.ts         light / dark / system switch, persisted
 └── demos/

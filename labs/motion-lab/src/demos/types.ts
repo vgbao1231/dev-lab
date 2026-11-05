@@ -3,6 +3,13 @@ import type { ComponentType } from 'react';
 export type DemoGroup = 'core' | 'gestures' | 'layout' | 'scroll' | 'accessibility';
 
 /**
+ * The tiny card visual on the index. It is a shared vocabulary, not demo code:
+ * each kind maps to one CSS keyframe set in `src/styles.css`. A new demo picks an
+ * existing kind; a new kind is a shell change (package A), not a demo change.
+ */
+export type DemoPreview = 'spring' | 'stagger' | 'gesture' | 'layout' | 'scroll' | 'reduce';
+
+/**
  * Everything the index page needs to know about a demo. It lives next to the
  * demo in `meta.ts` and is imported eagerly, so it must stay small: no React
  * imports, no component imports, no data beyond the spec below.
@@ -15,6 +22,8 @@ export type DemoMeta = {
   /** Sort key inside the index. Gaps of 10 leave room for insertions. */
   order: number;
   summary: string;
+  /** Which shared card preview the index renders for this demo. */
+  preview: DemoPreview;
   /** The APIs this demo is about, shown as a short reference. */
   api: string[];
   /** Mistakes that are easy to make with this API. */
