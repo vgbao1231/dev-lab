@@ -156,8 +156,10 @@ the playground runs vanilla `animate` snippets, so it is a starting point, not a
   wrap inside the panel instead of scrolling sideways, so a snippet stays readable on a phone.
   `Tab` inserts two spaces; `Esc` releases the trap for one press, so the next `Tab` leaves the editor.
 - **Playback** — auto-run 600ms after typing stops, plus Run (`Ctrl/⌘ + Enter`), replay, pause/resume
-  and 0.25×/0.5×/1×/2× speed. Errors are shown inline; a run resets the stage and stops the previous
-  animations first.
+  and 0.25×/0.5×/1×/2× speed. Errors are shown inline. Every run stops the previous animations and
+  remounts the stage nodes before starting: the DOM `animate` keeps per-element state, so a reused
+  box would treat the finished value as both start and target and the second run would look frozen.
+  A fresh node per run keeps replay honest without touching Motion internals.
 - **Reduced motion** — the playground does not auto-run when the OS asks for reduced motion; the
   reader presses Run explicitly. This keeps the accessibility stance without removing the feature.
 - **React** — every preset also carries a read-only `motion/react` version behind a `<details>`, so a

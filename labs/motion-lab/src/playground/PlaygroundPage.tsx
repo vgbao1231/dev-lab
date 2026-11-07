@@ -34,6 +34,7 @@ export default function PlaygroundPage({ initialPreset }: Props) {
   const [status, setStatus] = useState<PlaygroundStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [stageKey, setStageKey] = useState(0);
 
   const stageRef = useRef<HTMLDivElement>(null);
   const laneRef = useRef<HTMLDivElement>(null);
@@ -44,9 +45,11 @@ export default function PlaygroundPage({ initialPreset }: Props) {
   const runIdRef = useRef(0);
   const copiedTimer = useRef<number | undefined>(undefined);
   const tabReleaseRef = useRef(false);
+  const pendingRunRef = useRef(false);
 
   // The lane is measured from its computed insets instead of hard-coded pixels,
-  // so the snippet travels edge to edge even if the CSS padding changes.
+  // so the snippet travels edge to edge even if the CSS padding changes. It is
+  // re-measured after a remount because the box node is replaced.
   useEffect(() => {
     const lane = laneRef.current;
     const box = boxRef.current;
@@ -68,9 +71,9 @@ export default function PlaygroundPage({ initialPreset }: Props) {
     observer.observe(lane);
 
     return () => observer.disconnect();
-  }, []);
+  }, [stageKey]);
 
-  const resetStage = useCallback(() => {
+  const stopAnimations = useCallback(() => {
     runIdRef.current += 1;
 
     for (const animation of controlsRef.current) {
@@ -78,62 +81,84 @@ export default function PlaygroundPage({ initialPreset }: Props) {
     }
 
     controlsRef.current = [];
-
-    if (boxRef.current) {
-      boxRef.current.style.cssText = '';
-    }
-
-    for (const dot of dotsOf(stageRef.current)) {
-      dot.style.cssText = '';
-    }
   }, []);
 
+  /**
+   * Motion keeps per-element state even after the inline style is cleared, so a
+   * second `animate(box, { x: distance })` saw the finished value as both the
+   * start and the target and did nothing. Remounting the stage nodes gives every
+   * run a fresh element and a fresh Motion state.
+   */
+  const resetStage = useCallback(() => {
+    pendingRunRef.current = false;
+    stopAnimations();
+    setStageKey((key) => key + 1);
+  }, [stopAnimations]);
+
   const runCode = useCallback(() => {
+    pendingRunRef.current = true;
+    stopAnimations();
+    setStageKey((key) => key + 1);
+  }, [stopAnimations]);
+
+  // The run starts after the fresh nodes are committed.
+  // The run starts after the fresh nodes are committed. A zero-delay timer keeps
+  // the state updates out of the effect body (and still runs in the same tick).
+  useEffect(() => {
+    if (!pendingRunRef.current) {
+      return;
+    }
+
     const box = boxRef.current;
 
     if (!box || distance <= 0) {
       return;
     }
 
-    resetStage();
-    setError(null);
-    setPaused(false);
+    const timer = globalThis.setTimeout(() => {
+      pendingRunRef.current = false;
+      setError(null);
+      setPaused(false);
 
-    try {
-      const controls = runSnippet(code, {
-        box,
-        dots: dotsOf(stageRef.current),
-        distance,
-      });
+      try {
+        const controls = runSnippet(code, {
+          box,
+          dots: dotsOf(stageRef.current),
+          distance,
+        });
 
-      setPlaybackSpeed(controls, speedRef.current);
+        setPlaybackSpeed(controls, speedRef.current);
 
-      controlsRef.current = controls;
-      setStatus('running');
+        controlsRef.current = controls;
+        setStatus('running');
 
-      const runId = runIdRef.current;
-      void Promise.all(controls.map((animation) => animation.finished)).then(
-        () => {
-          if (runIdRef.current === runId) {
-            setStatus('done');
-          }
-        },
-        () => {
-          if (runIdRef.current === runId) {
-            setStatus('error');
-            setError('Animation bị dừng trước khi chạy xong.');
-          }
-        },
-      );
-    } catch (cause) {
-      setStatus('error');
-      setError(cause instanceof Error ? cause.message : String(cause));
-    }
-  }, [code, distance, resetStage]);
+        const runId = runIdRef.current;
+        void Promise.all(controls.map((animation) => animation.finished)).then(
+          () => {
+            if (runIdRef.current === runId) {
+              setStatus('done');
+            }
+          },
+          () => {
+            if (runIdRef.current === runId) {
+              setStatus('error');
+              setError('Animation bị dừng trước khi chạy xong.');
+            }
+          },
+        );
+      } catch (cause) {
+        setStatus('error');
+        setError(cause instanceof Error ? cause.message : String(cause));
+      }
+    }, 0);
 
-  // The default preset runs once the stage has a width. Under reduced motion the
-  // playground stays still until the reader presses "Chạy": the lab should not
-  // ignore the OS setting just because this page is about motion.
+    return () => globalThis.clearTimeout(timer);
+  }, [code, distance, stageKey]);
+
+  // The default preset runs once the stage has a width, and every edit re-arms
+  // the timer. Under reduced motion the playground stays still until the reader
+  // presses "Chạy": the lab should not ignore the OS setting just because this
+  // page is about motion.
   useEffect(() => {
     if (systemReduce || distance <= 0) {
       return;
@@ -141,11 +166,11 @@ export default function PlaygroundPage({ initialPreset }: Props) {
 
     const timer = globalThis.setTimeout(runCode, 600);
     return () => globalThis.clearTimeout(timer);
-  }, [distance, runCode, systemReduce]);
+  }, [code, distance, runCode, systemReduce]);
 
   useEffect(() => {
-    return () => resetStage();
-  }, [resetStage]);
+    return () => stopAnimations();
+  }, [stopAnimations]);
 
   useEffect(() => {
     return () => globalThis.clearTimeout(copiedTimer.current);
@@ -278,15 +303,20 @@ export default function PlaygroundPage({ initialPreset }: Props) {
             </span>
           </div>
 
-          <div className="playground__stage-body">
+          <div className="playground__stage-body" ref={stageRef}>
             <div className="playground__lane" ref={laneRef}>
               <span className="playground__goal" ref={goalRef} aria-hidden="true" />
-              <span className="playground__box" ref={boxRef} aria-hidden="true" />
+              <span
+                key={`box-${stageKey}`}
+                className="playground__box"
+                ref={boxRef}
+                aria-hidden="true"
+              />
             </div>
 
             <div className="playground__dots" aria-hidden="true">
               {[0, 1, 2, 3, 4].map((dot) => (
-                <span key={dot} className="playground__dot" />
+                <span key={`dot-${stageKey}-${dot}`} className="playground__dot" />
               ))}
             </div>
           </div>
