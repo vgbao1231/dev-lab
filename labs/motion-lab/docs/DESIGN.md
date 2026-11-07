@@ -162,6 +162,12 @@ the playground runs vanilla `animate` snippets, so it is a starting point, not a
   A fresh node per run keeps replay honest without touching Motion internals.
 - **Reduced motion** — the playground does not auto-run when the OS asks for reduced motion; the
   reader presses Run explicitly. This keeps the accessibility stance without removing the feature.
+- **Spring curve** — when the snippet asks for `type: 'spring'`, a small SVG under the stage plots
+  position over time for the `stiffness`, `damping` and `mass` values written in the code, against a
+  dashed target line. It also states `ζ`, overshoot and settle time, so the numbers have a shape to
+  look at. The curve comes from the analytic spring solution, not an animation loop: one render per
+  edit, no ticking, and it stays still under reduced motion. A snippet without a spring transition
+  hides the graph rather than guessing.
 - **React** — every preset also carries a read-only `motion/react` version behind a `<details>`, so a
   reader can compare `animate(box, …)` with `motion.div` props without leaving the page. Only the
   vanilla snippet executes; live JSX would need a browser compiler and is out of scope.
