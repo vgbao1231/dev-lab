@@ -1,6 +1,9 @@
 # Design System: Dev Lab
 
-The design system for the portal and the labs. Minimalist, personal, content-first. Not a SaaS landing page.
+The design system for the **portal**. Minimalist, personal, content-first. Not a SaaS landing page.
+
+Labs are independent apps: they may look and feel different and are not required to follow this file or
+the portal ADRs. A lab documents its own rules in its own `README.md` / `AGENTS.md`.
 
 This file is an **index**: principles (section 8), checklist (section 9) and a table showing where content lives. Details are split by topic under `docs/design/`; only read the file that matches the task at hand.
 
@@ -28,7 +31,7 @@ Section numbers 1–9 stay as in the original, because comments in the code stil
 ## 8. Principles
 
 1. **Contrast:** primary text meets at least WCAG AA (4.5:1) against the background in every implemented theme × mode pair (currently: Minimalist Editorial light and dark). Check links and secondary text too.
-2. **Minimal:** avoid nested cards, decorative gradients/glows and large illustrations. Agreed exceptions: 16:9 SVG covers for posts in [ADR 0009](adr/0009-manual-post-covers.md), and the home-page background/parallax decoration in [ADR 0012](adr/0012-home-layout-and-parallax.md). Do not extend either exception to other pages or components.
+2. **Minimal:** avoid nested cards, decorative gradients/glows and large illustrations. Agreed exceptions: 16:9 SVG covers for posts in [ADR 0004](adr/0004-content-and-search.md), and the home-page background/parallax decoration in [ADR 0003](adr/0003-portal-ui-and-motion.md). Do not extend either exception to other pages or components.
 3. **One CTA:** at most one primary action per screen.
 4. **Consistent:** layout and typography stay the same across themes. Only color changes.
 5. **Personal:** content and the author's voice take priority over decoration.
@@ -66,8 +69,8 @@ nobody mistakes them for approved patterns. Fix them; do not add new ones.
 
 1. **Home decoration is an accepted exception, but its values are hard-coded.** The home page uses
    six blobs and 62 floating dust particles, with 1s–2.8s transitions and infinite keyframes. This is allowed
-   only for the home page by [ADR 0012](adr/0012-home-layout-and-parallax.md), and only as long as the
-   decoration is `aria-hidden` and disabled under `prefers-reduced-motion`. The numbers in ADR 0012 and
+   only for the home page by [ADR 0003](adr/0003-portal-ui-and-motion.md), and only as long as the
+   decoration is `aria-hidden` and disabled under `prefers-reduced-motion`. The numbers in ADR 0003 and
    `CHANGELOG.md` (four blobs, 65 particles) are historical and no longer match the code.
 2. **One relative size stays literal.** The post-heading `#` copy button keeps `font-size: 0.7em` in
    `global.css` so it scales with whichever heading it sits in. This is relative to its parent heading,

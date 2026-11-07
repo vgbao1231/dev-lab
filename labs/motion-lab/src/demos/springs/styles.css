@@ -1,0 +1,71 @@
+.springs-demo {
+  display: grid;
+  gap: var(--lab-space-4);
+  align-content: start;
+}
+
+.springs-lanes {
+  display: grid;
+  gap: var(--lab-space-3);
+}
+
+.springs-lane-group {
+  display: grid;
+  gap: var(--lab-space-2);
+}
+
+.springs-lane-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lab-space-2);
+}
+
+.springs-lane-title {
+  color: var(--lab-text-muted);
+  font-size: var(--lab-text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.springs-lane {
+  /* Start inset and the run-off band past the goal line. The component reads
+     these paddings to compute the travel, so keep them in sync. */
+  --springs-inset-start: var(--lab-space-2);
+  --springs-inset-end: var(--lab-space-6);
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-block-size: calc(var(--lab-space-6) + var(--lab-space-2) * 2);
+  padding-inline: var(--springs-inset-start) var(--springs-inset-end);
+  background: var(--lab-surface-muted);
+  border: 1px solid var(--lab-border);
+  border-radius: 999px;
+}
+
+.springs-goal {
+  position: absolute;
+  inset-block: var(--lab-space-2);
+  inset-inline-end: var(--springs-inset-end);
+  inline-size: 2px;
+  border-radius: 999px;
+  background: var(--lab-text-muted);
+}
+
+.springs-dot {
+  display: block;
+  inline-size: var(--lab-space-6);
+  block-size: var(--lab-space-6);
+  border-radius: 50%;
+}
+
+.springs-dot--spring {
+  background: var(--lab-accent);
+}
+
+.springs-dot--tween {
+  background: var(--lab-text-muted);
+}

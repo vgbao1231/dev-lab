@@ -6,6 +6,7 @@
  */
 export const iconNames = [
   'leaf',
+  'menu',
   'search',
   'sun',
   'moon',

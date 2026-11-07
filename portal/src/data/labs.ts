@@ -30,6 +30,14 @@ export const labs: Lab[] = [
       'radial-gradient(ellipse 60% 70% at 25% 115%, #12160f 55%, transparent 56%), radial-gradient(ellipse 70% 80% at 75% 120%, #171c13 55%, transparent 56%), linear-gradient(180deg, #4a554d, #2a312b)',
   },
   {
+    slug: 'motion-lab',
+    name: 'Motion Lab',
+    summary: 'Demo các kiểu chuyển động, cách dùng API và cạm bẫy khi làm motion.',
+    stack: ['React', 'Motion', 'Vite'],
+    status: 'planned',
+    category: 'Frontend',
+  },
+  {
     slug: 'js-under-the-hood',
     name: 'JS Under the Hood',
     summary: 'Event loop, closure, prototype, Promise.',

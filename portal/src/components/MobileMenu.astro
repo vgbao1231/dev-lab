@@ -1,0 +1,264 @@
+---
+import Icon from './Icon.astro';
+import { navItems } from '../data/nav';
+
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) => currentPath.startsWith(href);
+---
+
+<!--
+  Mobile sheet menu — docs/design/layout.md, "Header".
+  Native <dialog> + showModal(): top layer, focus trap and Esc out of the box.
+  It sits outside <header> on purpose: the header is translated while hiding on scroll,
+  and a transformed ancestor would become the containing block of the fixed dialog.
+-->
+<dialog class="mobile-menu" id="mobile-menu" data-mobile-menu aria-labelledby="mobile-menu-title">
+  <div class="mobile-menu__panel">
+    <div class="mobile-menu__head">
+      <h2 class="mobile-menu__title" id="mobile-menu-title">
+        Điều hướng
+      </h2>
+      <button class="mobile-menu__close" type="button" data-menu-close aria-label="Đóng menu">
+        <Icon name="x" size={18} />
+      </button>
+    </div>
+
+    <nav class="mobile-menu__nav" aria-label="Điều hướng chính">
+      <ul>
+        {navItems.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              data-nav-link={item.href}
+              data-menu-link
+              aria-current={isActive(item.href) ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</dialog>
+
+<script>
+  const desktop = globalThis.matchMedia('(min-width: 640px)');
+
+  let previousOverflow = '';
+
+  const getMenu = (): HTMLDialogElement | null =>
+    document.querySelector<HTMLDialogElement>('[data-mobile-menu]');
+
+  const setExpanded = (expanded: boolean): void => {
+    for (const trigger of document.querySelectorAll<HTMLElement>('[data-menu-open]')) {
+      trigger.setAttribute('aria-expanded', String(expanded));
+    }
+  };
+
+  const closeMenu = (): void => {
+    const menu = getMenu();
+    if (menu?.open) menu.close();
+  };
+
+  const bindMenu = (menu: HTMLDialogElement): void => {
+    if (menu.dataset.bound === 'true') return;
+    menu.dataset.bound = 'true';
+
+    // The dialog covers the viewport, so a click on the backdrop targets the dialog itself.
+    menu.addEventListener('click', (event) => {
+      if (event.target === menu) menu.close();
+    });
+
+    menu.addEventListener('close', () => {
+      document.documentElement.style.overflow = previousOverflow;
+      setExpanded(false);
+    });
+  };
+
+  const openMenu = (): void => {
+    const menu = getMenu();
+    if (!menu || menu.open) return;
+
+    bindMenu(menu);
+    previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    menu.showModal();
+    setExpanded(true);
+  };
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    if (target.closest('[data-menu-open]')) {
+      event.preventDefault();
+      openMenu();
+      return;
+    }
+
+    if (target.closest('[data-menu-close]')) {
+      closeMenu();
+      return;
+    }
+
+    // Close first, then let the browser follow the link.
+    if (target.closest('[data-menu-link]')) closeMenu();
+  });
+
+  // The sheet only exists below 640px: close it if the viewport grows while it is open.
+  desktop.addEventListener('change', (event) => {
+    if (event.matches) closeMenu();
+  });
+
+  /*
+   * The dialog element is re-created on every navigation, so the sheet is closed before
+   * the swap to keep it out of the transition. <html> survives the swap, hence the
+   * scroll lock is released here as well.
+   */
+  document.addEventListener('astro:before-swap', () => {
+    if (getMenu()?.open) {
+      closeMenu();
+      document.documentElement.style.overflow = previousOverflow;
+    }
+
+    setExpanded(false);
+  });
+</script>
+
+<style>
+  /*
+   * The dialog is a transparent full-viewport wrapper; the visible sheet is the panel
+   * pinned to the bottom edge. That way a click on the backdrop targets the dialog
+   * (closed in script) while clicks on the panel's own padding do not.
+   * Motion is opacity + transform only (docs/design/motion.md).
+   */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text);
+    transition:
+      overlay var(--duration-base) allow-discrete,
+      display var(--duration-base) allow-discrete;
+  }
+
+  .mobile-menu[open] {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .mobile-menu::backdrop {
+    background-color: color-mix(in oklab, var(--color-bg) 62%, transparent);
+    backdrop-filter: blur(4px);
+  }
+
+  .mobile-menu__panel {
+    width: 100%;
+    padding: 12px var(--space-inline) calc(12px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--color-border);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background-color: var(--color-surface);
+    opacity: 0;
+    transform: translateY(100%);
+    transition:
+      opacity var(--duration-base) var(--ease-standard),
+      transform var(--duration-base) var(--ease-standard);
+  }
+
+  .mobile-menu[open] .mobile-menu__panel {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* First frame after opening starts off-screen, then slides up. */
+  @starting-style {
+    .mobile-menu[open] .mobile-menu__panel {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+  }
+
+  .mobile-menu__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 4px;
+  }
+
+  /* Compact eyebrow label, same voice as the section labels. */
+  .mobile-menu__title {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .mobile-menu__close {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition:
+      color var(--duration-fast) var(--ease-standard),
+      background-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .mobile-menu__close:hover {
+    background-color: color-mix(in oklab, var(--color-accent) 12%, transparent);
+    color: var(--color-accent);
+  }
+
+  .mobile-menu__nav ul {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mobile-menu__nav li + li {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mobile-menu__nav a {
+    display: block;
+    padding: 12px 10px;
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    /* The shared growing-underline link style does not apply to nav links. */
+    background-image: none;
+    transition: color var(--duration-fast) var(--ease-standard);
+  }
+
+  .mobile-menu__nav a[aria-current='page'] {
+    background-color: color-mix(in oklab, var(--color-accent) 10%, transparent);
+    color: var(--color-accent);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .mobile-menu__nav a:hover {
+      color: var(--color-accent);
+    }
+  }
+</style>
