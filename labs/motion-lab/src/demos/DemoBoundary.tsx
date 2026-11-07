@@ -22,7 +22,7 @@ export class DemoBoundary extends Component<Props, State> {
     if (this.state.error) {
       return (
         <div className="demo-error" role="alert">
-          <p>Demo này gặp lỗi. Các demo khác vẫn chạy bình thường.</p>
+          <p>Nội dung này gặp lỗi. Các demo khác vẫn chạy bình thường.</p>
           <button
             type="button"
             className="demo-button"

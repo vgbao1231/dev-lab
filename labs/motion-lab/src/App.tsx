@@ -1,5 +1,7 @@
-import { Suspense, lazy, useEffect, useState, type ReactNode } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Backdrop } from './components/Backdrop';
 import { DemoPreview } from './components/DemoPreview';
+import { Search } from './components/SearchDialog';
 import { DemoBoundary } from './demos/DemoBoundary';
 import { demoGroups, demos, type Demo } from './demos/registry';
 import type { DemoGroup } from './demos/types';
@@ -29,11 +31,20 @@ const demoNodes = new Map<string, ReactNode>(
   }),
 );
 
+const PlaygroundPage = lazy(() => import('./playground/PlaygroundPage'));
+
 const findDemo = (route: string): Demo | undefined => {
   const match = /^\/demos\/([^/]+)$/.exec(route);
   const id = match?.[1];
   return id ? demos.find((demo) => demo.id === id) : undefined;
 };
+
+const findPlaygroundPreset = (route: string): string | undefined => {
+  const match = /^\/playground(?:\/([^/]+))?$/.exec(route);
+  return match ? match[1] : undefined;
+};
+
+const isPlaygroundRoute = (route: string): boolean => /^\/playground(?:\/[^/]+)?$/.test(route);
 
 const ThemeSwitch = () => {
   const [mode, setMode] = useTheme();
@@ -55,7 +66,9 @@ const ThemeSwitch = () => {
   );
 };
 
-const Header = () => (
+type HeaderProps = { active: 'demo' | 'playground' };
+
+const Header = ({ active }: HeaderProps) => (
   <header className="site-header">
     <div className="site-header__inner">
       <a className="brand" href="#/">
@@ -66,12 +79,24 @@ const Header = () => (
       </a>
 
       <nav className="site-nav" aria-label="Điều hướng chính">
-        <a className="site-nav__link" href="#/">
+        <a
+          className="site-nav__link"
+          href="#/"
+          aria-current={active === 'demo' ? 'page' : undefined}
+        >
           demo
+        </a>
+        <a
+          className="site-nav__link"
+          href="#/playground"
+          aria-current={active === 'playground' ? 'page' : undefined}
+        >
+          playground
         </a>
         <a className="site-nav__link" href={PORTAL_URL}>
           Dev Lab ↗
         </a>
+        <Search />
         <ThemeSwitch />
       </nav>
     </div>
@@ -171,6 +196,11 @@ const DemoPage = ({ demo, children }: { demo: Demo; children: ReactNode }) => {
         <pre className="code-block">
           <code>{demo.code}</code>
         </pre>
+        <p className="demo-playground-link">
+          <a className="demo-button" href={`#/playground/${demo.id}`}>
+            Nghịch snippet trong playground →
+          </a>
+        </p>
       </section>
 
       <DemoPager index={index} />
@@ -180,13 +210,39 @@ const DemoPage = ({ demo, children }: { demo: Demo; children: ReactNode }) => {
 
 const DemoCard = ({ demo, index }: { demo: Demo; index: number }) => {
   const [playKey, setPlayKey] = useState(0);
+  const cardRef = useRef<HTMLLIElement>(null);
 
   // Hover and focus replay the card preview by remounting it, so the animation
   // starts from its first frame instead of finishing once and staying still.
   const replay = () => setPlayKey((value) => value + 1);
 
+  // Cards below the fold finish their one-shot animation before the reader sees
+  // them. Replay once when the card first enters the viewport, then stop
+  // observing: the preview still never loops and never runs on a timer.
+  useEffect(() => {
+    const node = cardRef.current;
+
+    if (!node || typeof IntersectionObserver === 'undefined') {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setPlayKey((value) => value + 1);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <li>
+    <li ref={cardRef}>
       <a
         className="demo-card"
         href={`#/demos/${demo.id}`}
@@ -200,15 +256,17 @@ const DemoCard = ({ demo, index }: { demo: Demo; index: number }) => {
         }}
       >
         <DemoPreview key={playKey} kind={demo.preview} />
-        <span className="demo-card__meta">
-          <span className="demo-card__group">
-            {demoGroups.find((group) => group.id === demo.group)?.label ?? 'Demo'}
+        <span className="demo-card__body">
+          <span className="demo-card__meta">
+            <span className="demo-card__group">
+              {demoGroups.find((group) => group.id === demo.group)?.label ?? 'Demo'}
+            </span>
+            <span className="demo-card__index">{pad(index + 1)}</span>
           </span>
-          <span className="demo-card__index">{pad(index + 1)}</span>
+          <span className="demo-card__title">{demo.title}</span>
+          <span className="demo-card__summary">{demo.summary}</span>
+          <span className="demo-card__api">{demo.api.slice(0, 3).join(' · ')}</span>
         </span>
-        <span className="demo-card__title">{demo.title}</span>
-        <span className="demo-card__summary">{demo.summary}</span>
-        <span className="demo-card__api">{demo.api.slice(0, 3).join(' · ')}</span>
       </a>
     </li>
   );
@@ -221,13 +279,38 @@ const IndexPage = () => {
   return (
     <>
       <section className="hero">
-        <p className="kicker">Dev Lab · lab 02</p>
-        <h1>Motion Lab</h1>
-        <p className="lead">
-          Demo các kiểu chuyển động, cách dùng API và những chỗ dễ sai. Mỗi demo là một module
-          riêng: chỉ demo bạn mở mới được tải.
-        </p>
-        <p className="mono hero__meta">{pad(demos.length)} demo · React 19 · Motion · static</p>
+        <div className="hero__copy">
+          <p className="kicker">Dev Lab · lab 02</p>
+          <h1>Motion Lab</h1>
+          <p className="lead">
+            Demo các kiểu chuyển động, cách dùng API và những chỗ dễ sai. Mỗi demo là một module
+            riêng: chỉ demo bạn mở mới được tải.
+          </p>
+          <p className="hero__actions">
+            <a className="hero__cta" href="#/playground">
+              Mở playground →
+            </a>
+          </p>
+        </div>
+
+        <dl className="hero__spec" aria-label="Thông số của lab">
+          <div className="hero__spec-row">
+            <dt>demo</dt>
+            <dd>{pad(demos.length)}</dd>
+          </div>
+          <div className="hero__spec-row">
+            <dt>nhóm</dt>
+            <dd>{pad(demoGroups.length)}</dd>
+          </div>
+          <div className="hero__spec-row">
+            <dt>stack</dt>
+            <dd>React 19 · motion</dd>
+          </div>
+          <div className="hero__spec-row">
+            <dt>tải</dt>
+            <dd>theo từng demo</dd>
+          </div>
+        </dl>
       </section>
 
       {demos.length > 0 ? (
@@ -275,7 +358,9 @@ const IndexPage = () => {
 
 const App = () => {
   const route = useHashRoute();
-  const demo = findDemo(route);
+  const playground = isPlaygroundRoute(route);
+  const playgroundPreset = findPlaygroundPreset(route);
+  const demo = playground ? undefined : findDemo(route);
   const demoNode = demo ? (demoNodes.get(demo.id) ?? null) : null;
 
   useEffect(() => {
@@ -283,15 +368,26 @@ const App = () => {
   }, [route]);
 
   useEffect(() => {
-    document.title = demo ? `${demo.title} — Motion Lab` : 'Motion Lab — Dev Lab';
-  }, [demo]);
+    document.title = playground
+      ? 'Playground — Motion Lab'
+      : demo
+        ? `${demo.title} — Motion Lab`
+        : 'Motion Lab — Dev Lab';
+  }, [demo, playground]);
 
   return (
     <div className="app">
-      <Header />
+      <Backdrop />
+      <Header active={playground ? 'playground' : 'demo'} />
 
       <main className="main">
-        {demo && demoNode ? (
+        {playground ? (
+          <DemoBoundary>
+            <Suspense fallback={<p className="demo-loading">Đang tải playground…</p>}>
+              <PlaygroundPage initialPreset={playgroundPreset} />
+            </Suspense>
+          </DemoBoundary>
+        ) : demo && demoNode ? (
           <DemoPage demo={demo}>
             <DemoBoundary key={demo.id}>
               <Suspense fallback={<p className="demo-loading">Đang tải demo…</p>}>
