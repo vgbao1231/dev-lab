@@ -22,8 +22,10 @@ src/
 ├── components/SearchDialog.tsx  Ctrl/⌘+K search over the demo metadata
 ├── playground/
 │   ├── PlaygroundPage.tsx     live snippet editor + stage (#/playground)
+│   ├── SpringCurve.tsx        spring graph read from the snippet parameters
 │   ├── presets.ts             editable starting snippets + read-only React view
 │   ├── runSnippet.ts          local snippet runner (vanilla animate)
+│   ├── springCurve.ts         analytic spring curve + stats (no DOM)
 │   └── styles.css             playground-only styles, shipped lazily
 ├── lib/search.ts           normaliser + scoring shared by the search dialog
 ├── lib/useHashRoute.ts     tiny hash router (#/ and #/demos/<id>)

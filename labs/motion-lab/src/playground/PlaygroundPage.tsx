@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { PLAYGROUND_PRESETS, findPreset, type PlaygroundPreset } from './presets';
+import SpringCurve from './SpringCurve';
 import { runSnippet, setPlaybackSpeed } from './runSnippet';
 import './styles.css';
 
@@ -101,7 +102,6 @@ export default function PlaygroundPage({ initialPreset }: Props) {
     setStageKey((key) => key + 1);
   }, [stopAnimations]);
 
-  // The run starts after the fresh nodes are committed.
   // The run starts after the fresh nodes are committed. A zero-delay timer keeps
   // the state updates out of the effect body (and still runs in the same tick).
   useEffect(() => {
@@ -348,6 +348,8 @@ export default function PlaygroundPage({ initialPreset }: Props) {
               </button>
             ))}
           </div>
+
+          <SpringCurve code={code} />
         </section>
 
         <section className="playground__panel" aria-labelledby="playground-code">
