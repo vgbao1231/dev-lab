@@ -23,6 +23,7 @@ src/
 ├── playground/
 │   ├── PlaygroundPage.tsx     live snippet editor + stage (#/playground)
 │   ├── SpringCurve.tsx        spring graph read from the snippet parameters
+│   ├── demoSnippets.ts        vanilla translation of every demo, lazy
 │   ├── presets.ts             editable starting snippets + read-only React view
 │   ├── runSnippet.ts          local snippet runner (vanilla animate)
 │   ├── springCurve.ts         analytic spring curve + stats (no DOM)
