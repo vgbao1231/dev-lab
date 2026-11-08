@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { useReducedMotion } from 'motion/react';
-import { PLAYGROUND_PRESETS, findPreset, type PlaygroundPreset } from './presets';
+import { resolveSource } from './demoSnippets';
+import {
+  PLAYGROUND_PRESETS,
+  sourceFromPreset,
+  type PlaygroundPreset,
+  type PlaygroundSource,
+} from './presets';
 import SpringCurve from './SpringCurve';
 import { runSnippet, setPlaybackSpeed } from './runSnippet';
 import './styles.css';
@@ -27,8 +33,8 @@ const dotsOf = (stage: HTMLElement | null): HTMLElement[] =>
 
 export default function PlaygroundPage({ initialPreset }: Props) {
   const systemReduce = useReducedMotion();
-  const [preset, setPreset] = useState<PlaygroundPreset>(() => findPreset(initialPreset));
-  const [code, setCode] = useState(preset.code);
+  const [source, setSource] = useState<PlaygroundSource>(() => resolveSource(initialPreset));
+  const [code, setCode] = useState(source.code);
   const [distance, setDistance] = useState(0);
   const [speed, setSpeed] = useState<number>(1);
   const [paused, setPaused] = useState(false);
@@ -176,13 +182,15 @@ export default function PlaygroundPage({ initialPreset }: Props) {
     return () => globalThis.clearTimeout(copiedTimer.current);
   }, []);
 
-  const choosePreset = (next: PlaygroundPreset) => {
-    setPreset(next);
+  const chooseSource = (next: PlaygroundSource) => {
+    setSource(next);
     setCode(next.code);
     setError(null);
     setStatus('idle');
     resetStage();
   };
+
+  const choosePreset = (next: PlaygroundPreset) => chooseSource(sourceFromPreset(next));
 
   const togglePause = () => {
     if (controlsRef.current.length === 0) {
@@ -255,7 +263,7 @@ export default function PlaygroundPage({ initialPreset }: Props) {
     });
   };
 
-  const edited = code !== preset.code;
+  const edited = code !== source.code;
 
   return (
     <article className="demo-page playground-page">
@@ -281,7 +289,7 @@ export default function PlaygroundPage({ initialPreset }: Props) {
             key={item.id}
             type="button"
             className="filter"
-            aria-pressed={item.id === preset.id}
+            aria-pressed={item.id === source.presetId}
             onClick={() => choosePreset(item)}
           >
             {item.label}
@@ -290,7 +298,7 @@ export default function PlaygroundPage({ initialPreset }: Props) {
       </div>
 
       <p className="playground__preset-note">
-        <strong>{preset.label}</strong> — {preset.note}
+        <strong>{source.label}</strong> — {source.note}
         {edited ? ' · đã sửa' : ''}
       </p>
 
@@ -388,8 +396,8 @@ export default function PlaygroundPage({ initialPreset }: Props) {
             <button type="button" className="demo-button playground__run" onClick={runCode}>
               Chạy (Ctrl/⌘ + Enter)
             </button>
-            <button type="button" className="demo-button" onClick={() => choosePreset(preset)}>
-              Khôi phục preset
+            <button type="button" className="demo-button" onClick={() => chooseSource(source)}>
+              Khôi phục snippet
             </button>
           </div>
 
@@ -405,9 +413,9 @@ export default function PlaygroundPage({ initialPreset }: Props) {
           </p>
 
           <details className="playground__react">
-            <summary>Bản React của preset (chỉ đọc)</summary>
+            <summary>Bản React của {source.demoId ? 'demo' : 'preset'} (chỉ đọc)</summary>
             <pre className="playground__react-code">
-              <code>{preset.reactCode}</code>
+              <code>{source.reactCode}</code>
             </pre>
             <p className="playground__hint">
               Demo page chạy đúng bản React này. Playground chỉ thực thi snippet vanilla ở trên —

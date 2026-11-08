@@ -143,11 +143,16 @@ Rules:
 
 `#/playground` is the learning surface: a live stage on the left, an editable snippet on the right.
 It is a lazy route, so the index never downloads the editor or its CSS. A demo page links to it with
-`#/playground/<demo-id>`; the playground picks the closest preset (the demos are React components,
-the playground runs vanilla `animate` snippets, so it is a starting point, not a copy).
+`#/playground/<demo-id>`, which loads that demo's own vanilla snippet from
+`src/playground/demoSnippets.ts`: the demos are React components, so the snippet translates the same
+idea to `animate`, while the read-only React block keeps the original code.
 
 - **Presets** — `spring`, `tween`, `stagger` and `easing`, each a short snippet plus one sentence about
   what to change. The active preset stays visible; editing the code marks it `đã sửa`.
+- **Demo snippets** — every demo has a vanilla translation (`variants`, `gestures`, `layout`, `scroll`,
+  `springs`, `reduced-motion`) and a sentence about what differs from the React version. The preset
+  chips stay available; choosing one leaves the demo source and loads that preset. Both kinds live in
+  the lazy playground chunk, so the index does not pay for them.
 - **Stage** — a measured lane with one box and five dots. `distance` is the lane width minus the box
   and its insets, so the same snippet travels the full lane at every viewport.
 - **Editor** — a plain `<textarea>`; no editor dependency. The snippet runs locally through
@@ -168,9 +173,9 @@ the playground runs vanilla `animate` snippets, so it is a starting point, not a
   look at. The curve comes from the analytic spring solution, not an animation loop: one render per
   edit, no ticking, and it stays still under reduced motion. A snippet without a spring transition
   hides the graph rather than guessing.
-- **React** — every preset also carries a read-only `motion/react` version behind a `<details>`, so a
-  reader can compare `animate(box, …)` with `motion.div` props without leaving the page. Only the
-  vanilla snippet executes; live JSX would need a browser compiler and is out of scope.
+- **React** — every preset and demo snippet also carries a read-only `motion/react` version behind a
+  `<details>`, so a reader can compare `animate(box, …)` with `motion.div` props without leaving the
+  page. Only the vanilla snippet executes; live JSX would need a browser compiler and is out of scope.
 
 The provider is deliberately small: one snippet, one stage, no import system or JSX compiler. Editing
 React components live is a separate, much heavier problem and is not part of this route.

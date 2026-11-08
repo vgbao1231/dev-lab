@@ -77,31 +77,27 @@ export const PLAYGROUND_PRESETS: PlaygroundPreset[] = [spring, tween, stagger, e
 export const DEFAULT_PRESET = spring;
 
 /**
- * A demo does not map one-to-one to a preset: the playground runs vanilla
- * `animate` snippets, while the demos are React components. This is the closest
- * starting point, not a copy of the demo.
+ * What the playground is currently editing: one of the four presets, or the
+ * vanilla translation of a demo. Keeping both in one shape lets the stage,
+ * editor and React block stay unaware of where the snippet came from.
  */
-const DEMO_PRESET: Record<string, string> = {
-  variants: 'stagger',
-  gestures: 'tween',
-  layout: 'spring',
-  scroll: 'easing',
-  springs: 'spring',
-  'reduced-motion': 'tween',
+export type PlaygroundSource = {
+  id: string;
+  label: string;
+  note: string;
+  code: string;
+  reactCode: string;
+  /** Set when the source is one of the four preset chips. */
+  presetId?: string;
+  /** Set when the source belongs to a demo page. */
+  demoId?: string;
 };
 
-/** Accepts a preset id (`spring`) or a demo id (`springs`) from the hash route. */
-export const findPreset = (input: string | undefined): PlaygroundPreset => {
-  if (!input) {
-    return DEFAULT_PRESET;
-  }
-
-  const direct = PLAYGROUND_PRESETS.find((preset) => preset.id === input);
-
-  if (direct) {
-    return direct;
-  }
-
-  const mapped = DEMO_PRESET[input];
-  return PLAYGROUND_PRESETS.find((preset) => preset.id === mapped) ?? DEFAULT_PRESET;
-};
+export const sourceFromPreset = (preset: PlaygroundPreset): PlaygroundSource => ({
+  id: preset.id,
+  label: preset.label,
+  note: preset.note,
+  code: preset.code,
+  reactCode: preset.reactCode,
+  presetId: preset.id,
+});
