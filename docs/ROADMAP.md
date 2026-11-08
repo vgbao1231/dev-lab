@@ -1,6 +1,6 @@
 # Roadmap: Dev Lab
 
-**Current status (2026-11-04):** Phase 1 is still in progress. The portal, design tokens, content system, search, tag registry, covers and the three React articles are implemented, and the portal is deployed on Cloudflare Pages. Still open: the React Lab Pages project and branch-preview checks in 1.6. React Lab is the first lab and is still a scaffold; Motion Lab is the second lab and now has a scaffold in `labs/motion-lab`.
+**Current status (2026-11-08):** Phase 1 is still in progress. The portal, design tokens, content system, search, tag registry, covers and the three React articles are implemented, and the portal is deployed on Cloudflare Pages. Still open: the React Lab Pages project and branch-preview checks in 1.6. React Lab is the first lab and is still a scaffold; Motion Lab is built and merged (six demos, index previews, search and a snippet playground) and waits only for its own Pages project.
 
 This document splits the project into phases. Each phase has a work checklist and completion criteria.
 
