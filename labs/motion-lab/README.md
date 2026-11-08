@@ -84,11 +84,24 @@ it turns a demo into an editable vanilla `motion` snippet with a measured stage,
 inline errors, without adding a dependency, plus a read-only React version of each preset. When a
 snippet uses a spring, a small SVG plots the curve from its `stiffness`, `damping` and `mass` with
 `ζ`, overshoot and settle time. Search (`Ctrl/⌘ + K` or `/`) filters demos, APIs and pitfalls straight
-from the eager metadata. The lazy
-registry keeps unopened demos out of the entry
-bundle. The Cloudflare Pages project is **not created yet** (build command
-`pnpm --filter motion-lab build`, output directory `labs/motion-lab/dist`, root directory `/`);
-until it is deployed the portal still lists the lab as `planned`.
+from the eager metadata. The lazy registry keeps unopened demos out of the entry bundle. The lab is
+not deployed yet; see [Deploy](#deploy).
+
+## Deploy
+
+Motion Lab is its own Cloudflare Pages project, built from the repository root:
+
+| Setting                | Value                                          |
+| ---------------------- | ---------------------------------------------- |
+| Project                | `motion-lab-gura` (check the name is free)     |
+| Production branch      | `main`                                         |
+| Build command          | `pnpm --filter motion-lab build`               |
+| Build output directory | `labs/motion-lab/dist`                         |
+| Environment variables  | `NODE_VERSION=22.22.0`, `PNPM_VERSION=12.14.0` |
+
+Hash routing means no rewrite rules are needed. After the first deploy, set `status: 'live'` and the
+Pages URL as `href` in `portal/src/data/labs.ts`, then tick the Motion Lab deploy item in
+[`docs/ROADMAP.md`](../../docs/ROADMAP.md) and the lab's C2 item in [`ROADMAP.md`](ROADMAP.md).
 
 ## Notes
 
