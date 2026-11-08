@@ -81,8 +81,10 @@ dependencies, and do not run repo-wide formatters or builds while another packag
 The six demos are live (each in its own chunk), the shell has been aligned with the Dev Lab visual
 grammar, and the first article is published. The playground (`#/playground`) is live as a lazy route:
 it turns a demo into an editable vanilla `motion` snippet with a measured stage, playback controls and
-inline errors, without adding a dependency, plus a read-only React version of each preset. Search
-(`Ctrl/⌘ + K` or `/`) filters demos, APIs and pitfalls straight from the eager metadata. The lazy
+inline errors, without adding a dependency, plus a read-only React version of each preset. When a
+snippet uses a spring, a small SVG plots the curve from its `stiffness`, `damping` and `mass` with
+`ζ`, overshoot and settle time. Search (`Ctrl/⌘ + K` or `/`) filters demos, APIs and pitfalls straight
+from the eager metadata. The lazy
 registry keeps unopened demos out of the entry
 bundle. The Cloudflare Pages project is **not created yet** (build command
 `pnpm --filter motion-lab build`, output directory `labs/motion-lab/dist`, root directory `/`);
