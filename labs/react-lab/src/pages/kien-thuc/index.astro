@@ -1,0 +1,69 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { topicDescriptions, topicLabels, topics } from '../../data/content';
+
+const posts = (await getCollection('knowledge', ({ data }) => !data.draft)).sort(
+  (first, second) => second.data.date.valueOf() - first.data.date.valueOf(),
+);
+
+const groups = topics
+  .map((topic) => ({
+    topic,
+    label: topicLabels[topic],
+    description: topicDescriptions[topic],
+    items: posts.filter((post) => post.data.topic === topic),
+  }))
+  .filter((group) => group.items.length > 0);
+
+const levelCount = new Set(posts.map((post) => post.data.level)).size;
+---
+
+<BaseLayout
+  title="Kiến thức React — React Lab"
+  description="Bài viết React theo chủ đề: hooks, lifecycle, rendering, state, performance và thư viện."
+>
+  <div class="page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li>
+          <a href="/">react lab</a>
+        </li>
+        <li aria-current="page">kiến thức</li>
+      </ol>
+      <span class="meta">
+        {posts.length} bài · {levelCount} mức độ
+      </span>
+    </nav>
+
+    <section class="hero">
+      <p class="hero__kicker">Thư viện kiến thức</p>
+      <h1 class="hero__title">Kiến thức React.</h1>
+      <p class="hero__lead">
+        Đi từ cơ chế render đến cách dùng hook và chọn thư viện. Mỗi bài độc lập, nhưng các bài
+        trong cùng chủ đề nối tiếp nhau.
+      </p>
+    </section>
+
+    {groups.length > 0 ? (
+      groups.map((group) => (
+        <section class="section" id={group.topic} aria-labelledby={`${group.topic}-title`}>
+          <div class="section__head">
+            <h2 class="section__title" id={`${group.topic}-title`}>
+              {group.label}
+            </h2>
+            <p class="section__lead">{group.description}</p>
+          </div>
+          <div class="post-grid">
+            {group.items.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </div>
+        </section>
+      ))
+    ) : (
+      <p class="empty">Chưa có bài viết nào.</p>
+    )}
+  </div>
+</BaseLayout>

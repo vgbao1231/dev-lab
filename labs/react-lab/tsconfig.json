@@ -1,12 +1,19 @@
 {
-  "extends": "../../tsconfig.base.json",
+  /*
+   * Same constraint as the portal: do not use the array form of `extends`,
+   * because Rolldown (Vite inside Astro) resolves it incorrectly.
+   */
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"],
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "moduleDetection": "force",
     "jsx": "react-jsx",
-    "allowImportingTsExtensions": true,
-    "types": ["vite/client"]
-  },
-  "include": ["src", "vite.config.ts"]
+    "jsxImportSource": "react",
+
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  }
 }

@@ -12,7 +12,7 @@ Goal: share knowledge, reinforce existing knowledge through practice, and build 
 - Portal: Astro (static output), plain CSS + design tokens
 - Motion: Astro View Transitions (`<ClientRouter />`) + `motion/mini` for entrance animations
 - Content: Markdown/MDX through Astro content collections
-- First lab: React, TypeScript, Vite
+- First lab: React Lab — Astro + React islands + MDX (knowledge base plus interactive demos)
 - Code quality: TypeScript `strict`, ESLint (flat config), Prettier
 - Deploy: Cloudflare Pages (portal live; React Lab not deployed yet — see the Deploy section below)
 
@@ -52,7 +52,7 @@ dev-lab/
 ├── packages/
 │   └── tags/                  # @dev-lab/tags — shared tag registry for the portal + labs
 └── labs/
-    └── react-lab/            # React + TypeScript + Vite lab
+    └── react-lab/            # Astro knowledge site + React demo islands
 ```
 
 Each lab is a standalone app under `labs/` and may have its own stack and UI. Shared packages
@@ -112,7 +112,9 @@ Posts are Markdown files in `portal/src/content/posts/`; the filename becomes th
 missing field, a wrong `type`, a tag that is not in the registry, or more than four tags fails the
 build. Tag conventions: [`docs/TAGS.md`](docs/TAGS.md).
 
-> The three current React internals posts are real content; the sample post `bai-viet-mau.md` has been removed.
+> Lab-specific React material lives in its own lab. React Lab keeps the three React internals articles
+> (Fiber, concurrent rendering, tearing) in `labs/react-lab/src/content/knowledge/`; the portal keeps
+> general web knowledge (HTML, browser, internet, cache, structure).
 
 ## Deploy (Cloudflare Pages) — runbook
 
@@ -123,15 +125,15 @@ the three projects are configured, so they are also the checklist for the two re
 
 The portal and **each lab are a separate Pages project**, all built from this repo. Rationale in [ADR 0001](docs/adr/0001-portal-architecture.md).
 
-| Setting                | Portal (`dev-lab-gura`)                        | React Lab (`react-lab-gura`)                   | Motion Lab (`motion-lab-gura`)                 |
-| ---------------------- | ---------------------------------------------- | ---------------------------------------------- | ---------------------------------------------- |
-| Repository             | `vgbao1231/dev-lab`                            | `vgbao1231/dev-lab`                            | `vgbao1231/dev-lab`                            |
-| Production branch      | `main`                                         | `main`                                         | `main`                                         |
-| Framework preset       | Astro (then override the build command)        | React (Vite) (then override the build command) | React (Vite) (then override the build command) |
-| Root directory         | `/`                                            | `/`                                            | `/`                                            |
-| Build command          | `pnpm --filter portal build`                   | `pnpm --filter react-lab build`                | `pnpm --filter motion-lab build`               |
-| Build output directory | `portal/dist`                                  | `labs/react-lab/dist`                          | `labs/motion-lab/dist`                         |
-| Environment variables  | `NODE_VERSION=22.22.0`, `PNPM_VERSION=12.14.0` | same as the portal                             | same as the portal                             |
+| Setting                | Portal (`dev-lab-gura`)                        | React Lab (`react-lab-gura`)            | Motion Lab (`motion-lab-gura`)                 |
+| ---------------------- | ---------------------------------------------- | --------------------------------------- | ---------------------------------------------- |
+| Repository             | `vgbao1231/dev-lab`                            | `vgbao1231/dev-lab`                     | `vgbao1231/dev-lab`                            |
+| Production branch      | `main`                                         | `main`                                  | `main`                                         |
+| Framework preset       | Astro (then override the build command)        | Astro (then override the build command) | React (Vite) (then override the build command) |
+| Root directory         | `/`                                            | `/`                                     | `/`                                            |
+| Build command          | `pnpm --filter portal build`                   | `pnpm --filter react-lab build`         | `pnpm --filter motion-lab build`               |
+| Build output directory | `portal/dist`                                  | `labs/react-lab/dist`                   | `labs/motion-lab/dist`                         |
+| Environment variables  | `NODE_VERSION=22.22.0`, `PNPM_VERSION=12.14.0` | same as the portal                      | same as the portal                             |
 
 Three things that are easy to get wrong:
 

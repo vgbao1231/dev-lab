@@ -1,0 +1,54 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PostCover from './PostCover.astro';
+import {
+  estimateReadingMinutes,
+  formatDate,
+  levelLabels,
+  postTypeLabels,
+  topicLabels,
+} from '../data/content';
+
+export type Props = {
+  post: CollectionEntry<'knowledge'>;
+};
+
+const { post } = Astro.props;
+const readingMinutes = estimateReadingMinutes(post.body);
+---
+
+<article class="post-card">
+  <div class="post-card__cover">
+    <PostCover
+      cover={post.data.cover}
+      coverAlt={post.data.coverAlt}
+      title={post.data.title}
+      typeLabel={postTypeLabels[post.data.type]}
+    />
+  </div>
+
+  <div class="post-card__body">
+    <p class="post-card__meta meta">
+      <span>{topicLabels[post.data.topic]}</span>
+      <span aria-hidden="true">·</span>
+      <span>{levelLabels[post.data.level]}</span>
+    </p>
+
+    <h2 class="post-card__title">
+      <a href={`/kien-thuc/${post.id}`}>{post.data.title}</a>
+    </h2>
+
+    <p class="post-card__summary">{post.data.summary}</p>
+
+    <ul class="tag-list" aria-label="Tag của bài viết">
+      {post.data.tags.map((tag) => (
+        <li class="tag">{tag}</li>
+      ))}
+    </ul>
+
+    <div class="post-card__footer meta">
+      <span>{formatDate(post.data.date)}</span>
+      <span>{readingMinutes} phút đọc</span>
+    </div>
+  </div>
+</article>

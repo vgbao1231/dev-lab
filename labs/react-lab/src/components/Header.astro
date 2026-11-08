@@ -1,0 +1,28 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+const path = Astro.url.pathname;
+const onKnowledge = path.startsWith('/kien-thuc');
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true"></span>
+      <span>
+        React<span class="brand__suffix">Lab.</span>
+      </span>
+    </a>
+
+    <nav class="site-nav" aria-label="Điều hướng chính">
+      <a href="/kien-thuc" aria-current={onKnowledge ? 'page' : undefined}>
+        kiến thức
+      </a>
+      <a class="site-nav__portal" href="https://dev-lab-gura.pages.dev">
+        dev lab ↗
+      </a>
+    </nav>
+
+    <ThemeToggle />
+  </div>
+</header>

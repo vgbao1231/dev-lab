@@ -1,0 +1,85 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCover from '../../components/PostCover.astro';
+import {
+  estimateReadingMinutes,
+  formatDate,
+  levelLabels,
+  postTypeLabels,
+  topicLabels,
+} from '../../data/content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('knowledge', ({ data }) => !data.draft);
+
+  return posts.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const readingMinutes = estimateReadingMinutes(entry.body);
+---
+
+<BaseLayout title={`${entry.data.title} — React Lab`} description={entry.data.summary}>
+  <div class="page">
+    <article class="article-page">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li>
+            <a href="/">react lab</a>
+          </li>
+          <li>
+            <a href="/kien-thuc">kiến thức</a>
+          </li>
+          <li aria-current="page">{topicLabels[entry.data.topic]}</li>
+        </ol>
+      </nav>
+
+      <header class="article-header">
+        <p class="meta">
+          {postTypeLabels[entry.data.type]} · {topicLabels[entry.data.topic]} ·{' '}
+          {levelLabels[entry.data.level]}
+        </p>
+        <h1>{entry.data.title}</h1>
+        <p class="article-header__lead">{entry.data.summary}</p>
+        <div class="article-header__meta meta">
+          <span>{formatDate(entry.data.date)}</span>
+          <span>{readingMinutes} phút đọc</span>
+        </div>
+        <ul class="tag-list" aria-label="Tag của bài viết">
+          {entry.data.tags.map((tag) => (
+            <li class="tag">{tag}</li>
+          ))}
+        </ul>
+      </header>
+
+      {entry.data.cover ? (
+        <div class="article-cover">
+          <PostCover
+            cover={entry.data.cover}
+            coverAlt={entry.data.coverAlt}
+            title={entry.data.title}
+            typeLabel={postTypeLabels[entry.data.type]}
+          />
+        </div>
+      ) : null}
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <footer class="article-footer">
+        <a class="button" href="/kien-thuc">
+          ← Tất cả kiến thức
+        </a>
+        <a class="button" href={`/kien-thuc#${entry.data.topic}`}>
+          Thêm về {topicLabels[entry.data.topic]} →
+        </a>
+      </footer>
+    </article>
+  </div>
+</BaseLayout>

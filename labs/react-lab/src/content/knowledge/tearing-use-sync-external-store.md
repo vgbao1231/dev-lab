@@ -2,7 +2,8 @@
 title: 'Tearing, Stale Snapshots và useSyncExternalStore'
 date: 2026-10-24
 type: concept
-lab: react-lab
+topic: state
+level: nang-cao
 tags: ['react', 'state-management', 'concurrency']
 cover: react-tearing
 coverAlt: 'Sơ đồ render snapshot v1 và external store v2, đường tear ở giữa'

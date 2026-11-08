@@ -1,0 +1,75 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { topicDescriptions, topicLabels, topics } from '../data/content';
+
+const posts = (await getCollection('knowledge', ({ data }) => !data.draft)).sort(
+  (first, second) => second.data.date.valueOf() - first.data.date.valueOf(),
+);
+
+const latest = posts.slice(0, 3);
+const postCount = posts.length;
+---
+
+<BaseLayout title="React Lab — hiểu React từ bên trong">
+  <div class="page">
+    <section class="hero">
+      <p class="hero__kicker">Dev Lab · React Lab</p>
+      <h1 class="hero__title">Hiểu React từ bên trong.</h1>
+      <p class="hero__lead">
+        Bài viết về hooks, lifecycle, rendering, state và những thư viện đang dùng hằng ngày — kèm
+        demo tương tác để thấy cơ chế bằng mắt, không chỉ đọc mô tả.
+      </p>
+      <div class="hero__actions">
+        <a class="button button--accent" href="/kien-thuc">
+          Đọc kiến thức
+        </a>
+        <a class="button" href="https://dev-lab-gura.pages.dev">
+          Về Dev Lab ↗
+        </a>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="latest-title">
+      <div class="section__head">
+        <h2 class="section__title" id="latest-title">
+          Bài mới
+        </h2>
+        <a class="meta" href="/kien-thuc">
+          tất cả {postCount} bài →
+        </a>
+      </div>
+
+      {latest.length > 0 ? (
+        <div class="post-grid post-grid--three">
+          {latest.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      ) : (
+        <p class="empty">Chưa có bài viết nào. Nội dung đầu tiên sẽ xuất hiện ở đây.</p>
+      )}
+    </section>
+
+    <section class="section" aria-labelledby="topics-title">
+      <div class="section__head">
+        <h2 class="section__title" id="topics-title">
+          Học theo chủ đề
+        </h2>
+        <p class="section__lead">Sáu nhánh, từ cơ chế bên trong đến thư viện ngoài React.</p>
+      </div>
+
+      <ul class="topic-grid">
+        {topics.map((topic) => (
+          <li>
+            <a class="topic-card" href={`/kien-thuc#${topic}`}>
+              <span class="topic-card__name">{topicLabels[topic]}</span>
+              <span class="topic-card__description">{topicDescriptions[topic]}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</BaseLayout>

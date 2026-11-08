@@ -1,0 +1,54 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+export type Props = {
+  title: string;
+  description?: string;
+};
+
+const {
+  title,
+  description = 'React Lab — kiến thức React từ cơ chế đến thư viện, kèm demo tương tác.',
+} = Astro.props;
+
+// Runs before paint so the first frame already has the right mode.
+const modeInitScript = `
+(() => {
+  const stored = localStorage.getItem('react-lab:mode');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.dataset.mode =
+    stored === 'light' || stored === 'dark' ? stored : prefersDark ? 'dark' : 'light';
+})();
+`;
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <script is:inline set:html={modeInitScript} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Bỏ qua tới nội dung
+    </a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

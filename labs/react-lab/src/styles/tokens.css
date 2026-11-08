@@ -1,0 +1,74 @@
+/*
+ * React Lab tokens. The lab shares the portal's warm ground and type families
+ * but keeps its own cyan accent, so it reads as a sibling of Dev Lab rather
+ * than a copy of the blog. Docs: docs/DESIGN.md.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --lab-bg: light-dark(#f7f4ed, #171614);
+  --lab-surface: light-dark(#fffcf6, #24221f);
+  --lab-surface-muted: light-dark(#f0ece2, #2c2a26);
+  --lab-text: light-dark(#292720, #f2ebdd);
+  --lab-text-muted: light-dark(#756f64, #b6ada0);
+  --lab-border: light-dark(#e3ddd1, #3a3630);
+  --lab-accent: light-dark(#0b6e8a, #7dd3fc);
+  --lab-accent-soft: light-dark(#e2f1f6, #10303c);
+  --lab-link: var(--lab-accent);
+
+  --lab-font-sans: 'Be Vietnam Pro', system-ui, sans-serif;
+  --lab-font-body: 'Inter', system-ui, sans-serif;
+  --lab-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --lab-text-2xs: 0.75rem;
+  --lab-text-xs: 0.8125rem;
+  --lab-text-sm: 0.875rem;
+  --lab-text-base: 1.0625rem;
+  --lab-text-lg: 1.25rem;
+  --lab-text-xl: 1.5rem;
+  --lab-text-2xl: 2rem;
+  --lab-text-hero: clamp(2.5rem, 1.6rem + 3.4vw, 4rem);
+
+  --lab-space-1: 4px;
+  --lab-space-2: 8px;
+  --lab-space-3: 12px;
+  --lab-space-4: 18px;
+  --lab-space-5: 28px;
+  --lab-space-6: 44px;
+  --lab-space-7: 72px;
+
+  --lab-radius-sm: 4px;
+  --lab-radius-md: 8px;
+  --lab-radius-lg: 12px;
+
+  --lab-width-page: 1120px;
+  --lab-width-content: 760px;
+  --lab-header-height: 64px;
+
+  --lab-duration-fast: 120ms;
+  --lab-duration-base: 200ms;
+  --lab-ease: cubic-bezier(0.2, 0, 0, 1);
+
+  --lab-gutter: 20px;
+}
+
+:root[data-mode='light'] {
+  color-scheme: light;
+}
+
+:root[data-mode='dark'] {
+  color-scheme: dark;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --lab-gutter: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --lab-gutter: 32px;
+  }
+}

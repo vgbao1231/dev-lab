@@ -36,7 +36,7 @@ This repo separates product language from project language.
 - `portal/src/components/`: `.astro` components, one PascalCase file per component (header, cards, cover, icon, search, and so on)
 - `portal/src/data/`: the single source of data. `profile.ts` (personal information), `labs.ts`, `themes.ts`, `content.ts` (`postTypes`), `covers.ts`, `icons.ts`
 - `portal/src/lib/`: pure shared logic (`search.ts`, `reading.ts`) with no DOM dependency
-- `portal/src/content/posts/`: posts; the file name is the slug
+- `portal/src/content/posts/`: general web posts; the file name is the slug. Lab-specific articles live in the lab's own `src/content/` (React Lab: `labs/react-lab/src/content/knowledge/`)
 - `portal/src/content.config.ts`: frontmatter schema (source of truth for required fields)
 - `portal/src/styles/tokens.css`: token values (colour, type size, spacing, motion)
 - `packages/tags/`: shared `@dev-lab/tags` registry; the only source for tag IDs, labels and groups
@@ -142,8 +142,7 @@ never edits a file it does not own.
 ## Git
 
 - Use Conventional Commits: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `chore:`. Write the message in English.
-- One branch per task, named in English: `feat/<short-description>`, `docs/<short-description>`.
-- **Start every task branch from the latest `main`:** run `git switch main && git pull --ff-only`, then
-  `git switch -c <branch>`. Do not branch off the current branch or another unmerged branch, even when it
-  holds related work. If a task cannot be separated from unmerged work, ask the user first.
-- Do not commit directly to `main`.
+- The project has one maintainer, so a task may land directly on `main`. Feature branches are optional;
+  when one is used, name it in English (`feat/<short-description>`, `docs/<short-description>`) and start
+  it from the latest `main` (`git switch main && git pull --ff-only`, then `git switch -c <branch>`). Do
+  not branch off another unmerged branch; if a task cannot be separated from unmerged work, ask first.

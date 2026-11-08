@@ -2,7 +2,8 @@
 title: 'React Concurrent Rendering: Lanes, Scheduling và Interruptible Rendering'
 date: 2026-10-23
 type: concept
-lab: react-lab
+topic: rendering
+level: nang-cao
 tags: ['react', 'concurrency', 'performance']
 cover: react-scheduler
 coverAlt: 'Sơ đồ các lane Sync, Input, Default, Transition, Idle trên trục thời gian, với điểm yield'

@@ -1,6 +1,6 @@
 # Roadmap: Dev Lab
 
-**Current status (2026-11-08):** Phase 1 is still in progress. The portal, design tokens, content system, search, tag registry, covers and the three React articles are implemented, and the portal is deployed on Cloudflare Pages. Still open: the React Lab Pages project and branch-preview checks in 1.6. React Lab is the first lab and is still a scaffold; Motion Lab is built and merged (six demos, index previews, search and a snippet playground) and waits only for its own Pages project.
+**Current status (2026-11-08):** Phase 1 is still in progress. The portal, design tokens, content system, search, tag registry, covers and the three React articles are implemented, and the portal is deployed on Cloudflare Pages. Still open: the React Lab Pages project and branch-preview checks in 1.6. React Lab is now an Astro knowledge site with its own content collection and visual identity; the three React articles live there instead of the portal. Motion Lab is built and merged (six demos, index previews, search and a snippet playground) and waits only for its own Pages project.
 
 This document splits the project into phases. Each phase has a work checklist and completion criteria.
 
@@ -86,13 +86,26 @@ This document splits the project into phases. Each phase has a work checklist an
 
 ### 1.5 React Lab
 
-- [x] Initialise the React + TypeScript + Vite project in `labs/react-lab/`
+React Lab is a **hybrid**: a knowledge base like the portal (long-form articles on real URLs) and an
+interactive demo surface like Motion Lab. It owns its stack, visual identity and plan
+(`labs/react-lab/README.md`, `ROADMAP.md`, `docs/DESIGN.md`); portal ADRs and `docs/design/` do not
+apply to it.
+
+- [x] Initialise React Lab as an Astro + React islands + MDX site in `labs/react-lab/`
+      — replaced the earlier Vite SPA so articles have real routes, static output and metadata
+- [x] Content collection `knowledge` with `type`, `topic`, `level`, shared `@dev-lab/tags` ids,
+      optional `cover` + `coverAlt`, and `draft`
+- [x] Lab shell: header, footer, theme toggle, skip link, light/dark via `--lab-*` tokens
+- [x] Routes: `/`, `/kien-thuc`, `/kien-thuc/<slug>`, `/404.html`
+- [x] Move the three React articles out of the portal into the lab, with their SVG covers
 - [x] Article 1 (Concept): React Fiber & Reconciliation — element tree, Fiber tree, render phase
       and commit phase; why `key` decides whether state is kept or lost
 - [x] Article 2 (Concept): React Concurrent Rendering — lanes, scheduler, interruptible render
       and the limits of the commit phase
 - [x] Article 3 (Concept): Tearing & `useSyncExternalStore` — snapshot, subscription and how to
       avoid two components reading two versions of the data
+- [ ] Seed the remaining topic branches (hooks, lifecycle, performance, libraries) with articles
+- [ ] Add interactive demos as React islands on their own routes
 
 ### 1.6 Deploy
 

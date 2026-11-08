@@ -52,21 +52,21 @@ Not every lab needs to cover all of these types.
 
 ## 6. Potential lab examples
 
-This is an open list, not a fixed plan. React Lab is the first lab; Motion Lab is the second.
+This is an open list, not a fixed plan. React Lab is the first lab (Astro knowledge site plus demos); Motion Lab is the second (demo-first).
 
-| Lab                 | Planned stack               | Main content                              |
-| ------------------- | --------------------------- | ----------------------------------------- |
-| React Lab           | React, TypeScript, Vite     | Hooks, rendering, state, performance      |
-| Motion Lab          | React, Motion, Vite         | Motion demos, API usage, pitfalls, docs   |
-| Next.js Lab         | Next.js                     | SSR, SSG, Server Components, caching      |
-| JS Under the Hood   | Flexible                    | Event loop, closure, prototype, Promise   |
-| Web Performance Lab | Flexible                    | Core Web Vitals, waterfall, benchmark     |
-| Testing Lab         | Vitest, Playwright          | Unit, integration, E2E                    |
-| Backend Mechanics   | Node.js, Express            | HTTP, middleware, auth, API design        |
-| Database Lab        | SQL                         | Index, join, transaction, isolation level |
-| DevOps Playground   | Docker, GitHub Actions      | CI/CD, deployment                         |
-| Cloud Lab           | AWS, CloudFront, S3, Lambda | CDN caching, serverless                   |
-| Git Internals       | Flexible                    | Commit graph, merge, rebase               |
+| Lab                 | Planned stack               | Main content                                               |
+| ------------------- | --------------------------- | ---------------------------------------------------------- |
+| React Lab           | Astro, React, MDX           | Hooks, lifecycle, rendering, state, performance, libraries |
+| Motion Lab          | React, Motion, Vite         | Motion demos, API usage, pitfalls, docs                    |
+| Next.js Lab         | Next.js                     | SSR, SSG, Server Components, caching                       |
+| JS Under the Hood   | Flexible                    | Event loop, closure, prototype, Promise                    |
+| Web Performance Lab | Flexible                    | Core Web Vitals, waterfall, benchmark                      |
+| Testing Lab         | Vitest, Playwright          | Unit, integration, E2E                                     |
+| Backend Mechanics   | Node.js, Express            | HTTP, middleware, auth, API design                         |
+| Database Lab        | SQL                         | Index, join, transaction, isolation level                  |
+| DevOps Playground   | Docker, GitHub Actions      | CI/CD, deployment                                          |
+| Cloud Lab           | AWS, CloudFront, S3, Lambda | CDN caching, serverless                                    |
+| Git Internals       | Flexible                    | Commit graph, merge, rebase                                |
 
 ## 7. Principles
 
@@ -101,7 +101,7 @@ Detailed rationale in [`adr/`](adr/README.md).
 
 - **Name**: Dev Lab, repo `dev-lab` (decided 2026-10-18).
 - **Portal**: `portal/`, Astro with static output, plain CSS + design tokens ([ADR 0001](adr/0001-portal-architecture.md)).
-- **Labs**: each lab is an independent app in `labs/`, and may have its own stack, repo and deploy process. First lab: `react-lab` (React, TypeScript, Vite). Second: `motion-lab` (React, Motion, Vite) — planned.
+- **Labs**: each lab is an independent app in `labs/`, and may have its own stack, repo and deploy process. First lab: `react-lab` (Astro + React islands + MDX; a knowledge base plus interactive demos). Second: `motion-lab` (React, Motion, Vite). Labs keep their own articles when the material belongs to that lab; the portal keeps general web knowledge.
 - **Content**: Markdown/MDX in the `posts` content collection; frontmatter schema in `portal/src/content.config.ts`.
 - **Design**: theme and mode are two independent axes ([ADR 0002](adr/0002-design-foundations.md)); phase 1 implements only the Minimalist Editorial theme. Detailed UI specs and token values live in [`docs/design/`](design/); [`docs/DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) is the index (principles, checklist, known deviations); decisions and rationale live in [`docs/adr/`](adr/README.md). These rules cover the portal; labs are free to define their own.
 - **Hosting**: Cloudflare Pages — the portal is deployed; no lab is deployed yet.
@@ -113,6 +113,6 @@ Detailed rationale in [`adr/`](adr/README.md).
 
 The items below are **not settled yet**. Do not treat them as decided when writing code or content.
 
-- Whether labs share design tokens with the portal or have their own identity (`react-lab` currently only has layout styles).
+- Whether labs share design tokens with the portal or have their own identity (`react-lab` and `motion-lab` each define their own `--lab-*` tokens).
 - How a lab publishes its own docs beyond its `README.md` (site page, article in the portal, or both).
 - The publishing workflow, and whether a content management tool beyond Markdown files is needed.

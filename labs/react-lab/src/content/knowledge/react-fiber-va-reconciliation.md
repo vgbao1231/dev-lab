@@ -2,7 +2,8 @@
 title: 'React Fiber & Reconciliation: React thực sự render UI như thế nào?'
 date: 2026-10-22
 type: concept
-lab: react-lab
+topic: rendering
+level: nang-cao
 tags: ['react', 'internals', 'rendering']
 cover: react-fiber
 coverAlt: 'Sơ đồ Fiber tree với Root, Header và List, các nhánh current và work-in-progress cùng nhãn render → commit'

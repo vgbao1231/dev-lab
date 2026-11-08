@@ -1,11 +1,11 @@
 /**
- * Danh sách cover có sẵn trong `src/assets/covers/`.
+ * Cover ids available in `src/assets/covers/`.
  *
- * Cover là SVG vẽ tay, được nhúng inline để dùng chung token màu với theme. Vì vậy
- * frontmatter chỉ lưu khóa (`react-fiber`), không lưu đường dẫn file. Thêm cover mới:
- * thêm file SVG cùng tên vào `src/assets/covers/` rồi thêm khóa vào đây.
+ * The React-specific covers moved to `labs/react-lab/src/assets/covers/` with
+ * their articles. Add a new id here (and the SVG) when a general portal article
+ * needs a cover again.
  */
-export const coverIds = ['react-fiber', 'react-scheduler', 'react-tearing'] as const;
+export const coverIds = [] as const;
 
 export type CoverId = (typeof coverIds)[number];
 
