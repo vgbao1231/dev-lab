@@ -25,6 +25,7 @@ dev-lab/
 ├── README.md
 ├── docs/
 │   ├── PROJECT_OVERVIEW.md   # Goals, audience, scope, settled and unsettled architecture
+│   ├── ACTIVE_CONTEXT.md     # Handoff note: what the last session left unfinished
 │   ├── ROADMAP.md            # Phases, checklists, completion criteria
 │   ├── DESIGN_SYSTEM.md      # Design system index, principles, checklist
 │   ├── TAGS.md               # Shared tag registry and rules for adding tags

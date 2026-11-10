@@ -50,6 +50,7 @@ Do not read all of `docs/`. Pick by task:
 
 | Task                                                             | Read                                                                         |
 | ---------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Starting or resuming work                                        | `docs/ACTIVE_CONTEXT.md` (what the last session left unfinished)             |
 | New to the project / orientation                                 | "Project at a glance" above + `docs/adr/README.md`                           |
 | Colour, theme, colour tokens                                     | `docs/design/theme.md`                                                       |
 | Fonts, type scale                                                | `docs/design/typography.md`                                                  |
@@ -59,7 +60,7 @@ Do not read all of `docs/`. Pick by task:
 | Animation, hover, View Transitions                               | `docs/design/motion.md`                                                      |
 | Writing or editing a post                                        | `portal/src/content.config.ts`, `portal/src/data/content.ts`, `docs/TAGS.md` |
 | Proposing a feature or a new lab                                 | `docs/PROJECT_OVERVIEW.md`, top of `docs/ROADMAP.md`                         |
-| Why the project is built this way                                | `docs/adr/`                                                                  |
+| Why the project is built this way                                | `docs/adr/` — read the `full` rows; a `summary` row is enough                |
 
 Code comments say "`docs/DESIGN_SYSTEM.md` section N"; the table at the top of that file maps section N to the topic file.
 
@@ -137,6 +138,7 @@ never edits a file it does not own.
    - Changed a colour token, font or UI rule: update `docs/design/` first, then the code.
    - Settled a memorable decision: add an ADR in `docs/adr/`.
    - Fixed a known deviation: remove it from the "Known deviations" list in `docs/DESIGN_SYSTEM.md`.
+   - Ending a session with unfinished work: rewrite `docs/ACTIVE_CONTEXT.md` (replace the body, do not append).
 4. Do not log every revision round in docs. History lives in commit messages.
 
 ## Git
