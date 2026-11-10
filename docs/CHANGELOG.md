@@ -4,6 +4,19 @@ History of revision rounds, moved out of `ROADMAP.md` so the roadmap only holds 
 Agents **do not need to read** this file unless they need to know how a value changed over time. The rationale for notable
 decisions lives in [`adr/`](adr/README.md); the full history lives in `git log`.
 
+- **2026-11-11**: Motion Lab's shell is now resilient to client-side routing and accessible from
+  the keyboard: a hash route that matches no demo or page renders a not-found page instead of the
+  index, a skip link targets `<main>`, and a route change moves focus there after updating the
+  scroll position, title and description. The playground remounts when the preset in the URL changes,
+  the backdrop listens for `prefers-reduced-motion` changes instead of reading it once, and card
+  preloads no longer surface a rejected chunk. A seventh demo, `while-in-view` (scroll group, `scroll`
+  preview kind), teaches `whileInView`, `viewport={{ root, once, amount }}` and `onViewportEnter`
+  inside a local scroller. The document head gained favicon, apple-touch icon, per-scheme
+  `theme-color`, canonical, Open Graph and Twitter tags plus a 1200×630 social card; deploy prep adds
+  `public/_headers` (asset caching, `nosniff`, referrer policy) and a before/after checklist in the
+  lab README. Docs: `labs/motion-lab/docs/DESIGN.md`, `ROADMAP.md`, `README.md`,
+  `docs/WORKSTREAMS.md`.
+
 - **2026-11-08**: React Lab is now an Astro + React islands + MDX knowledge site instead of a Vite SPA. Articles have real routes (`/kien-thuc/<slug>`), static output and metadata; the content collection `knowledge` adds `topic` (`hooks`, `lifecycle`, `rendering`, `state`, `performance`, `libraries`) and `level` (`co-ban`, `trung-cap`, `nang-cao`) on top of the shared `@dev-lab/tags` registry. The lab keeps its own `--lab-*` tokens: the portal's warm neutrals plus a cyan accent (`#0b6e8a` light / `#7dd3fc` dark), a 1120px page and a 760px prose measure. The three React articles and their SVG covers moved from the portal into `labs/react-lab/src/content/knowledge/` and `labs/react-lab/src/assets/covers/`; `portal/src/data/covers.ts` is now empty. Lab docs: `labs/react-lab/README.md`, `ROADMAP.md`, `docs/DESIGN.md`.
 
 - **2026-11-08**: Motion Lab's playground now opens a demo with that demo's own vanilla translation instead of the closest preset. All six demos (`variants`, `gestures`, `layout`, `scroll`, `springs`, `reduced-motion`) carry a short snippet plus a note on what differs from their React component; the read-only React block shows the demo's real code. The four presets remain for free editing and clear the demo source when chosen. The snippets live in the lazy playground chunk, so the index bundle does not grow beyond the metadata it already shares. Docs: `labs/motion-lab/docs/DESIGN.md`, `labs/motion-lab/README.md`.

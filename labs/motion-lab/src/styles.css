@@ -162,6 +162,29 @@ pre {
   min-height: 100vh;
 }
 
+/* Skip link: first tab stop, hidden until focused. It has to move focus in JS
+ * because a plain #main hash would be read as a route by the hash router. */
+
+.skip-link {
+  position: fixed;
+  top: var(--lab-space-3);
+  left: var(--lab-space-3);
+  z-index: 20;
+  padding: 10px 14px;
+  color: var(--lab-text);
+  background: var(--lab-surface);
+  border: 1px solid var(--lab-accent);
+  border-radius: var(--lab-radius-md);
+  font-family: var(--lab-font-mono);
+  font-size: var(--lab-text-2xs);
+  transform: translateY(calc(-100% - var(--lab-space-4)));
+  transition: transform var(--lab-duration-fast) var(--lab-ease);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
 /* Backdrop — fixed behind the app, above the body gradient */
 
 .backdrop {
@@ -358,6 +381,7 @@ pre {
   flex-wrap: wrap;
   align-items: center;
   gap: var(--lab-space-4);
+  margin-left: auto;
 }
 
 .site-nav__link {
@@ -625,6 +649,18 @@ pre {
 }
 
 @media (max-width: 559px) {
+  /* Keep the mode switch beside the brand: the header is two rows instead of
+     three, and the nav gets the second row to itself. */
+  .theme-switch {
+    order: 1;
+    margin-left: auto;
+  }
+
+  .site-nav {
+    order: 2;
+    width: 100%;
+  }
+
   .search-trigger__label,
   .search-trigger__kbd {
     display: none;
@@ -647,6 +683,12 @@ pre {
   max-width: var(--lab-width-page);
   margin: 0 auto;
   padding: var(--lab-space-2) var(--lab-gutter) var(--lab-space-7);
+}
+
+/* <main> is a focus target after a route change, not an interactive control:
+ * drawing the global focus ring around the whole page would be noise. */
+.main:focus {
+  outline: none;
 }
 
 .hero {
@@ -1497,6 +1539,22 @@ pre {
 
 .demo-page .lead {
   font-size: var(--lab-text-base);
+}
+
+.not-found__route {
+  margin-top: var(--lab-space-4);
+}
+
+.not-found__route code {
+  display: inline-block;
+  padding: 6px 10px;
+  color: var(--lab-text-muted);
+  background: var(--lab-surface-muted);
+  border: 1px solid var(--lab-border);
+  border-radius: var(--lab-radius-sm);
+  font-family: var(--lab-font-mono);
+  font-size: var(--lab-text-sm);
+  overflow-wrap: anywhere;
 }
 
 .stage {

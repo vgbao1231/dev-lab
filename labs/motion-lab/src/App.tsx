@@ -1,4 +1,12 @@
-import { Suspense, lazy, useEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  Suspense,
+  lazy,
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent as ReactMouseEvent,
+  type ReactNode,
+} from 'react';
 import { Backdrop } from './components/Backdrop';
 import { DemoPreview } from './components/DemoPreview';
 import { Search } from './components/SearchDialog';
@@ -11,6 +19,7 @@ import { useTheme, type ThemeMode } from './lib/useTheme';
 // Placeholder until the portal has a stable custom domain.
 const PORTAL_URL = 'https://dev-lab-gura.pages.dev';
 const SOURCE_URL = 'https://github.com/vgbao1231/dev-lab/tree/main/labs/motion-lab';
+const BASE_DESCRIPTION = 'Demo các kiểu chuyển động, cách dùng API và cạm bẫy khi làm motion.';
 
 const THEME_OPTIONS: { mode: ThemeMode; label: string }[] = [
   { mode: 'dark', label: 'tối' },
@@ -39,12 +48,27 @@ const findDemo = (route: string): Demo | undefined => {
   return id ? demos.find((demo) => demo.id === id) : undefined;
 };
 
-const findPlaygroundPreset = (route: string): string | undefined => {
-  const match = /^\/playground(?:\/([^/]+))?$/.exec(route);
-  return match ? match[1] : undefined;
-};
+type Route =
+  | { kind: 'index' }
+  | { kind: 'demo'; demo: Demo }
+  | { kind: 'playground'; preset?: string }
+  | { kind: 'not-found'; route: string };
 
-const isPlaygroundRoute = (route: string): boolean => /^\/playground(?:\/[^/]+)?$/.test(route);
+const resolveRoute = (route: string): Route => {
+  if (route === '' || route === '/') {
+    return { kind: 'index' };
+  }
+
+  const playground = /^\/playground(?:\/([^/]+))?$/.exec(route);
+
+  if (playground) {
+    return { kind: 'playground', preset: playground[1] };
+  }
+
+  const demo = findDemo(route);
+
+  return demo ? { kind: 'demo', demo } : { kind: 'not-found', route };
+};
 
 const ThemeSwitch = () => {
   const [mode, setMode] = useTheme();
@@ -97,8 +121,8 @@ const Header = ({ active }: HeaderProps) => (
           Dev Lab ↗
         </a>
         <Search />
-        <ThemeSwitch />
       </nav>
+      <ThemeSwitch />
     </div>
   </header>
 );
@@ -216,6 +240,13 @@ const DemoCard = ({ demo, index }: { demo: Demo; index: number }) => {
   // starts from its first frame instead of finishing once and staying still.
   const replay = () => setPlayKey((value) => value + 1);
 
+  // Warm the demo chunk as soon as intent is visible. A failed preload is not
+  // fatal: the demo page has its own boundary for the real render.
+  const preload = () => {
+    replay();
+    demo.load().catch(() => undefined);
+  };
+
   // Cards below the fold finish their one-shot animation before the reader sees
   // them. Replay once when the card first enters the viewport, then stop
   // observing: the preview still never loops and never runs on a timer.
@@ -246,14 +277,8 @@ const DemoCard = ({ demo, index }: { demo: Demo; index: number }) => {
       <a
         className="demo-card"
         href={`#/demos/${demo.id}`}
-        onPointerEnter={() => {
-          replay();
-          void demo.load();
-        }}
-        onFocus={() => {
-          replay();
-          void demo.load();
-        }}
+        onPointerEnter={preload}
+        onFocus={preload}
       >
         <DemoPreview key={playKey} kind={demo.preview} />
         <span className="demo-card__body">
@@ -356,45 +381,132 @@ const IndexPage = () => {
   );
 };
 
+const NotFoundPage = ({ route }: { route: string }) => {
+  const missingDemo = /^\/demos\/[^/]+\/?$/.test(route);
+
+  return (
+    <article className="demo-page not-found">
+      <nav className="crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li>
+            <a href="#/">demo</a>
+          </li>
+          <li aria-current="page">không tìm thấy</li>
+        </ol>
+      </nav>
+
+      <h1>{missingDemo ? 'Demo không tồn tại' : 'Không tìm thấy trang'}</h1>
+      <p className="lead">
+        {missingDemo
+          ? 'Địa chỉ này không khớp demo nào trong lab. Có thể demo đã đổi tên hoặc link đã cũ.'
+          : 'Địa chỉ này không khớp trang nào trong Motion Lab.'}
+      </p>
+      <p className="not-found__route">
+        <code>{`#${route}`}</code>
+      </p>
+
+      <p className="demo-playground-link">
+        <a className="demo-button" href="#/">
+          Về danh sách demo →
+        </a>
+      </p>
+      <p className="demo-hint">
+        Mẹo: <kbd>Ctrl/⌘ + K</kbd> mở tìm kiếm trên toàn bộ demo và playground.
+      </p>
+    </article>
+  );
+};
+
 const App = () => {
   const route = useHashRoute();
-  const playground = isPlaygroundRoute(route);
-  const playgroundPreset = findPlaygroundPreset(route);
-  const demo = playground ? undefined : findDemo(route);
+  const current = resolveRoute(route);
+  const playground = current.kind === 'playground';
+  const demo = current.kind === 'demo' ? current.demo : undefined;
   const demoNode = demo ? (demoNodes.get(demo.id) ?? null) : null;
+  const missingRoute =
+    current.kind === 'not-found'
+      ? current.route
+      : current.kind === 'demo' && !demoNode
+        ? `/demos/${current.demo.id}`
+        : undefined;
 
+  const mainRef = useRef<HTMLElement>(null);
+  const isFirstRender = useRef(true);
+
+  const pageTitle =
+    current.kind === 'demo'
+      ? `${current.demo.title} — Motion Lab`
+      : current.kind === 'playground'
+        ? 'Playground — Motion Lab'
+        : current.kind === 'not-found'
+          ? 'Không tìm thấy — Motion Lab'
+          : 'Motion Lab — Dev Lab';
+
+  const description =
+    current.kind === 'demo'
+      ? `${current.demo.title}: ${current.demo.summary}`
+      : current.kind === 'playground'
+        ? 'Sửa snippet motion và xem thay đổi ngay trên stage của Motion Lab.'
+        : BASE_DESCRIPTION;
+
+  // Hash navigation does not reload the document, so the new page needs its own
+  // scroll position, title and description. Focus moves to <main> only after a
+  // real route change: on first load the browser keeps its normal focus position.
   useEffect(() => {
     globalThis.scrollTo(0, 0);
+
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    mainRef.current?.focus({ preventScroll: true });
   }, [route]);
 
   useEffect(() => {
-    document.title = playground
-      ? 'Playground — Motion Lab'
-      : demo
-        ? `${demo.title} — Motion Lab`
-        : 'Motion Lab — Dev Lab';
-  }, [demo, playground]);
+    document.title = pageTitle;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', description);
+  }, [description, pageTitle]);
+
+  const skipToContent = (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    const main = mainRef.current;
+
+    if (!main) {
+      return;
+    }
+
+    // A plain `href="#main"` would change the hash route to /main, so the
+    // skip link moves focus itself instead of navigating.
+    event.preventDefault();
+    main.focus();
+    main.scrollIntoView({ block: 'start' });
+  };
 
   return (
     <div className="app">
+      <a className="skip-link" href="#main" onClick={skipToContent}>
+        Bỏ qua tới nội dung
+      </a>
       <Backdrop />
       <Header active={playground ? 'playground' : 'demo'} />
 
-      <main className="main">
-        {playground ? (
+      <main id="main" className="main" tabIndex={-1} ref={mainRef}>
+        {current.kind === 'playground' ? (
           <DemoBoundary>
             <Suspense fallback={<p className="demo-loading">Đang tải playground…</p>}>
-              <PlaygroundPage initialPreset={playgroundPreset} />
+              <PlaygroundPage key={current.preset ?? 'index'} initialPreset={current.preset} />
             </Suspense>
           </DemoBoundary>
-        ) : demo && demoNode ? (
-          <DemoPage demo={demo}>
-            <DemoBoundary key={demo.id}>
+        ) : current.kind === 'demo' && demoNode ? (
+          <DemoPage demo={current.demo}>
+            <DemoBoundary key={current.demo.id}>
               <Suspense fallback={<p className="demo-loading">Đang tải demo…</p>}>
                 {demoNode}
               </Suspense>
             </DemoBoundary>
           </DemoPage>
+        ) : missingRoute ? (
+          <NotFoundPage route={missingRoute} />
         ) : (
           <IndexPage />
         )}

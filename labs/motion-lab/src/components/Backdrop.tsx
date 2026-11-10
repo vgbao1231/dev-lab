@@ -14,57 +14,78 @@ import { useEffect, useRef } from 'react';
  */
 const BLOOMS = ['a', 'b', 'c'] as const;
 const STREAKS = 5;
-
-const prefersReducedMotion = (): boolean =>
-  globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
 export const Backdrop = () => {
   const layerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const layer = layerRef.current;
+    const media = globalThis.matchMedia?.(REDUCED_MOTION_QUERY);
 
-    if (!layer || prefersReducedMotion()) {
+    if (!layer || !media) {
       return;
     }
 
-    let targetX = 0;
-    let targetY = 0;
-    let x = 0;
-    let y = 0;
-    let frame = 0;
+    let stop: (() => void) | undefined;
 
-    const settle = () => {
-      x += (targetX - x) * 0.06;
-      y += (targetY - y) * 0.06;
+    // The parallax loop is started and stopped from one place, so a preference
+    // change while the page is open is honoured without a reload.
+    const start = (): (() => void) => {
+      let targetX = 0;
+      let targetY = 0;
+      let x = 0;
+      let y = 0;
+      let frame = 0;
 
-      layer.style.setProperty('--backdrop-x', x.toFixed(4));
-      layer.style.setProperty('--backdrop-y', y.toFixed(4));
+      const settle = () => {
+        x += (targetX - x) * 0.06;
+        y += (targetY - y) * 0.06;
 
-      if (Math.abs(targetX - x) > 0.002 || Math.abs(targetY - y) > 0.002) {
-        frame = globalThis.requestAnimationFrame(settle);
-      } else {
-        frame = 0;
-      }
+        layer.style.setProperty('--backdrop-x', x.toFixed(4));
+        layer.style.setProperty('--backdrop-y', y.toFixed(4));
+
+        if (Math.abs(targetX - x) > 0.002 || Math.abs(targetY - y) > 0.002) {
+          frame = globalThis.requestAnimationFrame(settle);
+        } else {
+          frame = 0;
+        }
+      };
+
+      const onPointerMove = (event: PointerEvent) => {
+        targetX = (event.clientX / globalThis.innerWidth - 0.5) * 2;
+        targetY = (event.clientY / globalThis.innerHeight - 0.5) * 2;
+
+        if (!frame) {
+          frame = globalThis.requestAnimationFrame(settle);
+        }
+      };
+
+      globalThis.addEventListener('pointermove', onPointerMove, { passive: true });
+
+      return () => {
+        globalThis.removeEventListener('pointermove', onPointerMove);
+
+        if (frame) {
+          globalThis.cancelAnimationFrame(frame);
+        }
+
+        layer.style.removeProperty('--backdrop-x');
+        layer.style.removeProperty('--backdrop-y');
+      };
     };
 
-    const onPointerMove = (event: PointerEvent) => {
-      targetX = (event.clientX / globalThis.innerWidth - 0.5) * 2;
-      targetY = (event.clientY / globalThis.innerHeight - 0.5) * 2;
-
-      if (!frame) {
-        frame = globalThis.requestAnimationFrame(settle);
-      }
+    const sync = () => {
+      stop?.();
+      stop = media.matches ? undefined : start();
     };
 
-    globalThis.addEventListener('pointermove', onPointerMove, { passive: true });
+    media.addEventListener('change', sync);
+    sync();
 
     return () => {
-      globalThis.removeEventListener('pointermove', onPointerMove);
-
-      if (frame) {
-        globalThis.cancelAnimationFrame(frame);
-      }
+      media.removeEventListener('change', sync);
+      stop?.();
     };
   }, []);
 

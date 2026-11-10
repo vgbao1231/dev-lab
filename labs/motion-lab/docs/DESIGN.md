@@ -57,9 +57,18 @@ transitions; the rest of the shell stays quiet.
 
 - **Header** — brand `Motion Lab.` with a violet square mark, then mono links (`demo`, `playground`,
   `Dev Lab ↗`), a `tìm` search pill with its keyboard shortcut, and the segmented mode switch. One
-  bottom border; not sticky, so it never competes with the demo stage.
-- **Breadcrumb** — mono `demo / <id>` on the left, `05 / 06 · <group>` on the right. The current id
-  is `aria-current="page"`.
+  bottom border; not sticky, so it never competes with the demo stage. Below 560px the mode switch
+  sits beside the brand and the nav takes a second row, so the header stays two rows instead of
+  wrapping into three.
+- **Skip link** — the first tab stop is `Bỏ qua tới nội dung`, visually hidden until focused. It
+  targets `<main>` (focusable with `tabindex="-1"`), so the reader can jump the header without
+  re-tabbing through it on every page.
+- **Breadcrumb** — mono `demo / <id>` on the left, `<n> / <total> · <group>` on the right. The
+  current id is `aria-current="page"`.
+- **Not found** — a hash route that is neither `/`, `/demos/<known-id>` nor `/playground[/<id>]`
+  renders a small page instead of the index: the route in mono, one sentence saying whether the
+  demo or the page is missing, and a button back to the demo list. The header stays, so search and
+  the playground are still one click away.
 - **Stage** — the demo lives in a bordered surface card. The bar above it names the stage and the
   position (`stage · springs`, `05 / 06`); the body has a 18rem minimum height so the page does not
   jump when a demo mounts.
@@ -72,6 +81,12 @@ transitions; the rest of the shell stays quiet.
   stack and loading model), then a group filter row (`tất cả` plus one chip per group, count on the
   right), then one grid of demo cards. Each card is a bordered surface: a preview stage across the top,
   then group + number, title, summary and API line in a padded body.
+
+**Document head** — `<title>` and `meta[name="description"]` follow the current route (demo,
+playground, not found). Static tags describe the lab: `public/favicon.svg`,
+`public/apple-touch-icon.png`, the 1200×630 `public/og.png`, one `theme-color` per colour scheme, and
+canonical/OG URLs pointing at `https://motion-lab-gura.pages.dev/` until the deploy target gets a real
+domain. Descriptions come from the demo's `summary`, so no page needs a hand-written copy.
 
 ## Search
 
@@ -196,6 +211,10 @@ gradients or glow, and no fixed positioning outside its own box.
 - Everything is keyboard-operable; the mode switch is a `role="group"` of `aria-pressed` buttons, and
   the index filter uses the same pattern with a `role="status"` count. The search dialog adds
   `Ctrl/⌘ + K`, arrow keys and `esc`, and returns focus to its trigger.
+- The first tab stop is the skip link; `<main>` is the focus target, not a decorative wrapper.
+- Hash navigation is client-side, so a route change moves focus to `<main>` after scroll and title
+  update. The effect skips the first render: on load the browser keeps its normal focus position.
+  This keeps a screen reader from staying on a card link that no longer exists.
 - There is no hover-only information: the card preview also plays on keyboard focus.
 - `prefers-reduced-motion: reduce` is honoured twice: the global CSS guard shortens shell
   transitions, and each demo reads `useReducedMotion()` to swap movement for an instant state change.

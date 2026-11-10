@@ -13,6 +13,11 @@ Demo-first, not a benchmark: there is no bundle-size or library-comparison page.
 ## Structure
 
 ```
+public/
+├── _headers              Cloudflare Pages caching + security headers
+├── favicon.svg
+├── apple-touch-icon.png
+└── og.png                social card
 src/
 ├── App.tsx                 shell: header, index page, demo page, Suspense + error boundary
 ├── main.tsx                entry point
@@ -80,7 +85,8 @@ dependencies, and do not run repo-wide formatters or builds while another packag
 ## Status
 
 The six demos are live (each in its own chunk), the shell has been aligned with the Dev Lab visual
-grammar, and the first article is published. The playground (`#/playground`) is live as a lazy route:
+grammar, and the first article is published. The seventh demo, `while-in-view`, adds viewport
+reveals (`whileInView`, `viewport.root`, `once`, `amount`) and reuses the `scroll` preview kind. The playground (`#/playground`) is live as a lazy route:
 it turns a demo into an editable vanilla `motion` snippet with a measured stage, playback controls and
 inline errors, without adding a dependency, plus a read-only React version of each preset. When a
 snippet uses a spring, a small SVG plots the curve from its `stiffness`, `damping` and `mass` with
@@ -100,9 +106,20 @@ Motion Lab is its own Cloudflare Pages project, built from the repository root:
 | Build output directory | `labs/motion-lab/dist`                         |
 | Environment variables  | `NODE_VERSION=22.22.0`, `PNPM_VERSION=12.14.0` |
 
-Hash routing means no rewrite rules are needed. After the first deploy, set `status: 'live'` and the
-Pages URL as `href` in `portal/src/data/labs.ts`, then tick the Motion Lab deploy item in
-[`docs/ROADMAP.md`](../../docs/ROADMAP.md) and the lab's C2 item in [`ROADMAP.md`](ROADMAP.md).
+Hash routing means no rewrite rules are needed. [`public/_headers`](public/_headers) is copied into
+`dist` as-is and sets long-lived caching for `/assets/*`, plus `nosniff` and a strict referrer
+policy; the HTML stays revalidated so a deploy is visible immediately.
+
+Before the first production deploy:
+
+1. Run `pnpm --filter motion-lab build` and `pnpm --filter motion-lab preview`, then open `/`, one
+   demo, `#/playground`, and a hash route that does not exist (the not-found page should render).
+2. Confirm the project name `motion-lab-gura` is free, then create the Pages project with the
+   settings above. Leave branch previews off until the first production deploy works.
+3. After the deploy, set `status: 'running'` and the Pages URL as `href` in
+   `portal/src/data/labs.ts`, tick the Motion Lab deploy item in
+   [`docs/ROADMAP.md`](../../docs/ROADMAP.md) and the lab's C2 item in [`ROADMAP.md`](ROADMAP.md),
+   and add the release entry to [`docs/CHANGELOG.md`](../../docs/CHANGELOG.md).
 
 ## Notes
 

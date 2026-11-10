@@ -19,6 +19,7 @@ and its docs. Parallel work packages and file ownership: [`docs/WORKSTREAMS.md`]
 | B4 — scroll          | scroll-linked demo                              | done           |
 | B5 — springs         | spring vs tween demo                            | done           |
 | B6 — reduced motion  | reduced-motion demo                             | done           |
+| B7 — viewport reveal | `whileInView` + `viewport` demo                 | done           |
 | C1 — content         | first portal article(s) + `motion` tag          | done           |
 | C2 — release         | deploy docs, portal status, roadmap ticks       | deploy pending |
 | D — visual alignment | shell, tokens, header/footer/breadcrumb, docs   | done           |
@@ -59,7 +60,11 @@ A demo is done when:
 - [ ] the demo stays inside its own chunk: no static import from `App.tsx`, `registry.ts` or another demo
 
 Demo list and specs: `src/demos/*/meta.ts`. B1 variants, B2 gestures, B3 layout, B4 scroll,
-B5 springs, B6 reduced motion.
+B5 springs, B6 reduced motion, B7 viewport reveal (`whileInView`).
+
+B7 reuses the `scroll` preview kind and the `scroll` group: it teaches the viewport-observer API
+(`whileInView`, `viewport.root`, `once`, `amount`) next to the scroll-linked demo, without adding a
+shell kind or a second scroll implementation.
 
 ## Phase C — content and release
 
@@ -67,6 +72,9 @@ B5 springs, B6 reduced motion.
       `@dev-lab/tags`; 2–3 tags per article rules still apply
 - [ ] C2: Cloudflare Pages project for the lab (`pnpm --filter motion-lab build`, output
       `labs/motion-lab/dist`), then set `status` / `href` for `motion-lab` in `portal/src/data/labs.ts`
+- [x] C2: deploy settings documented in `README.md`, asset caching and security headers in
+      `public/_headers`, production build verified — creating the Pages project still needs
+      Cloudflare access
 - [x] C2: tick the Phase 2 boxes in `docs/ROADMAP.md`, add the deploy row to the root `README.md`,
       add a CHANGELOG entry for the lab release
 
@@ -102,7 +110,7 @@ rule.
 
 ## Completion criteria
 
-- Six demos, each reachable and each in its own chunk
+- Seven demos, each reachable and each in its own chunk
 - At least one portal article tagged `motion`, linked to a demo
 - Lab deployed and linked from the portal's `/labs` page
 - `pnpm lint && pnpm format:check && pnpm typecheck && pnpm build` passes at the repo root

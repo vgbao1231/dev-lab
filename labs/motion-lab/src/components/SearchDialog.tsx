@@ -55,7 +55,7 @@ const SEARCH_ENTRIES: LabSearchEntry[] = [
     title: 'Tất cả demo',
     type: 'Trang',
     meta: 'danh sách · lọc theo nhóm',
-    summary: 'Sáu demo motion, lọc theo nhóm và mở từng demo.',
+    summary: `${demos.length} demo motion, lọc theo nhóm và mở từng demo.`,
     href: '#/',
   }),
 ];

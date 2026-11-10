@@ -4,6 +4,7 @@ import { meta as reducedMotion } from '../demos/reduced-motion/meta';
 import { meta as scroll } from '../demos/scroll/meta';
 import { meta as springs } from '../demos/springs/meta';
 import { meta as variants } from '../demos/variants/meta';
+import { meta as whileInView } from '../demos/while-in-view/meta';
 import type { DemoMeta } from '../demos/types';
 import {
   DEFAULT_PRESET,
@@ -51,6 +52,15 @@ const SNIPPETS: DemoSnippet[] = [
     meta: scroll,
     note: 'Demo buộc chuyển động vào scrollYProgress; ở đây cả quãng đường chạy một lần với ease linear để thấy tiến trình.',
     code: `animate(box, { x: distance }, { duration: 1.4, ease: 'linear' });`,
+  },
+  {
+    meta: whileInView,
+    note: 'Demo reveal theo khung cuộn riêng; playground không có viewport cuộn nên snippet chạy cùng nhịp reveal một lần cho cả nhóm dots.',
+    code: `animate(
+  dots,
+  { opacity: [0.2, 1], y: [16, 0] },
+  { delay: stagger(0.08), duration: 0.4, ease: 'easeOut' },
+);`,
   },
   {
     meta: springs,

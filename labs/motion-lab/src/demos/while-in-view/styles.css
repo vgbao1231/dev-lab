@@ -1,0 +1,53 @@
+.while-in-view-demo {
+  display: grid;
+  gap: var(--lab-space-4);
+  align-content: start;
+}
+
+.while-in-view-viewport {
+  block-size: 12rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--lab-surface-muted);
+  border: 1px solid var(--lab-border);
+  border-radius: var(--lab-radius-md);
+  scrollbar-width: thin;
+}
+
+.while-in-view-track {
+  display: grid;
+  gap: var(--lab-space-2);
+  padding: var(--lab-space-3);
+  margin: 0;
+  list-style: none;
+}
+
+.while-in-view-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px var(--lab-space-3);
+  align-items: baseline;
+  padding: var(--lab-space-3);
+  background: var(--lab-surface);
+  border: 1px solid var(--lab-border);
+  border-radius: var(--lab-radius-sm);
+}
+
+.while-in-view-row__index {
+  grid-row: span 2;
+  color: var(--lab-text-muted);
+  font-family: var(--lab-font-mono);
+  font-size: var(--lab-text-2xs);
+}
+
+.while-in-view-row__api {
+  color: var(--lab-accent);
+  font-family: var(--lab-font-mono);
+  font-size: var(--lab-text-2xs);
+}
+
+.while-in-view-row__text {
+  color: var(--lab-text-muted);
+  font-size: var(--lab-text-sm);
+  line-height: 1.5;
+}

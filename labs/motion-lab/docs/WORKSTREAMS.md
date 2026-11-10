@@ -140,12 +140,13 @@ Starts only when B1–B6 and C1 are merged on `feat/motion-lab`.
 5. Update this lab's `README.md` status section; keep the ownership map in this file accurate.
 6. Run the full check from the repo root: `pnpm lint && pnpm format:check && pnpm typecheck && pnpm build`.
 
-## Adding a seventh demo later
+## Adding another demo later
 
-Create `src/demos/<id>/meta.ts` (unique `order`, group from `src/demos/types.ts`), `index.tsx` and
-`styles.css`. No registry edit, no shell edit: the index page and the hash route pick it up on the
-next dev-server reload. If a new group is needed, ask package A — group labels live in
-`registry.ts`.
+`while-in-view` (B7) is the worked example: create `src/demos/<id>/meta.ts` (unique `order`, group
+from `src/demos/types.ts`), `index.tsx` and `styles.css`. No registry edit, no shell edit: the index
+page and the hash route pick it up on the next dev-server reload. If a new group is needed, ask
+package A — group labels live in `registry.ts`. Reuse an existing `preview` kind; a new kind is a
+shell change documented in `docs/DESIGN.md` first.
 
 ## Scaling to N agents
 
